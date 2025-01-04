@@ -23,4 +23,13 @@ values ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
     );
     return result[0].id;
   }
+
+  async delete(id: string): Promise<boolean> {
+    const deletionResult = await this.datasource.query(
+      `DELETE FROM "users" WHERE id = $1`,
+      [id],
+    );
+    console.log(deletionResult);
+    return deletionResult[1] === 1;
+  }
 }

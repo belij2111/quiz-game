@@ -53,6 +53,6 @@ export class UsersService {
   }
 
   async delete(id: string): Promise<boolean> {
-    return this.usersRepository.delete(id);
+    return this.usersSqlRepository.delete(id);
   }
 }
