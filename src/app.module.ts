@@ -7,6 +7,7 @@ import { UserAccountsModule } from './features/user-accounts/user-accounts.modul
 import { CoreConfig } from './core/core.config';
 import { CoreModule } from './core/core.module';
 import { NotificationsModule } from './features/notifications/notifications.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -19,6 +20,16 @@ import { NotificationsModule } from './features/notifications/notifications.modu
         };
       },
       inject: [CoreConfig],
+    }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: 'sa',
+      database: 'sprint-05',
+      autoLoadEntities: false,
+      synchronize: false,
     }),
     CoreModule,
     UserAccountsModule,
