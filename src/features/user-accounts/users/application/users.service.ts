@@ -5,6 +5,7 @@ import { CryptoService } from '../../crypto/crypto.service';
 import { User } from '../domain/user.entity';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 import { UserAccountConfig } from '../../config/user-account.config';
+import { UsersSqlRepository } from '../infrastructure/users.sql.repository';
 
 @Injectable()
 export class UsersService {
@@ -13,9 +14,10 @@ export class UsersService {
     private readonly bcryptService: CryptoService,
     private readonly uuidProvider: UuidProvider,
     private readonly userAccountConfig: UserAccountConfig,
+    private readonly usersSqlRepository: UsersSqlRepository,
   ) {}
 
-  async create(userCreateModel: UserCreateModel): Promise<{ id: string }> {
+  async create(userCreateModel: UserCreateModel): Promise<number> {
     const existingUserByLogin = await this.usersRepository.findByLoginOrEmail(
       userCreateModel.login,
     );
@@ -47,7 +49,7 @@ export class UsersService {
         isConfirmed: true,
       },
     };
-    return this.usersRepository.create(newUser);
+    return this.usersSqlRepository.create(newUser);
   }
 
   async delete(id: string): Promise<boolean> {

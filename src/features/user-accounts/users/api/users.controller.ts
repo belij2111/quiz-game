@@ -21,6 +21,7 @@ import {
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { ApiBasicAuth } from '@nestjs/swagger';
 import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
+import { UsersSqlQueryRepository } from '../infrastructure/users.sql.query-repository';
 
 @Controller('/users')
 @UseGuards(BasicAuthGuard)
@@ -28,6 +29,7 @@ import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.
 export class UsersController {
   constructor(
     private readonly usersQueryRepository: UsersQueryRepository,
+    private readonly usersSqlQueryRepository: UsersSqlQueryRepository,
     private readonly usersService: UsersService,
   ) {}
 
@@ -35,7 +37,7 @@ export class UsersController {
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() userCreateModel: UserCreateModel) {
     const createdUserId = await this.usersService.create(userCreateModel);
-    return await this.usersQueryRepository.getById(createdUserId.id);
+    return await this.usersSqlQueryRepository.getById(createdUserId);
   }
 
   @Get()

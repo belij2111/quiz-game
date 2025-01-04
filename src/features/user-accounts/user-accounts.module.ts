@@ -26,6 +26,8 @@ import { SecurityDevicesRepository } from './security-devices/infrastructure/sec
 import { SecurityDevicesQueryRepository } from './security-devices/infrastructure/security-devices.query-repository';
 import { CryptoService } from './crypto/crypto.service';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { UsersSqlRepository } from './users/infrastructure/users.sql.repository';
+import { UsersSqlQueryRepository } from './users/infrastructure/users.sql.query-repository';
 
 @Module({
   imports: [
@@ -58,6 +60,8 @@ import { NotificationsModule } from '../notifications/notifications.module';
     SecurityDevicesQueryRepository,
     JwtService,
     CryptoService,
+    UsersSqlRepository,
+    UsersSqlQueryRepository,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
