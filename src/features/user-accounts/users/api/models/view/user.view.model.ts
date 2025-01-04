@@ -8,7 +8,7 @@ export class UserViewModel {
 
   static mapToView(user: UserDocument): UserViewModel {
     const model = new UserViewModel();
-    model.id = user.id;
+    model.id = user.id.toString();
     model.login = user.login;
     model.email = user.email;
     model.createdAt = user.createdAt;
