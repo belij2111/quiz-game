@@ -5,10 +5,10 @@ import { DataSource } from 'typeorm';
 
 @Injectable()
 export class UsersSqlQueryRepository {
-  constructor(@InjectDataSource() private datasource: DataSource) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async getById(id: number): Promise<UserViewModel | null> {
-    const foundUser = await this.datasource.query(
+    const foundUser = await this.dataSource.query(
       `SELECT * FROM "users"
          WHERE id=$1`,
       [id],

@@ -32,7 +32,7 @@ export class TestingRepository {
     @InjectModel(Like.name) private LikeModel: LikeModelType,
     @InjectModel(SecurityDevices.name)
     private SecurityDevicesModel: SecurityDevicesModelType,
-    @InjectDataSource() private datasource: DataSource,
+    @InjectDataSource() private dataSource: DataSource,
   ) {}
 
   async deleteAllData() {
@@ -42,7 +42,7 @@ export class TestingRepository {
       this.CommentModel.deleteMany(),
       this.LikeModel.deleteMany(),
       this.SecurityDevicesModel.deleteMany(),
-      this.datasource.query(`TRUNCATE TABLE "users" RESTART IDENTITY`),
+      this.dataSource.query(`TRUNCATE TABLE "users" RESTART IDENTITY`),
     ]);
   }
 }
