@@ -12,7 +12,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from '../application/users.service';
-import { UsersQueryRepository } from '../infrastructure/users.query-repository';
 import { UserViewModel } from './models/view/user.view.model';
 import {
   GetUsersQueryParams,
@@ -28,7 +27,6 @@ import { UsersSqlQueryRepository } from '../infrastructure/users.sql.query-repos
 @ApiBasicAuth()
 export class UsersController {
   constructor(
-    private readonly usersQueryRepository: UsersQueryRepository,
     private readonly usersSqlQueryRepository: UsersSqlQueryRepository,
     private readonly usersService: UsersService,
   ) {}
@@ -46,7 +44,7 @@ export class UsersController {
     @Query()
     query: GetUsersQueryParams,
   ): Promise<PaginatedViewModel<UserViewModel[]>> {
-    return await this.usersQueryRepository.getAll(query);
+    return await this.usersSqlQueryRepository.getAll(query);
   }
 
   @Delete(':id')
