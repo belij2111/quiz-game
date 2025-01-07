@@ -56,7 +56,7 @@ export class PostsTestManager {
     createdModel: PostCreateModel,
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
-    request(this.app.getHttpServer())
+    return request(this.app.getHttpServer())
       .post('/posts')
       .auth('invalid login', 'invalid password')
       .send(createdModel)

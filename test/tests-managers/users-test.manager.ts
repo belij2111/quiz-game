@@ -34,7 +34,7 @@ export class UsersTestManager {
     createdModel: UserCreateModel,
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
-    request(this.app.getHttpServer())
+    return request(this.app.getHttpServer())
       .post('/users')
       .auth('invalid login', 'invalid password')
       .send(createdModel)
