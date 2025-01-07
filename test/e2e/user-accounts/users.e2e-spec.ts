@@ -27,7 +27,7 @@ describe('e2e-Users', () => {
     await app.close();
   });
 
-  describe('USERS/posts', () => {
+  describe('POST/users', () => {
     it(`should create new user : STATUS 201`, async () => {
       const validUserModel: UserCreateModel = createValidUserModel();
       const createdResponse = await usersTestManager.createUser(

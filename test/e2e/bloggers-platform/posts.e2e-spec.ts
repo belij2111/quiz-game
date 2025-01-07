@@ -32,7 +32,7 @@ describe('e2e-Posts', () => {
     await app.close();
   });
 
-  describe('POST/post', () => {
+  describe('POST/posts', () => {
     it(`should create new post : STATUS 201`, async () => {
       const validBlogModel: BlogCreateModel = createValidBlogModel();
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
