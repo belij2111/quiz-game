@@ -51,4 +51,22 @@ describe('e2e-Users', () => {
       );
     });
   });
+
+  describe('GET/users', () => {
+    it(`should return users with paging : STATUS 200`, async () => {
+      const createdUsers = await usersTestManager.createUsers(3);
+      const createdResponse = await usersTestManager.getUsersWithPaging(
+        HttpStatus.OK,
+      );
+      usersTestManager.expectCorrectPagination(
+        createdUsers,
+        createdResponse.body,
+      );
+      // console.log(createdResponse.body);
+    });
+    it(`shouldn't return users with paging if the request is unauthorized : STATUS 401`, async () => {
+      await usersTestManager.createUsers(3);
+      await usersTestManager.getUsersIsNotAuthorized(HttpStatus.UNAUTHORIZED);
+    });
+  });
 });
