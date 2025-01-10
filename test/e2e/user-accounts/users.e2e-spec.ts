@@ -69,4 +69,24 @@ describe('e2e-Users', () => {
       await usersTestManager.getUsersIsNotAuthorized(HttpStatus.UNAUTHORIZED);
     });
   });
+
+  describe('DELETE/users/:id', () => {
+    it(`should delete the user by ID : STATUS 204`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel(1);
+      const createdUser = await usersTestManager.createUser(validUserModel);
+      await usersTestManager.deleteById(createdUser.id, HttpStatus.NO_CONTENT);
+    });
+    it(`shouldn't delete user by ID if the request is unauthorized : STATUS 401`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel(1);
+      const createdUser = await usersTestManager.createUser(validUserModel);
+      await usersTestManager.deleteByIdIsNotAuthorized(
+        createdUser.id,
+        HttpStatus.UNAUTHORIZED,
+      );
+    });
+    it(`shouldn't delete user by ID if the user does not exist : STATUS 404`, async () => {
+      const nonExistentId = '-100';
+      await usersTestManager.deleteById(nonExistentId, HttpStatus.NOT_FOUND);
+    });
+  });
 });
