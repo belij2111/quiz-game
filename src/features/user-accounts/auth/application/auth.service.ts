@@ -21,6 +21,7 @@ import { randomUUID } from 'node:crypto';
 import { SecurityDevices } from '../../security-devices/domain/security-devices.entity';
 import { SecurityDevicesRepository } from '../../security-devices/infrastructure/security-devices.repository';
 import { UserAccountConfig } from '../../config/user-account.config';
+import { UsersSqlRepository } from '../../users/infrastructure/users.sql.repository';
 
 @Injectable()
 export class AuthService {
@@ -32,11 +33,12 @@ export class AuthService {
     private readonly uuidProvider: UuidProvider,
     private readonly mailService: MailService,
     private readonly securityDevicesRepository: SecurityDevicesRepository,
+    private readonly usersSqlRepository: UsersSqlRepository,
   ) {}
 
   async validateUser(loginInput: LoginInputModel): Promise<string | null> {
     const { loginOrEmail, password } = loginInput;
-    const user = await this.usersRepository.findByLoginOrEmail(loginOrEmail);
+    const user = await this.usersSqlRepository.findByLoginOrEmail(loginOrEmail);
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
@@ -47,7 +49,7 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid password');
     }
-    return user._id.toString();
+    return user.id.toString();
   }
 
   async login(

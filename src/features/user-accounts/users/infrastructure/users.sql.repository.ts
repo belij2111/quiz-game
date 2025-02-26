@@ -31,4 +31,13 @@ values ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
     );
     return deletionResult[1] === 1;
   }
+
+  async findByLoginOrEmail(loginOrEmail: string) {
+    const result = await this.dataSource.query(
+      `SELECT * FROM "users"
+    WHERE login = $1 or email  = $1`,
+      [loginOrEmail],
+    );
+    return result.length > 0 ? result[0] : null;
+  }
 }

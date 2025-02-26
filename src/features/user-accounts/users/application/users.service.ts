@@ -18,17 +18,15 @@ export class UsersService {
   ) {}
 
   async create(userCreateModel: UserCreateModel): Promise<number> {
-    const existingUserByLogin = await this.usersRepository.findByLoginOrEmail(
-      userCreateModel.login,
-    );
+    const existingUserByLogin =
+      await this.usersSqlRepository.findByLoginOrEmail(userCreateModel.login);
     if (existingUserByLogin) {
       throw new BadRequestException([
         { field: 'login', message: 'Login is not unique' },
       ]);
     }
-    const existingUserByEmail = await this.usersRepository.findByLoginOrEmail(
-      userCreateModel.email,
-    );
+    const existingUserByEmail =
+      await this.usersSqlRepository.findByLoginOrEmail(userCreateModel.email);
     if (existingUserByEmail) {
       throw new BadRequestException([
         { field: 'email', message: 'Email is not unique' },
