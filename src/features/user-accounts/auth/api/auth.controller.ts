@@ -19,7 +19,6 @@ import {
 import { UserInfoInputModel } from './models/input/user-info.input.model';
 import { LoginSuccessViewModel } from './models/view/login-success.view.model';
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param.decorator';
-import { UsersQueryRepository } from '../../users/infrastructure/users.query-repository';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
 import { UserCreateModel } from '../../users/api/models/input/create-user.input.model';
 import { RegistrationConfirmationCodeModel } from './models/input/registration-confirmation-code.model';
@@ -29,12 +28,13 @@ import { NewPasswordRecoveryInputModel } from './models/input/new-password-recov
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
 import { CurrentDeviceId } from '../../../../core/decorators/param/current-device-id.param.decorator';
 import { Throttle } from '@nestjs/throttler';
+import { UsersSqlQueryRepository } from '../../users/infrastructure/users.sql.query-repository';
 
 @Controller('/auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly usersQueryRepository: UsersQueryRepository,
+    private readonly usersSqlQueryRepository: UsersSqlQueryRepository,
   ) {}
 
   @Post('/login')
@@ -86,8 +86,8 @@ export class AuthController {
   @Get('/me')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
-  async get(@CurrentUserId() currentUserId: string) {
-    return this.usersQueryRepository.getAuthUserById(currentUserId);
+  async get(@CurrentUserId() currentUserId: number) {
+    return this.usersSqlQueryRepository.getAuthUserById(currentUserId);
   }
 
   @Post('/registration')
