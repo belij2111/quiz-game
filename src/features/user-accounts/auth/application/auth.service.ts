@@ -179,15 +179,14 @@ export class AuthService {
   async registrationEmailResending(
     inputEmail: RegistrationEmailResendingModel,
   ) {
-    const existingUserByEmail = await this.usersRepository.findByLoginOrEmail(
-      inputEmail.email,
-    );
+    const existingUserByEmail =
+      await this.usersSqlRepository.findByLoginOrEmail(inputEmail.email);
     if (!existingUserByEmail) {
       throw new BadRequestException([
         { field: 'email', message: 'User with this email does not exist' },
       ]);
     }
-    if (existingUserByEmail.emailConfirmation.isConfirmed) {
+    if (existingUserByEmail.isConfirmed) {
       throw new BadRequestException([
         {
           field: 'email',
@@ -199,7 +198,7 @@ export class AuthService {
     const newConfirmationCode = this.uuidProvider.generate();
     const newExpirationDate = new Date(new Date().getTime() + expirationTime);
 
-    await this.usersRepository.updateRegistrationConfirmation(
+    await this.usersSqlRepository.updateRegistrationConfirmation(
       existingUserByEmail.id,
       newConfirmationCode,
       newExpirationDate,

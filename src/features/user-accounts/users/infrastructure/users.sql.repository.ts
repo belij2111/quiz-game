@@ -61,4 +61,19 @@ values ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
     );
     return result.rowCount !== 0;
   }
+
+  async updateRegistrationConfirmation(
+    id: string,
+    code: string,
+    expirationDate: Date,
+  ) {
+    const result = await this.dataSource.query(
+      `UPDATE "users"
+       SET "confirmationCode" = $1,
+          "expirationDate" = $2
+       WHERE "id" = $3`,
+      [code, expirationDate, id],
+    );
+    return result.rowCount !== 0;
+  }
 }
