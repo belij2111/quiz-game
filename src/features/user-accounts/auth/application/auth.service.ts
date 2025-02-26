@@ -161,7 +161,7 @@ export class AuthService {
   async confirmationRegistrationUser(
     inputCode: RegistrationConfirmationCodeModel,
   ) {
-    const confirmedUser = await this.usersRepository.findByConfirmationCode(
+    const confirmedUser = await this.usersSqlRepository.findByConfirmationCode(
       inputCode.code,
     );
     if (!confirmedUser) {
@@ -170,7 +170,7 @@ export class AuthService {
       ]);
     }
     const isConfirmed = true;
-    await this.usersRepository.updateEmailConfirmation(
+    await this.usersSqlRepository.updateEmailConfirmation(
       confirmedUser.id,
       isConfirmed,
     );

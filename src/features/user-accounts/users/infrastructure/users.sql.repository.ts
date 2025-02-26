@@ -40,4 +40,25 @@ values ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
     );
     return result.length > 0 ? result[0] : null;
   }
+
+  async findByConfirmationCode(inputCode: string) {
+    const result = await this.dataSource.query(
+      `SELECT * FROM "users"
+    WHERE "confirmationCode" = $1
+        AND "expirationDate" > NOW()
+        AND "isConfirmed" = FALSE`,
+      [inputCode],
+    );
+    return result.length > 0 ? result[0] : null;
+  }
+
+  async updateEmailConfirmation(id: string, isConfirmed: boolean) {
+    const result = await this.dataSource.query(
+      `UPDATE "users"
+       SET "isConfirmed" = $1
+       WHERE "id" = $2`,
+      [isConfirmed, id],
+    );
+    return result.rowCount !== 0;
+  }
 }
