@@ -76,4 +76,14 @@ values ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
     );
     return result.rowCount !== 0;
   }
+
+  async updatePassword(id: string, newPasswordHash: string) {
+    const result = await this.dataSource.query(
+      `UPDATE "users"
+       SET "password" = $1
+       WHERE "id" = $2`,
+      [newPasswordHash, id],
+    );
+    return result.rowCount !== 0;
+  }
 }

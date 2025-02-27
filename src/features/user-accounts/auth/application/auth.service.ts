@@ -8,7 +8,6 @@ import { JwtService } from '@nestjs/jwt';
 import { CryptoService } from '../../crypto/crypto.service';
 import { LoginInputModel } from '../api/models/input/login.input.model';
 import { LoginSuccessViewModel } from '../api/models/view/login-success.view.model';
-import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { User } from '../../users/domain/user.entity';
 import { UserCreateModel } from '../../users/api/models/input/create-user.input.model';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
@@ -26,7 +25,6 @@ import { UsersSqlRepository } from '../../users/infrastructure/users.sql.reposit
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersRepository: UsersRepository,
     private readonly bcryptService: CryptoService,
     private readonly jwtService: JwtService,
     private readonly userAccountConfig: UserAccountConfig,
@@ -232,14 +230,14 @@ export class AuthService {
   async newPassword(inputData: NewPasswordRecoveryInputModel) {
     const { newPassword, recoveryCode } = inputData;
     const existingUserByRecoveryCode =
-      await this.usersRepository.findByConfirmationCode(recoveryCode);
+      await this.usersSqlRepository.findByConfirmationCode(recoveryCode);
     if (!existingUserByRecoveryCode) {
       throw new BadRequestException([
         { field: 'code', message: 'Confirmation code is incorrect' },
       ]);
     }
     const newPasswordHash = await this.bcryptService.generateHash(newPassword);
-    await this.usersRepository.updatePassword(
+    await this.usersSqlRepository.updatePassword(
       existingUserByRecoveryCode.id,
       newPasswordHash,
     );
