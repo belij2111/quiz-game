@@ -211,14 +211,13 @@ export class AuthService {
   }
 
   async passwordRecovery(inputEmail: PasswordRecoveryInputModel) {
-    const existingUserByEmail = await this.usersRepository.findByLoginOrEmail(
-      inputEmail.email,
-    );
+    const existingUserByEmail =
+      await this.usersSqlRepository.findByLoginOrEmail(inputEmail.email);
     if (!existingUserByEmail) return;
     const expirationTime = this.userAccountConfig.CONFIRMATION_CODE_EXPIRATION;
     const recoveryCode = this.uuidProvider.generate();
     const newExpirationDate = new Date(new Date().getTime() + expirationTime);
-    await this.usersRepository.updateRegistrationConfirmation(
+    await this.usersSqlRepository.updateRegistrationConfirmation(
       existingUserByEmail.id,
       recoveryCode,
       newExpirationDate,
