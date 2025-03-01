@@ -21,6 +21,7 @@ import { SecurityDevices } from '../../security-devices/domain/security-devices.
 import { SecurityDevicesRepository } from '../../security-devices/infrastructure/security-devices.repository';
 import { UserAccountConfig } from '../../config/user-account.config';
 import { UsersSqlRepository } from '../../users/infrastructure/users.sql.repository';
+import { SecurityDevicesSqlRepository } from '../../security-devices/infrastructure/security-devices.sql.repository';
 
 @Injectable()
 export class AuthService {
@@ -32,6 +33,7 @@ export class AuthService {
     private readonly mailService: MailService,
     private readonly securityDevicesRepository: SecurityDevicesRepository,
     private readonly usersSqlRepository: UsersSqlRepository,
+    private readonly securityDevicesSqlRepository: SecurityDevicesSqlRepository,
   ) {}
 
   async validateUser(loginInput: LoginInputModel): Promise<string | null> {
@@ -83,7 +85,7 @@ export class AuthService {
       iatDate: new Date(decodePayload.iat! * 1000).toISOString(),
       expDate: new Date(decodePayload.exp! * 1000).toISOString(),
     };
-    await this.securityDevicesRepository.create(deviceSession);
+    await this.securityDevicesSqlRepository.create(deviceSession);
     return {
       accessToken,
       refreshToken,

@@ -28,6 +28,7 @@ import { CryptoService } from './crypto/crypto.service';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { UsersSqlRepository } from './users/infrastructure/users.sql.repository';
 import { UsersSqlQueryRepository } from './users/infrastructure/users.sql.query-repository';
+import { SecurityDevicesSqlRepository } from './security-devices/infrastructure/security-devices.sql.repository';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { UsersSqlQueryRepository } from './users/infrastructure/users.sql.query-
     SecurityDevicesService,
     SecurityDevicesRepository,
     SecurityDevicesQueryRepository,
+    SecurityDevicesSqlRepository,
     JwtService,
     CryptoService,
     UsersSqlRepository,
