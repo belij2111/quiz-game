@@ -5,14 +5,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { SecurityDevicesRepository } from '../security-devices/infrastructure/security-devices.repository';
 import { UserAccountConfig } from '../config/user-account.config';
+import { SecurityDevicesSqlRepository } from '../security-devices/infrastructure/security-devices.sql.repository';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly securityDevicesRepository: SecurityDevicesRepository,
+    private readonly securityDevicesSqlRepository: SecurityDevicesSqlRepository,
     private readonly userAccountConfig: UserAccountConfig,
   ) {}
 
@@ -33,14 +33,14 @@ export class RefreshTokenGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    const deviceSession = await this.securityDevicesRepository.findById(
+    const deviceSession = await this.securityDevicesSqlRepository.findById(
       payload.deviceId,
     );
     if (!deviceSession) {
       throw new UnauthorizedException();
     }
     const tokenVersionFromPayload = new Date(payload.iat! * 1000).toISOString();
-    const tokenVersionInDB = deviceSession.iatDate;
+    const tokenVersionInDB = deviceSession[0].iatDate.toISOString();
     if (tokenVersionFromPayload !== tokenVersionInDB) {
       throw new UnauthorizedException();
     }

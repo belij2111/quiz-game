@@ -22,4 +22,22 @@ values ($1, $2, $3, $4, $5,$6) RETURNING id `,
     );
     return result[0].id;
   }
+
+  async update(deviceId: string, iatDate: string): Promise<boolean> {
+    const result = await this.dataSource.query(
+      `UPDATE "securityDevices"
+      SET "iatDate" = $1
+      WHERE "deviceId" = $2`,
+      [iatDate, deviceId],
+    );
+    return result.rowCount !== 0;
+  }
+
+  async findById(deviceId: string) {
+    return this.dataSource.query(
+      `SELECT * FROM "securityDevices"
+      WHERE "deviceId" = $1`,
+      [deviceId],
+    );
+  }
 }

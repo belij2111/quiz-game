@@ -113,7 +113,7 @@ export class AuthService {
     );
     const decodePayload = this.jwtService.decode(refreshToken);
     const iatDate = new Date(decodePayload.iat! * 1000).toISOString();
-    await this.securityDevicesRepository.update(deviceId, iatDate);
+    await this.securityDevicesSqlRepository.update(deviceId, iatDate);
     return {
       accessToken,
       refreshToken,
