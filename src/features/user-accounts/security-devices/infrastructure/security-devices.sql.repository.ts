@@ -33,6 +33,17 @@ values ($1, $2, $3, $4, $5,$6) RETURNING id `,
     return result.rowCount !== 0;
   }
 
+  async delete(currentUserId: string, currentDeviceId: string) {
+    await this.dataSource.query(
+      `DELETE FROM "securityDevices"
+      WHERE "userId" = $1
+      AND "deviceId" != $2
+    `,
+      [currentUserId, currentDeviceId],
+    );
+    return true;
+  }
+
   async findById(deviceId: string) {
     return this.dataSource.query(
       `SELECT * FROM "securityDevices"

@@ -4,18 +4,20 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { SecurityDevicesRepository } from '../infrastructure/security-devices.repository';
+import { SecurityDevicesSqlRepository } from '../infrastructure/security-devices.sql.repository';
 
 @Injectable()
 export class SecurityDevicesService {
   constructor(
     private readonly securityDevicesRepository: SecurityDevicesRepository,
+    private readonly securityDevicesSqlRepository: SecurityDevicesSqlRepository,
   ) {}
 
   async delete(
     currentUserId: string,
     currentDeviceId: string,
   ): Promise<boolean> {
-    return await this.securityDevicesRepository.delete(
+    return await this.securityDevicesSqlRepository.delete(
       currentUserId,
       currentDeviceId,
     );
