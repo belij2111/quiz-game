@@ -16,10 +16,6 @@ import {
   Like,
   LikeModelType,
 } from '../../bloggers-platform/likes/domain/like.entity';
-import {
-  SecurityDevices,
-  SecurityDevicesModelType,
-} from '../../user-accounts/security-devices/domain/security-devices.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
@@ -30,8 +26,6 @@ export class TestingRepository {
     @InjectModel(Post.name) private PostModel: PostModelType,
     @InjectModel(Comment.name) private CommentModel: CommentModelType,
     @InjectModel(Like.name) private LikeModel: LikeModelType,
-    @InjectModel(SecurityDevices.name)
-    private SecurityDevicesModel: SecurityDevicesModelType,
     @InjectDataSource() private dataSource: DataSource,
   ) {}
 
@@ -41,8 +35,10 @@ export class TestingRepository {
       this.PostModel.deleteMany(),
       this.CommentModel.deleteMany(),
       this.LikeModel.deleteMany(),
-      this.SecurityDevicesModel.deleteMany(),
-      this.dataSource.query(`TRUNCATE TABLE "users" RESTART IDENTITY`),
+      this.dataSource.query(
+        `TRUNCATE TABLE public."users", 
+        public."securityDevices" RESTART IDENTITY`,
+      ),
     ]);
   }
 }
