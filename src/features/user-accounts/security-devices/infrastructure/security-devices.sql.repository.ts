@@ -45,21 +45,21 @@ values ($1, $2, $3, $4, $5,$6) RETURNING id `,
   }
 
   async deleteById(deviceId: string) {
-    const deletionResult = await this.dataSource.query(
+    const result = await this.dataSource.query(
       `DELETE FROM "securityDevices"
         WHERE "deviceId" = $1
       `,
       [deviceId],
     );
-    return deletionResult[1] === 1;
+    return result[1] === 1;
   }
 
   async findById(deviceId: string) {
-    const deletionResult = await this.dataSource.query(
+    const result = await this.dataSource.query(
       `SELECT * FROM "securityDevices"
       WHERE "deviceId" = $1`,
       [deviceId],
     );
-    return deletionResult[0];
+    return result[0];
   }
 }

@@ -25,11 +25,11 @@ values ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
   }
 
   async delete(id: string): Promise<boolean> {
-    const deletionResult = await this.dataSource.query(
+    const result = await this.dataSource.query(
       `DELETE FROM "users" WHERE id = $1`,
       [id],
     );
-    return deletionResult[1] === 1;
+    return result[1] === 1;
   }
 
   async findByLoginOrEmail(loginOrEmail: string) {
