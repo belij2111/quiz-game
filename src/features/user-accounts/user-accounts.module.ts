@@ -22,13 +22,12 @@ import { UsersService } from './users/application/users.service';
 import { UsersRepository } from './users/infrastructure/users.repository';
 import { UsersQueryRepository } from './users/infrastructure/users.query-repository';
 import { SecurityDevicesService } from './security-devices/application/security-devices.service';
-import { SecurityDevicesRepository } from './security-devices/infrastructure/security-devices.repository';
-import { SecurityDevicesQueryRepository } from './security-devices/infrastructure/security-devices.query-repository';
 import { CryptoService } from './crypto/crypto.service';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { UsersSqlRepository } from './users/infrastructure/users.sql.repository';
 import { UsersSqlQueryRepository } from './users/infrastructure/users.sql.query-repository';
 import { SecurityDevicesSqlRepository } from './security-devices/infrastructure/security-devices.sql.repository';
+import { SecurityDevicesSqlQueryRepository } from './security-devices/infrastructure/security-devices.sql.query-repository';
 
 @Module({
   imports: [
@@ -57,9 +56,8 @@ import { SecurityDevicesSqlRepository } from './security-devices/infrastructure/
     LocalStrategy,
     JwtStrategy,
     SecurityDevicesService,
-    SecurityDevicesRepository,
-    SecurityDevicesQueryRepository,
     SecurityDevicesSqlRepository,
+    SecurityDevicesSqlQueryRepository,
     JwtService,
     CryptoService,
     UsersSqlRepository,
@@ -69,6 +67,6 @@ import { SecurityDevicesSqlRepository } from './security-devices/infrastructure/
       useClass: ThrottlerGuard,
     },
   ],
-  exports: [UsersRepository, SecurityDevicesRepository],
+  exports: [UsersRepository],
 })
 export class UserAccountsModule {}

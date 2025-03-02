@@ -8,23 +8,23 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { SecurityDevicesService } from '../application/security-devices.service';
-import { SecurityDevicesQueryRepository } from '../infrastructure/security-devices.query-repository';
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param.decorator';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
 import { CurrentDeviceId } from '../../../../core/decorators/param/current-device-id.param.decorator';
+import { SecurityDevicesSqlQueryRepository } from '../infrastructure/security-devices.sql.query-repository';
 
 @Controller('/security')
 export class SecurityDevicesController {
   constructor(
     private readonly securityDevicesService: SecurityDevicesService,
-    private readonly securityDevicesQueryRepository: SecurityDevicesQueryRepository,
+    private readonly securityDevicesSqlQueryRepository: SecurityDevicesSqlQueryRepository,
   ) {}
 
   @Get('/devices')
   @UseGuards(RefreshTokenGuard)
   @HttpCode(HttpStatus.OK)
   async getAll(@CurrentUserId() currentUserId: string) {
-    return await this.securityDevicesQueryRepository.getAll(currentUserId);
+    return await this.securityDevicesSqlQueryRepository.getAll(currentUserId);
   }
 
   @Delete('/devices')
