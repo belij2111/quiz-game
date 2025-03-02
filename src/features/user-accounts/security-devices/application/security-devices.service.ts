@@ -3,13 +3,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { SecurityDevicesRepository } from '../infrastructure/security-devices.repository';
 import { SecurityDevicesSqlRepository } from '../infrastructure/security-devices.sql.repository';
 
 @Injectable()
 export class SecurityDevicesService {
   constructor(
-    private readonly securityDevicesRepository: SecurityDevicesRepository,
     private readonly securityDevicesSqlRepository: SecurityDevicesSqlRepository,
   ) {}
 
@@ -24,7 +22,8 @@ export class SecurityDevicesService {
   }
 
   async deleteById(currentUserId: string, deviceId: string) {
-    const foundDevice = await this.securityDevicesRepository.findById(deviceId);
+    const foundDevice =
+      await this.securityDevicesSqlRepository.findById(deviceId);
     if (!foundDevice) {
       throw new NotFoundException('The device was not found');
     }
@@ -36,7 +35,7 @@ export class SecurityDevicesService {
         },
       ]);
     }
-    return await this.securityDevicesRepository.deleteById(
+    return await this.securityDevicesSqlRepository.deleteById(
       foundDevice.deviceId,
     );
   }

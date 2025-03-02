@@ -40,7 +40,7 @@ export class RefreshTokenGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     const tokenVersionFromPayload = new Date(payload.iat! * 1000).toISOString();
-    const tokenVersionInDB = deviceSession[0].iatDate.toISOString();
+    const tokenVersionInDB = deviceSession.iatDate.toISOString();
     if (tokenVersionFromPayload !== tokenVersionInDB) {
       throw new UnauthorizedException();
     }
