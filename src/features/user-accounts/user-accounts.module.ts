@@ -28,6 +28,7 @@ import { UsersSqlRepository } from './users/infrastructure/users.sql.repository'
 import { UsersSqlQueryRepository } from './users/infrastructure/users.sql.query-repository';
 import { SecurityDevicesSqlRepository } from './security-devices/infrastructure/security-devices.sql.repository';
 import { SecurityDevicesSqlQueryRepository } from './security-devices/infrastructure/security-devices.sql.query-repository';
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { SecurityDevicesSqlQueryRepository } from './security-devices/infrastruc
     CryptoService,
     UsersSqlRepository,
     UsersSqlQueryRepository,
+    RefreshTokenGuard,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
