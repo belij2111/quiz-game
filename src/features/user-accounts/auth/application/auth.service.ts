@@ -18,7 +18,6 @@ import { PasswordRecoveryInputModel } from '../api/models/input/password-recover
 import { NewPasswordRecoveryInputModel } from '../api/models/input/new-password-recovery-input.model';
 import { randomUUID } from 'node:crypto';
 import { SecurityDevices } from '../../security-devices/domain/security-devices.entity';
-import { SecurityDevicesRepository } from '../../security-devices/infrastructure/security-devices.repository';
 import { UserAccountConfig } from '../../config/user-account.config';
 import { UsersSqlRepository } from '../../users/infrastructure/users.sql.repository';
 import { SecurityDevicesSqlRepository } from '../../security-devices/infrastructure/security-devices.sql.repository';
@@ -31,7 +30,6 @@ export class AuthService {
     private readonly userAccountConfig: UserAccountConfig,
     private readonly uuidProvider: UuidProvider,
     private readonly mailService: MailService,
-    private readonly securityDevicesRepository: SecurityDevicesRepository,
     private readonly usersSqlRepository: UsersSqlRepository,
     private readonly securityDevicesSqlRepository: SecurityDevicesSqlRepository,
   ) {}
@@ -246,11 +244,12 @@ export class AuthService {
   }
 
   async logout(deviceId: string) {
-    const foundDevice = await this.securityDevicesRepository.findById(deviceId);
+    const foundDevice =
+      await this.securityDevicesSqlRepository.findById(deviceId);
     if (!foundDevice) {
       throw new NotFoundException('The device was not found');
     }
-    return await this.securityDevicesRepository.deleteById(
+    return await this.securityDevicesSqlRepository.deleteById(
       foundDevice.deviceId,
     );
   }
