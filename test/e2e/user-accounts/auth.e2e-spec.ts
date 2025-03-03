@@ -46,7 +46,7 @@ describe('e2e-Auth', () => {
       const validUserModel: UserCreateModel = createValidUserModel();
       await usersTestManager.createUser(validUserModel);
       const invalidUserModel: UserCreateModel = createInValidUserModel();
-      await authTestManager.logInNonExistentUser(
+      await authTestManager.loginUser(
         invalidUserModel,
         HttpStatus.UNAUTHORIZED,
       );
@@ -68,11 +68,11 @@ describe('e2e-Auth', () => {
       await usersTestManager.createUser(validUserModel);
       const loginResult = await authTestManager.loginUser(validUserModel);
       const createdResponse = await authTestManager.refreshToken(
-        loginResult.refreshToken,
+        loginResult!.refreshToken,
         HttpStatus.OK,
       );
-      // console.log(createdResponse?.accessToken);
-      // console.log(createdResponse?.refreshToken);
+      // console.log(createdResponse.accessToken);
+      // console.log(createdResponse.refreshToken);
       authTestManager.expectCorrectLoginUser(createdResponse);
     });
     it(`shouldn't generate a new pair of tokens if refreshToken expired : STATUS 401`, async () => {
@@ -81,7 +81,7 @@ describe('e2e-Auth', () => {
       const loginResult = await authTestManager.loginUser(validUserModel);
       await delay(20000);
       await authTestManager.refreshToken(
-        loginResult.refreshToken,
+        loginResult!.refreshToken,
         HttpStatus.UNAUTHORIZED,
       );
     });

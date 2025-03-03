@@ -23,12 +23,14 @@ export class AuthTestManager {
       .set('User-Agent', 'MyCustomUserAgent/1.0')
       .send(loginModel)
       .expect(statusCode);
-    return {
-      accessToken: response.body.accessToken,
-      refreshToken: response.headers['set-cookie'][0]
-        .split('=')[1]
-        .split(';')[0],
-    };
+    if (response.statusCode === HttpStatus.OK) {
+      return {
+        accessToken: response.body.accessToken,
+        refreshToken: response.headers['set-cookie'][0]
+          .split('=')[1]
+          .split(';')[0],
+      };
+    }
   }
 
   expectCorrectLoginUser(responseModel: any) {
@@ -37,21 +39,6 @@ export class AuthTestManager {
     expect(responseModel.accessToken).toMatch(jwtPattern);
     expect(responseModel.refreshToken).toBeDefined();
     expect(responseModel.refreshToken).toMatch(jwtPattern);
-  }
-
-  async logInNonExistentUser(
-    createdModel: UserCreateModel,
-    statusCode: number = HttpStatus.OK,
-  ) {
-    const loginModel: LoginInputModel = {
-      loginOrEmail: createdModel.email,
-      password: createdModel.password,
-    };
-    await request(this.app.getHttpServer())
-      .post('/auth/login')
-      .set('User-Agent', 'MyCustomUserAgent/1.0')
-      .send(loginModel)
-      .expect(statusCode);
   }
 
   async loginWithRateLimit(createdModel: UserCreateModel): Promise<any[]> {
@@ -85,6 +72,5 @@ export class AuthTestManager {
           .split(';')[0],
       };
     }
-    return null;
   }
 }
