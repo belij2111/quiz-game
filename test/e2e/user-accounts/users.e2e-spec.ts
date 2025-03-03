@@ -11,7 +11,7 @@ import {
 describe('e2e-Users', () => {
   let app: INestApplication;
   let usersTestManager: UsersTestManager;
-  beforeEach(async () => {
+  beforeAll(async () => {
     const result = await initSettings();
     app = result.app;
     const coreConfig = result.coreConfig;
