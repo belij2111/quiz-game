@@ -71,4 +71,20 @@ export class AuthTestManager {
     expect(tooManyRequestsResponse).toBeDefined();
     expect(tooManyRequestsResponse.message).toContain('Too Many Requests');
   }
+
+  async refreshToken(refreshToken: string, statusCode: number = HttpStatus.OK) {
+    const response = await request(this.app.getHttpServer())
+      .post('/auth/refresh-token')
+      .set('Cookie', `refreshToken=${refreshToken}`)
+      .expect(statusCode);
+    if (response.statusCode === HttpStatus.OK) {
+      return {
+        accessToken: response.body.accessToken,
+        refreshToken: response.headers['set-cookie'][0]
+          .split('=')[1]
+          .split(';')[0],
+      };
+    }
+    return null;
+  }
 }

@@ -8,6 +8,7 @@ import {
   createValidUserModel,
 } from '../../models/user-accounts/user.input.model';
 import { AuthTestManager } from '../../tests-managers/auth-test.manager';
+import { delay } from '../../helpers/delay';
 
 describe('e2e-Auth', () => {
   let app: INestApplication;
@@ -58,6 +59,31 @@ describe('e2e-Auth', () => {
         await authTestManager.loginWithRateLimit(validUserModel);
       //console.log(createdResponse);
       authTestManager.expectTooManyRequests(createdResponse);
+    });
+  });
+
+  describe('POST/auth/refresh-token', () => {
+    it(`should generate a new pair of tokens : STATUS 200`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await usersTestManager.createUser(validUserModel);
+      const loginResult = await authTestManager.loginUser(validUserModel);
+      const createdResponse = await authTestManager.refreshToken(
+        loginResult.refreshToken,
+        HttpStatus.OK,
+      );
+      // console.log(createdResponse?.accessToken);
+      // console.log(createdResponse?.refreshToken);
+      authTestManager.expectCorrectLoginUser(createdResponse);
+    });
+    it(`shouldn't generate a new pair of tokens if refreshToken expired : STATUS 401`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await usersTestManager.createUser(validUserModel);
+      const loginResult = await authTestManager.loginUser(validUserModel);
+      await delay(20000);
+      await authTestManager.refreshToken(
+        loginResult.refreshToken,
+        HttpStatus.UNAUTHORIZED,
+      );
     });
   });
 });
