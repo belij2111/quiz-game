@@ -18,7 +18,7 @@ export class UsersTestManager {
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())
-      .post('/users')
+      .post('/sa/users')
       .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
       .send(createdModel)
       .expect(statusCode);
@@ -38,7 +38,7 @@ export class UsersTestManager {
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())
-      .post('/users')
+      .post('/sa/users')
       .auth('invalid login', 'invalid password')
       .send(createdModel)
       .expect(statusCode);
@@ -51,7 +51,7 @@ export class UsersTestManager {
     const users: UserViewModel[] = [];
     for (let i = 1; i <= count; i++) {
       const response = await request(this.app.getHttpServer())
-        .post('/users')
+        .post('/sa/users')
         .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
         .send(createValidUserModel(i))
         .expect(statusCode);
@@ -65,7 +65,7 @@ export class UsersTestManager {
     const searchLoginTerm = 'user';
     const searchEmailTerm = 'user';
     return request(this.app.getHttpServer())
-      .get('/users')
+      .get('/sa/users')
       .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
       .query({
         searchLoginTerm,
@@ -95,7 +95,7 @@ export class UsersTestManager {
     const searchLoginTerm = 'user';
     const searchEmailTerm = 'user';
     return request(this.app.getHttpServer())
-      .get('/users')
+      .get('/sa/users')
       .auth('invalid login', 'invalid password')
       .query({
         searchLoginTerm,
@@ -110,7 +110,7 @@ export class UsersTestManager {
 
   async deleteById(id: string, statusCode: number = HttpStatus.NO_CONTENT) {
     return request(this.app.getHttpServer())
-      .delete('/users/' + id)
+      .delete('/sa/users/' + id)
       .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
       .expect(statusCode);
   }
@@ -120,7 +120,7 @@ export class UsersTestManager {
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())
-      .delete('/users/' + id)
+      .delete('/sa/users/' + id)
       .auth('invalid login', 'invalid password')
       .expect(statusCode);
   }
