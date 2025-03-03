@@ -139,4 +139,37 @@ describe('e2e-Auth', () => {
       authTestManager.expectTooManyRequests(createdResponse);
     });
   });
+
+  describe('POST/auth/registration-confirmation', () => {
+    it(`should confirm the user's registration in system : STATUS 204`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
+      const confirmationCode = mailServiceMock.sentEmails[0]?.code;
+      // console.log('mailServiceMock.sentEmails :', mailServiceMock.sentEmails);
+      await authTestManager.registrationConfirmation(
+        confirmationCode,
+        HttpStatus.NO_CONTENT,
+      );
+    });
+    it(`shouldn't confirm the user's registration with incorrect input data : STATUS 400`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
+      const invalidConfirmationCode = 'invalid confirmation code';
+      await authTestManager.registrationConfirmation(
+        invalidConfirmationCode,
+        HttpStatus.BAD_REQUEST,
+      );
+    });
+    it(`shouldn't confirm the user's registration if the limit is exceeded : STATUS 429`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
+      const confirmationCode = mailServiceMock.sentEmails[0]?.code;
+      const createdResponse =
+        await authTestManager.registrationConfirmationWithRateLimit(
+          confirmationCode,
+          6,
+        );
+      authTestManager.expectTooManyRequests(createdResponse);
+    });
+  });
 });

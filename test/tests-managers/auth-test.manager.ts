@@ -121,4 +121,27 @@ export class AuthTestManager {
     }
     return await Promise.all(promises);
   }
+
+  async registrationConfirmation(
+    confirmationCode: string,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    await request(this.app.getHttpServer())
+      .post('/auth/registration-confirmation')
+      .send({ code: confirmationCode })
+      .expect(statusCode);
+  }
+
+  async registrationConfirmationWithRateLimit(
+    confirmationCode: string,
+    countAttempts: number,
+  ) {
+    const promises: Promise<any>[] = [];
+    for (let i = 0; i < countAttempts; i++) {
+      promises.push(
+        this.registrationConfirmation(confirmationCode).catch((err) => err),
+      );
+    }
+    return await Promise.all(promises);
+  }
 }
