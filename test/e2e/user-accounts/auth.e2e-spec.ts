@@ -5,21 +5,26 @@ import { deleteAllData } from '../../helpers/delete-all-data';
 import { UserCreateModel } from '../../../src/features/user-accounts/users/api/models/input/create-user.input.model';
 import {
   createInValidUserModel,
+  createSeveralUsersModels,
   createValidUserModel,
 } from '../../models/user-accounts/user.input.model';
 import { AuthTestManager } from '../../tests-managers/auth-test.manager';
 import { delay } from '../../helpers/delay';
+import { MailService } from '../../../src/features/notifications/mail.service';
+import { MailServiceMock } from '../../mock/mail.service.mock';
 
 describe('e2e-Auth', () => {
   let app: INestApplication;
   let usersTestManager: UsersTestManager;
   let authTestManager: AuthTestManager;
+  let mailServiceMock: MailServiceMock;
   beforeEach(async () => {
-    const result = await initSettings();
+    const result = await initSettings(MailService, MailServiceMock);
     app = result.app;
     const coreConfig = result.coreConfig;
     usersTestManager = new UsersTestManager(app, coreConfig);
     authTestManager = new AuthTestManager(app, coreConfig);
+    mailServiceMock = app.get(MailService);
   });
   beforeEach(async () => {
     await deleteAllData(app);
@@ -108,6 +113,30 @@ describe('e2e-Auth', () => {
         loginResult!.accessToken,
         HttpStatus.UNAUTHORIZED,
       );
+    });
+  });
+
+  describe('POST/auth/registration', () => {
+    it(`should register user in system : STATUS 204`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      const sendEmailSpy = jest.spyOn(mailServiceMock, 'sendEmail');
+      await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
+      authTestManager.expectCorrectRegistration(sendEmailSpy, validUserModel);
+    });
+    it(`shouldn't register user in system with incorrect input data : STATUS 400`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel(7);
+      await usersTestManager.createUser(validUserModel);
+      await authTestManager.registration(
+        validUserModel,
+        HttpStatus.BAD_REQUEST,
+      );
+    });
+    it(`shouldn't register user in system if the limit is exceeded : STATUS 429`, async () => {
+      const createdUsersModels: UserCreateModel[] = createSeveralUsersModels(6);
+      const createdResponse =
+        await authTestManager.registrationWithRateLimit(createdUsersModels);
+      // console.log('createdResponse : ', createdResponse);
+      authTestManager.expectTooManyRequests(createdResponse);
     });
   });
 });

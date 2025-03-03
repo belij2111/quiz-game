@@ -89,4 +89,36 @@ export class AuthTestManager {
     expect(createdUser.email).toBe(createdResponse.email);
     expect(createdUser.id).toBe(createdResponse.userId);
   }
+
+  async registration(
+    createdModel: UserCreateModel,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    await request(this.app.getHttpServer())
+      .post('/auth/registration')
+      .send(createdModel)
+      .expect(statusCode);
+  }
+
+  expectCorrectRegistration(
+    sendEmailSpy: any,
+    validUserModel: UserCreateModel,
+  ) {
+    expect(sendEmailSpy).toHaveBeenCalled();
+    expect(sendEmailSpy).toHaveBeenCalledTimes(1);
+    expect(sendEmailSpy).toHaveBeenCalledWith(
+      validUserModel.email,
+      expect.any(String),
+      'registration',
+    );
+  }
+
+  async registrationWithRateLimit(createdUsers: UserCreateModel[]) {
+    const promises: Promise<any>[] = [];
+    for (const user of createdUsers) {
+      const registrationPromise = this.registration(user).catch((err) => err);
+      promises.push(registrationPromise);
+    }
+    return await Promise.all(promises);
+  }
 }
