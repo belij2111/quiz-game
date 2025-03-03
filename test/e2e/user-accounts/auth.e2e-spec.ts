@@ -60,8 +60,10 @@ describe('e2e-Auth', () => {
     it(`should restrict login if the limit is exceeded : STATUS 429`, async () => {
       const validUserModel: UserCreateModel = createValidUserModel();
       await usersTestManager.createUser(validUserModel);
-      const createdResponse =
-        await authTestManager.loginWithRateLimit(validUserModel);
+      const createdResponse = await authTestManager.loginWithRateLimit(
+        validUserModel,
+        6,
+      );
       // console.log('createdResponse :', createdResponse);
       authTestManager.expectTooManyRequests(createdResponse);
     });

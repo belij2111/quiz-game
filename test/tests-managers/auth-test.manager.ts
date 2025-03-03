@@ -43,10 +43,12 @@ export class AuthTestManager {
     expect(responseModel.refreshToken).toMatch(jwtPattern);
   }
 
-  async loginWithRateLimit(createdModel: UserCreateModel): Promise<any[]> {
-    const countLoginAttempts = 6;
+  async loginWithRateLimit(
+    createdModel: UserCreateModel,
+    countAttempts: number,
+  ): Promise<any[]> {
     const promises: Promise<any>[] = [];
-    for (let i = 0; i < countLoginAttempts; i++) {
+    for (let i = 0; i < countAttempts; i++) {
       promises.push(this.loginUser(createdModel).catch((err) => err));
     }
     return await Promise.all(promises);
