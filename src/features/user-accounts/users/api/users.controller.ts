@@ -22,7 +22,7 @@ import { ApiBasicAuth } from '@nestjs/swagger';
 import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
 import { UsersSqlQueryRepository } from '../infrastructure/users.sql.query-repository';
 
-@Controller('/users')
+@Controller('/sa/users')
 @UseGuards(BasicAuthGuard)
 @ApiBasicAuth()
 export class UsersController {
