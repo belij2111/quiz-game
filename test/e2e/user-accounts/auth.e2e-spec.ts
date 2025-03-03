@@ -3,7 +3,10 @@ import { UsersTestManager } from '../../tests-managers/users-test.manager';
 import { initSettings } from '../../helpers/init-settings';
 import { deleteAllData } from '../../helpers/delete-all-data';
 import { UserCreateModel } from '../../../src/features/user-accounts/users/api/models/input/create-user.input.model';
-import { createValidUserModel } from '../../models/user-accounts/user.input.model';
+import {
+  createInValidUserModel,
+  createValidUserModel,
+} from '../../models/user-accounts/user.input.model';
 import { AuthTestManager } from '../../tests-managers/auth-test.manager';
 
 describe('e2e-Auth', () => {
@@ -34,9 +37,27 @@ describe('e2e-Auth', () => {
         validUserModel,
         HttpStatus.OK,
       );
-      // console.log(createdResponse.body.accessToken);
-      // console.log(createdResponse.headers['set-cookie']);
+      // console.log(createdResponse.accessToken);
+      // console.log(createdResponse.refreshToken);
       authTestManager.expectCorrectLoginUser(createdResponse);
+    });
+    it(`shouldn't login user to the system if the password or login is wrong : STATUS 401`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await usersTestManager.createUser(validUserModel);
+      const invalidUserModel: UserCreateModel = createInValidUserModel();
+      await authTestManager.logInNonExistentUser(
+        invalidUserModel,
+        HttpStatus.UNAUTHORIZED,
+      );
+    });
+
+    it(`should restrict login if the limit is exceeded : STATUS 429`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await usersTestManager.createUser(validUserModel);
+      const createdResponse =
+        await authTestManager.loginWithRateLimit(validUserModel);
+      //console.log(createdResponse);
+      authTestManager.expectTooManyRequests(createdResponse);
     });
   });
 });
