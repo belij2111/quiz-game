@@ -3,6 +3,8 @@ import { UserCreateModel } from '../../src/features/user-accounts/users/api/mode
 import request from 'supertest';
 import { LoginInputModel } from '../../src/features/user-accounts/auth/api/models/input/login.input.model';
 import { CoreConfig } from '../../src/core/core.config';
+import { MeViewModel } from '../../src/features/user-accounts/auth/api/models/view/me.view.model';
+import { UserViewModel } from '../../src/features/user-accounts/users/api/models/view/user.view.model';
 
 export class AuthTestManager {
   constructor(
@@ -72,5 +74,19 @@ export class AuthTestManager {
           .split(';')[0],
       };
     }
+  }
+
+  async me(accessToken: string, statusCode: number = HttpStatus.OK) {
+    const response = await request(this.app.getHttpServer())
+      .get('/auth/me')
+      .auth(accessToken, { type: 'bearer' })
+      .expect(statusCode);
+    return response.body;
+  }
+
+  expectCorrectMe(createdUser: UserViewModel, createdResponse: MeViewModel) {
+    expect(createdUser.login).toBe(createdResponse.login);
+    expect(createdUser.email).toBe(createdResponse.email);
+    expect(createdUser.id).toBe(createdResponse.userId);
   }
 }
