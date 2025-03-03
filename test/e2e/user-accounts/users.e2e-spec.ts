@@ -85,7 +85,7 @@ describe('e2e-Users', () => {
       );
     });
     it(`shouldn't delete user by ID if the user does not exist : STATUS 404`, async () => {
-      const nonExistentId = '-100';
+      const nonExistentId = '12121212-1212-1212-1212-121212121212';
       await usersTestManager.deleteById(nonExistentId, HttpStatus.NOT_FOUND);
     });
   });
