@@ -38,21 +38,21 @@ describe('e2e-Blogs', () => {
         createdBlogs,
         createdResponse.body,
       );
-      // console.log(createResponse.body);
+      // console.log('createResponse.body :', createResponse.body);
     });
   });
 
   describe('POST/blogs', () => {
     it(`should create new blog : STATUS 201`, async () => {
       const validBlogModel: BlogCreateModel = createValidBlogModel();
-      // console.log(validBlogModel);
+      // console.log('validBlogModel :', validBlogModel);
       const createdResponse = await blogsTestManager.createBlog(validBlogModel);
-      //console.log(createdResponse);
+      //console.log('createdResponse :', createdResponse);
       blogsTestManager.expectCorrectModel(validBlogModel, createdResponse);
     });
     it(`shouldn't create new blog with incorrect input data : STATUS 400`, async () => {
       const invalidBlogModel: BlogCreateModel = createInValidBlogModel(777);
-      // console.log(invalidBlogModel);
+      // console.log('invalidBlogModel :', invalidBlogModel);
       await blogsTestManager.createBlog(
         invalidBlogModel,
         HttpStatus.BAD_REQUEST,
@@ -60,7 +60,7 @@ describe('e2e-Blogs', () => {
     });
     it(`shouldn't create new blog if the request is unauthorized : STATUS 401`, async () => {
       const validBlogModel: BlogCreateModel = createValidBlogModel();
-      // console.log(validBlogModel);
+      // console.log('validBlogModel :', validBlogModel);
       await blogsTestManager.createBlogIsNotAuthorized(
         validBlogModel,
         HttpStatus.UNAUTHORIZED,
@@ -72,7 +72,7 @@ describe('e2e-Blogs', () => {
     it(`should return blog by ID : STATUS 200`, async () => {
       const validBlogModel: BlogCreateModel = createValidBlogModel();
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
-      //console.log(createdBlog);
+      //console.log('createdBlog :', createdBlog);
       await blogsTestManager.getBlogById(createdBlog.id, HttpStatus.OK);
     });
     it(`shouldn't return blog by ID if the blog does not exist : STATUS 404`, async () => {
@@ -86,7 +86,7 @@ describe('e2e-Blogs', () => {
       const validBlogModel: BlogCreateModel = createValidBlogModel(1);
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
       const updatedBlogModel: BlogCreateModel = createValidBlogModel(555);
-      // console.log(updatedBlogModel);
+      // console.log('updatedBlogModel :', updatedBlogModel);
       await blogsTestManager.updateBlog(
         createdBlog.id,
         updatedBlogModel,

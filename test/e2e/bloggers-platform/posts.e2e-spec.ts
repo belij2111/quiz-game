@@ -41,14 +41,14 @@ describe('e2e-Posts', () => {
         validPostModel,
         HttpStatus.CREATED,
       );
-      // console.log(createdResponse);
+      // console.log('createdResponse :', createdResponse);
       postsTestManager.expectCorrectModel(validPostModel, createdResponse);
     });
     it(`shouldn't create new post with incorrect input data : STATUS 400`, async () => {
       const validBlogModel: BlogCreateModel = createValidBlogModel();
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
       const inValidPostModel = createInValidPostModel(createdBlog.id);
-      // console.log(inValidPost);
+      // console.log('inValidPostModel :', inValidPostModel);
       await postsTestManager.createPost(
         inValidPostModel,
         HttpStatus.BAD_REQUEST,
@@ -80,7 +80,7 @@ describe('e2e-Posts', () => {
         createdPosts,
         createdResponse.body,
       );
-      // console.log(createdResponse.body);
+      // console.log('createdResponse.body :', createdResponse.body);
     });
   });
 

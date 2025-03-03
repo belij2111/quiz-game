@@ -62,7 +62,7 @@ describe('e2e-Users', () => {
         createdUsers,
         createdResponse.body,
       );
-      // console.log(createdResponse.body);
+      // console.log('createdResponse.body :', createdResponse.body);
     });
     it(`shouldn't return users with paging if the request is unauthorized : STATUS 401`, async () => {
       await usersTestManager.createUsers(3);

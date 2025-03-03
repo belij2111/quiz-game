@@ -43,8 +43,8 @@ describe('e2e-Auth', () => {
         validUserModel,
         HttpStatus.OK,
       );
-      // console.log(createdResponse.accessToken);
-      // console.log(createdResponse.refreshToken);
+      // console.log('createdResponse.accessToken :', createdResponse.accessToken);
+      // console.log('createdResponse.refreshToken :', createdResponse.refreshToken);
       authTestManager.expectCorrectLoginUser(createdResponse);
     });
     it(`shouldn't login user to the system if the password or login is wrong : STATUS 401`, async () => {
@@ -62,7 +62,7 @@ describe('e2e-Auth', () => {
       await usersTestManager.createUser(validUserModel);
       const createdResponse =
         await authTestManager.loginWithRateLimit(validUserModel);
-      // console.log(createdResponse);
+      // console.log('createdResponse :', createdResponse);
       authTestManager.expectTooManyRequests(createdResponse);
     });
   });
@@ -76,8 +76,8 @@ describe('e2e-Auth', () => {
         loginResult!.refreshToken,
         HttpStatus.OK,
       );
-      // console.log(createdResponse.accessToken);
-      // console.log(createdResponse.refreshToken);
+      // console.log('createdResponse.accessToken :', createdResponse.accessToken);
+      // console.log('createdResponse.refreshToken :', createdResponse.refreshToken);
       authTestManager.expectCorrectLoginUser(createdResponse);
     });
     it(`shouldn't generate a new pair of tokens if refreshToken expired : STATUS 401`, async () => {
@@ -101,7 +101,7 @@ describe('e2e-Auth', () => {
         loginResult!.accessToken,
         HttpStatus.OK,
       );
-      // console.log(createdResponse);
+      // console.log('createdResponse :', createdResponse);
       authTestManager.expectCorrectMe(createdUser, createdResponse);
     });
     it(`shouldn't return users info with if accessTokens expired : STATUS 401`, async () => {
