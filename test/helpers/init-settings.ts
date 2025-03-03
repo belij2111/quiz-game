@@ -16,7 +16,7 @@ export const initSettings = async (
     imports: [dynamicAppModule],
   })
     .overrideProvider(service)
-    .useValue(serviceMock);
+    .useClass(serviceMock);
 
   if (addSettingsToModuleBuilder) {
     addSettingsToModuleBuilder(testingModuleBuilder);
