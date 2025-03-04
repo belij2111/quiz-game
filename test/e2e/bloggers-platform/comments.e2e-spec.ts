@@ -132,4 +132,38 @@ describe('e2e-Comments', () => {
       );
     });
   });
+
+  describe('DELETE/comment/:commentId', () => {
+    it(`should delete comment by commentId : STATUS 204`, async () => {
+      await commentsTestManager.delete(
+        loginResult!.accessToken,
+        createdComment.id,
+        HttpStatus.NO_CONTENT,
+      );
+    });
+    it(`shouldn't delete comment with if accessTokens expired : STATUS 401`, async () => {
+      await delay(10000);
+      await commentsTestManager.delete(
+        loginResult!.accessToken,
+        createdComment.id,
+        HttpStatus.UNAUTHORIZED,
+      );
+    });
+    it(`shouldn't delete comment if it belongs to another user : STATUS 403`, async () => {
+      loginResult = await coreTestManager.loginUser(2);
+      await commentsTestManager.delete(
+        loginResult!.accessToken,
+        createdComment.id,
+        HttpStatus.FORBIDDEN,
+      );
+    });
+    it(`shouldn't delete comment by commentId if it does not exist : STATUS 404`, async () => {
+      const nonExistentId = '121212121212121212121212';
+      await commentsTestManager.delete(
+        loginResult!.accessToken,
+        nonExistentId,
+        HttpStatus.NOT_FOUND,
+      );
+    });
+  });
 });

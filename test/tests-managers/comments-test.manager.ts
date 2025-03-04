@@ -95,4 +95,15 @@ export class CommentsTestManager {
       .send(createdModel)
       .expect(statusCode);
   }
+
+  async delete(
+    accessToken: string,
+    commentId: string,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    await request(this.app.getHttpServer())
+      .delete(`/comments/${commentId}`)
+      .auth(accessToken, { type: 'bearer' })
+      .expect(statusCode);
+  }
 }
