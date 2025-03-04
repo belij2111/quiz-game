@@ -45,7 +45,7 @@ describe('e2e-Blogs', () => {
         createdBlogs,
         createdResponse.body,
       );
-      // console.log('createResponse.body :', createResponse.body);
+      // console.log('createdResponse.body :', createdResponse.body);
     });
   });
 
