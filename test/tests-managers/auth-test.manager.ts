@@ -161,15 +161,13 @@ export class AuthTestManager {
   }
 
   async registrationEmailResendingWithRateLimit(
-    emailResendingModel: RegistrationEmailResendingModel,
+    createdModel: RegistrationEmailResendingModel,
     countAttempts: number,
   ) {
     const promises: Promise<any>[] = [];
     for (let i = 0; i < countAttempts; i++) {
       promises.push(
-        this.registrationEmailResending(emailResendingModel).catch(
-          (err) => err,
-        ),
+        this.registrationEmailResending(createdModel).catch((err) => err),
       );
     }
     return await Promise.all(promises);
