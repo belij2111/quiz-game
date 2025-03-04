@@ -25,4 +25,17 @@ export class SecurityDevicesTestManager {
       expect(device).toHaveProperty('deviceId');
     });
   }
+
+  async delete(
+    refreshTokens: string[],
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    const cookies = refreshTokens
+      .map((token) => `refreshToken=${token}`)
+      .join('; ');
+    await request(this.app.getHttpServer())
+      .delete('/security/devices')
+      .set('Cookie', cookies)
+      .expect(statusCode);
+  }
 }

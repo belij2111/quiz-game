@@ -50,4 +50,21 @@ describe('e2e-Security-Devices', () => {
       );
     });
   });
+
+  describe('DELETE/security/devices', () => {
+    it(`should delete all devices with active sessions excluding the current ones : STATUS 204`, async () => {
+      const refreshTokens = await coreTestManager.loginSeveralUsers(3);
+      await securityDevicesTestManager.delete(
+        refreshTokens,
+        HttpStatus.NO_CONTENT,
+      );
+    });
+    it(`shouldn't delete all devices with active sessions if the request is unauthorized : STATUS 401`, async () => {
+      const refreshTokens = ['invalid refreshTokens'];
+      await securityDevicesTestManager.delete(
+        refreshTokens,
+        HttpStatus.UNAUTHORIZED,
+      );
+    });
+  });
 });
