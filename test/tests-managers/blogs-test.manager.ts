@@ -162,4 +162,17 @@ export class BlogsTestManager {
       .expect(statusCode);
     return response.body;
   }
+
+  async getPostsByBlogId(blogId: string, statusCode: number = HttpStatus.OK) {
+    const { pageNumber, pageSize, sortBy, sortDirection } = paginationParams;
+    return request(this.app.getHttpServer())
+      .get(`/blogs/${blogId}/posts`)
+      .query({
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection,
+      })
+      .expect(statusCode);
+  }
 }

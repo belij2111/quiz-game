@@ -197,4 +197,34 @@ describe('e2e-Blogs', () => {
       );
     });
   });
+
+  describe('GET/blogs/:blogId/posts', () => {
+    it(`should return all posts for the specified blog : STATUS 200`, async () => {
+      const validBlogModel: BlogCreateModel = createValidBlogModel();
+      const createdBlog = await blogsTestManager.createBlog(validBlogModel);
+      const createdPosts = await postsTestManager.createPosts(
+        createdBlog.id,
+        5,
+      );
+      const createdResponse = await blogsTestManager.getPostsByBlogId(
+        createdBlog.id,
+        HttpStatus.OK,
+      );
+      postsTestManager.expectCorrectPagination(
+        createdPosts,
+        createdResponse.body,
+      );
+      //console.log('createdResponse.body :', createdResponse.body);
+    });
+    it(`shouldn't return posts if the blogId does not exist : STATUS 404`, async () => {
+      const validBlogModel: BlogCreateModel = createValidBlogModel();
+      const createdBlog = await blogsTestManager.createBlog(validBlogModel);
+      await postsTestManager.createPosts(createdBlog.id, 5);
+      const nonExistentId = '121212121212121212121212';
+      await blogsTestManager.getPostsByBlogId(
+        nonExistentId,
+        HttpStatus.NOT_FOUND,
+      );
+    });
+  });
 });
