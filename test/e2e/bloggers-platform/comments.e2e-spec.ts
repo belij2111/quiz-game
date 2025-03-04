@@ -104,7 +104,7 @@ describe('e2e-Comments', () => {
         HttpStatus.BAD_REQUEST,
       );
     });
-    it(`shouldn't update comment with if accessTokens expired : STATUS 401`, async () => {
+    it(`shouldn't update comment if accessTokens expired : STATUS 401`, async () => {
       const updatedCommentModel = createValidCommentModel(555);
       await delay(10000);
       await commentsTestManager.update(

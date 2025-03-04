@@ -205,7 +205,7 @@ describe('e2e-Posts', () => {
         HttpStatus.BAD_REQUEST,
       );
     });
-    it(`shouldn't create comment with if accessTokens expired : STATUS 401`, async () => {
+    it(`shouldn't create comment if accessTokens expired : STATUS 401`, async () => {
       const validCommentModel: CommentCreateModel = createValidCommentModel();
       const loginResult = await coreTestManager.loginUser();
       await delay(10000);
