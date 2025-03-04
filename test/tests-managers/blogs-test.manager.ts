@@ -6,6 +6,7 @@ import { paginationParams } from '../models/base/pagination.model';
 import { createValidBlogModel } from '../models/bloggers-platform/blog.input.model';
 import { Paginator } from '../../src/core/models/pagination.base.model';
 import { CoreConfig } from '../../src/core/core.config';
+import { PostCreateModel } from '../../src/features/bloggers-platform/posts/api/models/input/create-post.input.model';
 
 export class BlogsTestManager {
   constructor(
@@ -134,5 +135,31 @@ export class BlogsTestManager {
       .delete('/blogs/' + id)
       .auth('invalid login', 'invalid password')
       .expect(statusCode);
+  }
+
+  async createPostByBlogId(
+    blogId: string,
+    createdModel: PostCreateModel,
+    statusCode: number = HttpStatus.CREATED,
+  ) {
+    const response = await request(this.app.getHttpServer())
+      .post(`/blogs/${blogId}/posts`)
+      .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
+      .send(createdModel)
+      .expect(statusCode);
+    return response.body;
+  }
+
+  async createPostByBlogIdIsNotAuthorized(
+    blogId: string,
+    createdModel: PostCreateModel,
+    statusCode: number = HttpStatus.CREATED,
+  ) {
+    const response = await request(this.app.getHttpServer())
+      .post(`/blogs/${blogId}/posts`)
+      .auth('invalid login', 'invalid password')
+      .send(createdModel)
+      .expect(statusCode);
+    return response.body;
   }
 }
