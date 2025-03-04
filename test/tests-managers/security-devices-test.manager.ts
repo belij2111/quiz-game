@@ -38,4 +38,15 @@ export class SecurityDevicesTestManager {
       .set('Cookie', cookies)
       .expect(statusCode);
   }
+
+  async deleteById(
+    deviceId: string,
+    refreshToken: string,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    await request(this.app.getHttpServer())
+      .delete(`/security/devices/${deviceId}`)
+      .set('Cookie', `refreshToken=${refreshToken}`)
+      .expect(statusCode);
+  }
 }

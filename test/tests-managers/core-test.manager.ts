@@ -16,7 +16,7 @@ export class CoreTestManager {
   }
 
   async loginSeveralUsers(count: number = 1) {
-    const validUserModel: UserCreateModel = createValidUserModel();
+    const validUserModel: UserCreateModel = createValidUserModel(count);
     await this.usersTestManager.createUser(validUserModel);
     const loginResults = await this.authTestManager.loginWithRateLimit(
       validUserModel,
