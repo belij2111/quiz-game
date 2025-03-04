@@ -5,6 +5,7 @@ import { LoginInputModel } from '../../src/features/user-accounts/auth/api/model
 import { CoreConfig } from '../../src/core/core.config';
 import { MeViewModel } from '../../src/features/user-accounts/auth/api/models/view/me.view.model';
 import { UserViewModel } from '../../src/features/user-accounts/users/api/models/view/user.view.model';
+import { RegistrationEmailResendingModel } from '../../src/features/user-accounts/auth/api/models/input/registration-email-resending.model';
 
 export class AuthTestManager {
   constructor(
@@ -105,9 +106,10 @@ export class AuthTestManager {
   expectCorrectRegistration(
     sendEmailSpy: any,
     validUserModel: UserCreateModel,
+    callCount: number = 1,
   ) {
     expect(sendEmailSpy).toHaveBeenCalled();
-    expect(sendEmailSpy).toHaveBeenCalledTimes(1);
+    expect(sendEmailSpy).toHaveBeenCalledTimes(callCount);
     expect(sendEmailSpy).toHaveBeenCalledWith(
       validUserModel.email,
       expect.any(String),
@@ -142,6 +144,31 @@ export class AuthTestManager {
     for (let i = 0; i < countAttempts; i++) {
       promises.push(
         this.registrationConfirmation(confirmationCode).catch((err) => err),
+      );
+    }
+    return await Promise.all(promises);
+  }
+
+  async registrationEmailResending(
+    createdModel: RegistrationEmailResendingModel,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    await request(this.app.getHttpServer())
+      .post('/auth/registration-email-resending')
+      .send(createdModel)
+      .expect(statusCode);
+  }
+
+  async registrationEmailResendingWithRateLimit(
+    emailResendingModel: RegistrationEmailResendingModel,
+    countAttempts: number,
+  ) {
+    const promises: Promise<any>[] = [];
+    for (let i = 0; i < countAttempts; i++) {
+      promises.push(
+        this.registrationEmailResending(emailResendingModel).catch(
+          (err) => err,
+        ),
       );
     }
     return await Promise.all(promises);

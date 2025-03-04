@@ -12,6 +12,10 @@ import { AuthTestManager } from '../../tests-managers/auth-test.manager';
 import { delay } from '../../helpers/delay';
 import { MailService } from '../../../src/features/notifications/mail.service';
 import { MailServiceMock } from '../../mock/mail.service.mock';
+import {
+  createEmailResendingInputModel,
+  createInvalidEmailResendingInputModel,
+} from '../../models/user-accounts/email.resending.input.model';
 
 describe('e2e-Auth', () => {
   let app: INestApplication;
@@ -169,6 +173,47 @@ describe('e2e-Auth', () => {
       const createdResponse =
         await authTestManager.registrationConfirmationWithRateLimit(
           confirmationCode,
+          6,
+        );
+      authTestManager.expectTooManyRequests(createdResponse);
+    });
+  });
+
+  describe('POST/auth/registration-email-resending', () => {
+    it(`should resend confirmation registration by email : STATUS 204`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      const sendEmailSpy = jest.spyOn(mailServiceMock, 'sendEmail');
+      await authTestManager.registration(validUserModel);
+      const emailResendingModel =
+        createEmailResendingInputModel(validUserModel);
+      await authTestManager.registrationEmailResending(
+        emailResendingModel,
+        HttpStatus.NO_CONTENT,
+      );
+      authTestManager.expectCorrectRegistration(
+        sendEmailSpy,
+        validUserModel,
+        2,
+      );
+    });
+    it(`shouldn't resend confirmation registration with incorrect input data : STATUS 400 `, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
+      const invalidEmailResendingModel =
+        createInvalidEmailResendingInputModel();
+      await authTestManager.registrationEmailResending(
+        invalidEmailResendingModel,
+        HttpStatus.BAD_REQUEST,
+      );
+    });
+    it(`shouldn't resend confirmation registration if the limit is exceeded : STATUS 429`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await authTestManager.registration(validUserModel);
+      const emailResendingModel =
+        createEmailResendingInputModel(validUserModel);
+      const createdResponse =
+        await authTestManager.registrationEmailResendingWithRateLimit(
+          emailResendingModel,
           6,
         );
       authTestManager.expectTooManyRequests(createdResponse);
