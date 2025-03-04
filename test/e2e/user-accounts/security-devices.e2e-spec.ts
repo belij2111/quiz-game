@@ -107,9 +107,9 @@ describe('e2e-Security-Devices', () => {
     });
     it(`shouldn't delete a device session by deviceID if it does not exist : STATUS 404`, async () => {
       const refreshTokens = await coreTestManager.loginSeveralUsers(3);
-      const invalidDeviceId = 'invalidDeviceId';
+      const nonExistentId = '12121212-1212-1212-1212-121212121212';
       await securityDevicesTestManager.deleteById(
-        invalidDeviceId,
+        nonExistentId,
         refreshTokens[0],
         HttpStatus.NOT_FOUND,
       );
