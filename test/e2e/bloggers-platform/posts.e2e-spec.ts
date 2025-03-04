@@ -103,10 +103,7 @@ describe('e2e-Posts', () => {
   describe('GET/posts/:id', () => {
     it(`should return post by ID : STATUS 200`, async () => {
       const validPostModel = createValidPostModel(createdBlog.id);
-      const createdPost = await postsTestManager.createPost(
-        validPostModel,
-        HttpStatus.CREATED,
-      );
+      const createdPost = await postsTestManager.createPost(validPostModel);
       await postsTestManager.getPostById(createdPost.id, HttpStatus.OK);
     });
     it(`shouldn't return post by ID if the post does not exist : STATUS 404`, async () => {
