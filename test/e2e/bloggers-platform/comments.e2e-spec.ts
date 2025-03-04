@@ -20,6 +20,8 @@ import { PostViewModel } from '../../../src/features/bloggers-platform/posts/api
 import { CommentViewModel } from '../../../src/features/bloggers-platform/comments/api/models/view/comment.view.model';
 import { LoginSuccessViewModel } from '../../../src/features/user-accounts/auth/api/models/view/login-success.view.model';
 import { delay } from '../../helpers/delay';
+import { createLikeStatusModel } from '../../models/bloggers-platform/create-like-status.model';
+import { LikeStatus } from '../../../src/features/bloggers-platform/likes/domain/like.entity';
 
 describe('e2e-Comments', () => {
   let app: INestApplication;
@@ -51,6 +53,7 @@ describe('e2e-Comments', () => {
     createdBlog = await blogsTestManager.createBlog(validBlogModel);
     const validPostModel = createValidPostModel(createdBlog.id);
     createdPost = await postsTestManager.createPost(validPostModel);
+    await delay(3000);
     loginResult = await coreTestManager.loginUser();
     const validCommentModel: CommentCreateModel = createValidCommentModel();
     createdComment = await commentsTestManager.createComment(
@@ -162,6 +165,47 @@ describe('e2e-Comments', () => {
       await commentsTestManager.delete(
         loginResult!.accessToken,
         nonExistentId,
+        HttpStatus.NOT_FOUND,
+      );
+    });
+  });
+
+  describe('PUT/comment/:commentId/like-status', () => {
+    it(`should update the like status for the comment : STATUS 204`, async () => {
+      const updateLikeStatusModel = createLikeStatusModel(LikeStatus.Like);
+      await commentsTestManager.updateLikeStatus(
+        loginResult!.accessToken,
+        createdComment.id,
+        updateLikeStatusModel,
+        HttpStatus.NO_CONTENT,
+      );
+    });
+    it(`shouldn't update the like status with incorrect input data : STATUS 400`, async () => {
+      const invalidUpdateLikeStatusModel = 'invalid like status';
+      await commentsTestManager.updateLikeStatus(
+        loginResult!.accessToken,
+        createdComment.id,
+        invalidUpdateLikeStatusModel,
+        HttpStatus.BAD_REQUEST,
+      );
+    });
+    it(`shouldn't update the like status if accessTokens expired : STATUS 401`, async () => {
+      const updateLikeStatusModel = createLikeStatusModel(LikeStatus.Dislike);
+      await delay(10000);
+      await commentsTestManager.updateLikeStatus(
+        loginResult!.accessToken,
+        createdComment.id,
+        updateLikeStatusModel,
+        HttpStatus.UNAUTHORIZED,
+      );
+    });
+    it(`shouldn't update the like status if it does not exist : STATUS 404`, async () => {
+      const updateLikeStatusModel = createLikeStatusModel(LikeStatus.None);
+      const nonExistentId = '121212121212121212121212';
+      await commentsTestManager.updateLikeStatus(
+        loginResult!.accessToken,
+        nonExistentId,
+        updateLikeStatusModel,
         HttpStatus.NOT_FOUND,
       );
     });
