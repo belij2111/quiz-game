@@ -16,6 +16,10 @@ import {
   createEmailResendingInputModel,
   createInvalidEmailResendingInputModel,
 } from '../../models/user-accounts/email.resending.input.model';
+import {
+  createInvalidRegistrationConfirmationCodeInputModel,
+  createRegistrationConfirmationCodeInputModel,
+} from '../../models/user-accounts/registration.confirmation.code.input.model';
 
 describe('e2e-Auth', () => {
   let app: INestApplication;
@@ -151,16 +155,19 @@ describe('e2e-Auth', () => {
       const validUserModel: UserCreateModel = createValidUserModel();
       await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
       const confirmationCode = mailServiceMock.sentEmails[0]?.code;
+      const confirmationCodeModel =
+        createRegistrationConfirmationCodeInputModel(confirmationCode);
       // console.log('mailServiceMock.sentEmails :', mailServiceMock.sentEmails);
       await authTestManager.registrationConfirmation(
-        confirmationCode,
+        confirmationCodeModel,
         HttpStatus.NO_CONTENT,
       );
     });
     it(`shouldn't confirm the user's registration with incorrect input data : STATUS 400`, async () => {
       const validUserModel: UserCreateModel = createValidUserModel();
       await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
-      const invalidConfirmationCode = 'invalid confirmation code';
+      const invalidConfirmationCode =
+        createInvalidRegistrationConfirmationCodeInputModel();
       await authTestManager.registrationConfirmation(
         invalidConfirmationCode,
         HttpStatus.BAD_REQUEST,
@@ -170,9 +177,11 @@ describe('e2e-Auth', () => {
       const validUserModel: UserCreateModel = createValidUserModel();
       await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
       const confirmationCode = mailServiceMock.sentEmails[0]?.code;
+      const confirmationCodeModel =
+        createRegistrationConfirmationCodeInputModel(confirmationCode);
       const createdResponse =
         await authTestManager.registrationConfirmationWithRateLimit(
-          confirmationCode,
+          confirmationCodeModel,
           6,
         );
       authTestManager.expectTooManyRequests(createdResponse);

@@ -6,6 +6,7 @@ import { CoreConfig } from '../../src/core/core.config';
 import { MeViewModel } from '../../src/features/user-accounts/auth/api/models/view/me.view.model';
 import { UserViewModel } from '../../src/features/user-accounts/users/api/models/view/user.view.model';
 import { RegistrationEmailResendingModel } from '../../src/features/user-accounts/auth/api/models/input/registration-email-resending.model';
+import { RegistrationConfirmationCodeModel } from '../../src/features/user-accounts/auth/api/models/input/registration-confirmation-code.model';
 
 export class AuthTestManager {
   constructor(
@@ -127,23 +128,23 @@ export class AuthTestManager {
   }
 
   async registrationConfirmation(
-    confirmationCode: string,
+    createdModel: RegistrationConfirmationCodeModel,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     await request(this.app.getHttpServer())
       .post('/auth/registration-confirmation')
-      .send({ code: confirmationCode })
+      .send(createdModel)
       .expect(statusCode);
   }
 
   async registrationConfirmationWithRateLimit(
-    confirmationCode: string,
+    createdModel: RegistrationConfirmationCodeModel,
     countAttempts: number,
   ) {
     const promises: Promise<any>[] = [];
     for (let i = 0; i < countAttempts; i++) {
       promises.push(
-        this.registrationConfirmation(confirmationCode).catch((err) => err),
+        this.registrationConfirmation(createdModel).catch((err) => err),
       );
     }
     return await Promise.all(promises);
