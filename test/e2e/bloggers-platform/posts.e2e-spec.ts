@@ -95,7 +95,7 @@ describe('e2e-Posts', () => {
       );
       await postsTestManager.getPostById(createdPost.id, HttpStatus.OK);
     });
-    it(`shouldn't return blog by ID if the blog does not exist : STATUS 404`, async () => {
+    it(`shouldn't return post by ID if the post does not exist : STATUS 404`, async () => {
       const nonExistentId = '121212121212121212121212';
       await postsTestManager.getPostById(nonExistentId, HttpStatus.NOT_FOUND);
     });
