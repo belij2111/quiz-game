@@ -319,4 +319,22 @@ describe('e2e-Auth', () => {
       authTestManager.expectTooManyRequests(createdResponse);
     });
   });
+
+  describe('POST/auth/logout', () => {
+    it(`should clear the user session and log out  : STATUS 204 `, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await authTestManager.registration(validUserModel);
+      const loginResult = await authTestManager.loginUser(validUserModel);
+      const refreshToken = loginResult!.refreshToken;
+      await authTestManager.logout(refreshToken, HttpStatus.NO_CONTENT);
+    });
+    it(`shouldn't clear the user session and log out if refreshToken expired  : STATUS 401 `, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await authTestManager.registration(validUserModel);
+      const loginResult = await authTestManager.loginUser(validUserModel);
+      const refreshToken = loginResult!.refreshToken;
+      await delay(20000);
+      await authTestManager.logout(refreshToken, HttpStatus.UNAUTHORIZED);
+    });
+  });
 });

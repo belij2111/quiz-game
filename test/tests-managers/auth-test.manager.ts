@@ -231,4 +231,14 @@ export class AuthTestManager {
     }
     return await Promise.all(promises);
   }
+
+  async logout(
+    refreshToken: string,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    await request(this.app.getHttpServer())
+      .post('/auth/logout')
+      .set('Cookie', `refreshToken=${refreshToken}`)
+      .expect(statusCode);
+  }
 }
