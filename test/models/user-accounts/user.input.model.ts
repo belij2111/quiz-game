@@ -4,7 +4,7 @@ export const createValidUserModel = (count: number = 1): UserCreateModel => {
   const userModel = new UserCreateModel();
   userModel.login = `User_${count}`;
   userModel.password = `qwerty_${count}`;
-  userModel.email = `user_${count}@gmail.com`; // `belijtestback7777@gmail.com`; //`user_${count}@gmail.com`;
+  userModel.email = `user_${count}@gmail.com`;
   return userModel;
 };
 
