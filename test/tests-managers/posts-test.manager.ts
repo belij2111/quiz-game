@@ -6,6 +6,7 @@ import { PostViewModel } from '../../src/features/bloggers-platform/posts/api/mo
 import { createValidPostModel } from '../models/bloggers-platform/post.input.model';
 import { paginationParams } from '../models/base/pagination.model';
 import { Paginator } from '../../src/core/models/pagination.base.model';
+import { LikeInputModel } from '../../src/features/bloggers-platform/likes/api/models/input/like.input.model';
 
 export class PostsTestManager {
   constructor(
@@ -133,6 +134,19 @@ export class PostsTestManager {
     return request(this.app.getHttpServer())
       .delete('/posts/' + id)
       .auth('invalid login', 'invalid password')
+      .expect(statusCode);
+  }
+
+  async updateLikeStatus(
+    accessToken: string,
+    postId: string,
+    createdModel: LikeInputModel | string,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    await request(this.app.getHttpServer())
+      .put(`/posts/${postId}/like-status`)
+      .auth(accessToken, { type: 'bearer' })
+      .send(createdModel)
       .expect(statusCode);
   }
 }
