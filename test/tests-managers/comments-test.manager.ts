@@ -82,4 +82,17 @@ export class CommentsTestManager {
       .expect(statusCode);
     return response.body;
   }
+
+  async update(
+    accessToken: string,
+    commentId: string,
+    createdModel: CommentCreateModel,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    await request(this.app.getHttpServer())
+      .put(`/comments/${commentId}`)
+      .auth(accessToken, { type: 'bearer' })
+      .send(createdModel)
+      .expect(statusCode);
+  }
 }
