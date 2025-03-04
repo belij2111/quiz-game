@@ -75,4 +75,11 @@ export class CommentsTestManager {
     expect(responseModels.page).toBe(1);
     expect(responseModels.pageSize).toBe(10);
   }
+
+  async getCommentById(id: string, statusCode: number = HttpStatus.OK) {
+    const response = await request(this.app.getHttpServer())
+      .get('/comments/' + id)
+      .expect(statusCode);
+    return response.body;
+  }
 }
