@@ -50,15 +50,17 @@ export class AuthTestManager {
   async loginWithRateLimit(
     createdModel: UserCreateModel,
     countAttempts: number,
-  ): Promise<any[]> {
-    const promises: Promise<any>[] = [];
+  ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
+    const promises: Array<
+      Promise<{ accessToken: string; refreshToken: string } | Error>
+    > = [];
     for (let i = 0; i < countAttempts; i++) {
       promises.push(this.loginUser(createdModel).catch((err) => err));
     }
     return await Promise.all(promises);
   }
 
-  expectTooManyRequests(responses: any[]) {
+  expectTooManyRequests(responses: (Error | any)[]) {
     const tooManyRequestsResponse = responses.find(
       (response) =>
         response instanceof Error && response.message.includes('429'),
@@ -107,7 +109,7 @@ export class AuthTestManager {
   }
 
   expectCorrectSendEmail(
-    sendEmailSpy: any,
+    sendEmailSpy: jest.SpyInstance,
     validUserModel: UserCreateModel,
     actionType: 'registration' | 'passwordRecovery',
     callCount: number = 1,
@@ -121,8 +123,12 @@ export class AuthTestManager {
     );
   }
 
-  async registrationWithRateLimit(createdUsers: UserCreateModel[]) {
-    const promises: Promise<any>[] = [];
+  async registrationWithRateLimit(
+    createdUsers: UserCreateModel[],
+  ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
+    const promises: Array<
+      Promise<{ accessToken: string; refreshToken: string } | Error>
+    > = [];
     for (const user of createdUsers) {
       const registrationPromise = this.registration(user).catch((err) => err);
       promises.push(registrationPromise);
@@ -143,8 +149,10 @@ export class AuthTestManager {
   async registrationConfirmationWithRateLimit(
     createdModel: RegistrationConfirmationCodeModel,
     countAttempts: number,
-  ) {
-    const promises: Promise<any>[] = [];
+  ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
+    const promises: Array<
+      Promise<{ accessToken: string; refreshToken: string } | Error>
+    > = [];
     for (let i = 0; i < countAttempts; i++) {
       promises.push(
         this.registrationConfirmation(createdModel).catch((err) => err),
@@ -166,8 +174,10 @@ export class AuthTestManager {
   async registrationEmailResendingWithRateLimit(
     createdModel: RegistrationEmailResendingModel,
     countAttempts: number,
-  ) {
-    const promises: Promise<any>[] = [];
+  ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
+    const promises: Array<
+      Promise<{ accessToken: string; refreshToken: string } | Error>
+    > = [];
     for (let i = 0; i < countAttempts; i++) {
       promises.push(
         this.registrationEmailResending(createdModel).catch((err) => err),
@@ -189,8 +199,10 @@ export class AuthTestManager {
   async passwordRecoveryWithRateLimit(
     createdModel: RegistrationEmailResendingModel,
     countAttempts: number,
-  ) {
-    const promises: Promise<any>[] = [];
+  ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
+    const promises: Array<
+      Promise<{ accessToken: string; refreshToken: string } | Error>
+    > = [];
     for (let i = 0; i < countAttempts; i++) {
       promises.push(this.passwordRecovery(createdModel).catch((err) => err));
     }
@@ -210,8 +222,10 @@ export class AuthTestManager {
   async newPasswordWithRateLimit(
     createdModel: NewPasswordRecoveryInputModel,
     countAttempts: number,
-  ) {
-    const promises: Promise<any>[] = [];
+  ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
+    const promises: Array<
+      Promise<{ accessToken: string; refreshToken: string } | Error>
+    > = [];
     for (let i = 0; i < countAttempts; i++) {
       promises.push(this.newPassword(createdModel).catch((err) => err));
     }
