@@ -106,7 +106,7 @@ describe('e2e-Posts', () => {
       const createdPost = await postsTestManager.createPost(validPostModel);
       await postsTestManager.getPostById(createdPost.id, HttpStatus.OK);
     });
-    it(`shouldn't return post by ID if the post does not exist : STATUS 404`, async () => {
+    it(`shouldn't return post by ID if it does not exist : STATUS 404`, async () => {
       const nonExistentId = '121212121212121212121212';
       await postsTestManager.getPostById(nonExistentId, HttpStatus.NOT_FOUND);
     });
@@ -143,7 +143,7 @@ describe('e2e-Posts', () => {
         HttpStatus.UNAUTHORIZED,
       );
     });
-    it(`shouldn't update post by ID if the post does not exist : STATUS 404`, async () => {
+    it(`shouldn't update post by ID if it does not exist : STATUS 404`, async () => {
       const updatedPostModel = createValidPostModel(createdBlog.id, 555);
       const nonExistentId = '121212121212121212121212';
       await postsTestManager.updatePost(
@@ -168,7 +168,7 @@ describe('e2e-Posts', () => {
         HttpStatus.UNAUTHORIZED,
       );
     });
-    it(`shouldn't update post by ID if the post does not exist : STATUS 404`, async () => {
+    it(`shouldn't update post by ID if it does not exist : STATUS 404`, async () => {
       const nonExistentId = '121212121212121212121212';
       await postsTestManager.deleteById(nonExistentId, HttpStatus.NOT_FOUND);
     });

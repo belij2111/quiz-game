@@ -82,7 +82,7 @@ describe('e2e-Blogs', () => {
       //console.log('createdBlog :', createdBlog);
       await blogsTestManager.getBlogById(createdBlog.id, HttpStatus.OK);
     });
-    it(`shouldn't return blog by ID if the blog does not exist : STATUS 404`, async () => {
+    it(`shouldn't return blog by ID if it does not exist : STATUS 404`, async () => {
       const nonExistentId = '121212121212121212121212';
       await blogsTestManager.getBlogById(nonExistentId, HttpStatus.NOT_FOUND);
     });
@@ -121,7 +121,7 @@ describe('e2e-Blogs', () => {
         HttpStatus.UNAUTHORIZED,
       );
     });
-    it(`shouldn't update blog by ID if the blog does not exist : STATUS 404`, async () => {
+    it(`shouldn't update blog by ID if it does not exist : STATUS 404`, async () => {
       const updatedBlogModel: BlogCreateModel = createValidBlogModel(555);
       const nonExistentId = '121212121212121212121212';
       await blogsTestManager.updateBlog(
@@ -146,7 +146,7 @@ describe('e2e-Blogs', () => {
         HttpStatus.UNAUTHORIZED,
       );
     });
-    it(`shouldn't delete blog by ID if the blog does not exist : STATUS 404`, async () => {
+    it(`shouldn't delete blog by ID if it does not exist : STATUS 404`, async () => {
       const nonExistentId = '121212121212121212121212';
       await blogsTestManager.deleteById(nonExistentId, HttpStatus.NOT_FOUND);
     });
