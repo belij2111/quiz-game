@@ -20,6 +20,10 @@ import {
   createInvalidRegistrationConfirmationCodeInputModel,
   createRegistrationConfirmationCodeInputModel,
 } from '../../models/user-accounts/registration.confirmation.code.input.model';
+import {
+  createInvalidPasswordRecoveryInputModel,
+  createPasswordRecoveryInputModel,
+} from '../../models/user-accounts/password.recovery.input.model';
 
 describe('e2e-Auth', () => {
   let app: INestApplication;
@@ -131,7 +135,11 @@ describe('e2e-Auth', () => {
       const validUserModel: UserCreateModel = createValidUserModel();
       const sendEmailSpy = jest.spyOn(mailServiceMock, 'sendEmail');
       await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
-      authTestManager.expectCorrectRegistration(sendEmailSpy, validUserModel);
+      authTestManager.expectCorrectSendEmail(
+        sendEmailSpy,
+        validUserModel,
+        'registration',
+      );
     });
     it(`shouldn't register user in system with incorrect input data : STATUS 400`, async () => {
       const validUserModel: UserCreateModel = createValidUserModel(7);
@@ -199,9 +207,10 @@ describe('e2e-Auth', () => {
         emailResendingModel,
         HttpStatus.NO_CONTENT,
       );
-      authTestManager.expectCorrectRegistration(
+      authTestManager.expectCorrectSendEmail(
         sendEmailSpy,
         validUserModel,
+        'registration',
         2,
       );
     });
@@ -223,6 +232,48 @@ describe('e2e-Auth', () => {
       const createdResponse =
         await authTestManager.registrationEmailResendingWithRateLimit(
           emailResendingModel,
+          6,
+        );
+      authTestManager.expectTooManyRequests(createdResponse);
+    });
+  });
+
+  describe('POST/auth/password-recovery', () => {
+    it(`should recover password via email confirmation : STATUS 204`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      const sendEmailSpy = jest.spyOn(mailServiceMock, 'sendEmail');
+      await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
+      const passwordRecoveryModel =
+        createPasswordRecoveryInputModel(validUserModel);
+      await authTestManager.passwordRecovery(
+        passwordRecoveryModel,
+        HttpStatus.NO_CONTENT,
+      );
+      authTestManager.expectCorrectSendEmail(
+        sendEmailSpy,
+        validUserModel,
+        'passwordRecovery',
+        2,
+      );
+    });
+    it(`shouldn't recover password with incorrect input data : STATUS 400 `, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await authTestManager.registration(validUserModel);
+      const invalidPasswordRecoveryModel =
+        createInvalidPasswordRecoveryInputModel();
+      await authTestManager.passwordRecovery(
+        invalidPasswordRecoveryModel,
+        HttpStatus.BAD_REQUEST,
+      );
+    });
+    it(`shouldn't recover password if the limit is exceeded : STATUS 429 `, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await authTestManager.registration(validUserModel);
+      const passwordRecoveryModel =
+        createPasswordRecoveryInputModel(validUserModel);
+      const createdResponse =
+        await authTestManager.passwordRecoveryWithRateLimit(
+          passwordRecoveryModel,
           6,
         );
       authTestManager.expectTooManyRequests(createdResponse);

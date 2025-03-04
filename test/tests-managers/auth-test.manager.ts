@@ -7,6 +7,7 @@ import { MeViewModel } from '../../src/features/user-accounts/auth/api/models/vi
 import { UserViewModel } from '../../src/features/user-accounts/users/api/models/view/user.view.model';
 import { RegistrationEmailResendingModel } from '../../src/features/user-accounts/auth/api/models/input/registration-email-resending.model';
 import { RegistrationConfirmationCodeModel } from '../../src/features/user-accounts/auth/api/models/input/registration-confirmation-code.model';
+import { PasswordRecoveryInputModel } from '../../src/features/user-accounts/auth/api/models/input/password-recovery-input.model';
 
 export class AuthTestManager {
   constructor(
@@ -104,9 +105,10 @@ export class AuthTestManager {
       .expect(statusCode);
   }
 
-  expectCorrectRegistration(
+  expectCorrectSendEmail(
     sendEmailSpy: any,
     validUserModel: UserCreateModel,
+    actionType: 'registration' | 'passwordRecovery',
     callCount: number = 1,
   ) {
     expect(sendEmailSpy).toHaveBeenCalled();
@@ -114,7 +116,7 @@ export class AuthTestManager {
     expect(sendEmailSpy).toHaveBeenCalledWith(
       validUserModel.email,
       expect.any(String),
-      'registration',
+      actionType,
     );
   }
 
@@ -169,6 +171,27 @@ export class AuthTestManager {
       promises.push(
         this.registrationEmailResending(createdModel).catch((err) => err),
       );
+    }
+    return await Promise.all(promises);
+  }
+
+  async passwordRecovery(
+    createdModel: PasswordRecoveryInputModel,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    await request(this.app.getHttpServer())
+      .post('/auth/password-recovery')
+      .send(createdModel)
+      .expect(statusCode);
+  }
+
+  async passwordRecoveryWithRateLimit(
+    createdModel: RegistrationEmailResendingModel,
+    countAttempts: number,
+  ) {
+    const promises: Promise<any>[] = [];
+    for (let i = 0; i < countAttempts; i++) {
+      promises.push(this.passwordRecovery(createdModel).catch((err) => err));
     }
     return await Promise.all(promises);
   }
