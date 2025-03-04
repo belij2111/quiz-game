@@ -199,7 +199,7 @@ describe('e2e-Comments', () => {
         HttpStatus.UNAUTHORIZED,
       );
     });
-    it(`shouldn't update the like status if it does not exist : STATUS 404`, async () => {
+    it(`shouldn't update the like status if the commentId does not exist : STATUS 404`, async () => {
       const updateLikeStatusModel = createLikeStatusModel(LikeStatus.None);
       const nonExistentId = '121212121212121212121212';
       await commentsTestManager.updateLikeStatus(
