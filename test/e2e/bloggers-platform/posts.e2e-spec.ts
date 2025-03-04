@@ -253,4 +253,41 @@ describe('e2e-Posts', () => {
       );
     });
   });
+
+  describe('GET/posts/:postId/comments', () => {
+    beforeEach(async () => {
+      const validPostModel = createValidPostModel(createdBlog.id);
+      createdPost = await postsTestManager.createPost(validPostModel);
+    });
+    it(`should return all comments for the specified post : STATUS 200`, async () => {
+      const loginResult = await coreTestManager.loginUser();
+      const createdComments = await commentsTestManager.createComments(
+        loginResult!.accessToken,
+        createdPost.id,
+        5,
+      );
+      const createdResponse = await commentsTestManager.getCommentsWithPaging(
+        createdPost.id,
+        HttpStatus.OK,
+      );
+      commentsTestManager.expectCorrectPagination(
+        createdComments,
+        createdResponse.body,
+      );
+      //console.log('createdResponse.body :', createdResponse.body);
+    });
+    it(`shouldn't return all comments if the postId does not exist : STATUS 404`, async () => {
+      const loginResult = await coreTestManager.loginUser();
+      await commentsTestManager.createComments(
+        loginResult!.accessToken,
+        createdPost.id,
+        5,
+      );
+      const nonExistentId = '121212121212121212121212';
+      await commentsTestManager.getCommentsWithPaging(
+        nonExistentId,
+        HttpStatus.NOT_FOUND,
+      );
+    });
+  });
 });

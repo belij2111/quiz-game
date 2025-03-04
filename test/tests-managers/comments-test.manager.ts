@@ -5,7 +5,6 @@ import { CommentViewModel } from '../../src/features/bloggers-platform/comments/
 import { paginationParams } from '../models/base/pagination.model';
 import { Paginator } from '../../src/core/models/pagination.base.model';
 import { createValidCommentModel } from '../models/bloggers-platform/comment.input.model';
-import { LikeInputModel } from '../../src/features/bloggers-platform/likes/api/models/input/like.input.model';
 
 export class CommentsTestManager {
   constructor(private readonly app: INestApplication) {}
@@ -75,49 +74,5 @@ export class CommentsTestManager {
     expect(responseModels.pagesCount).toBe(1);
     expect(responseModels.page).toBe(1);
     expect(responseModels.pageSize).toBe(10);
-  }
-
-  async getCommentById(id: string, statusCode: number = HttpStatus.OK) {
-    const response = await request(this.app.getHttpServer())
-      .get('/comments/' + id)
-      .expect(statusCode);
-    return response.body;
-  }
-
-  async update(
-    accessToken: string,
-    commentId: string,
-    createdModel: CommentCreateModel,
-    statusCode: number = HttpStatus.NO_CONTENT,
-  ) {
-    await request(this.app.getHttpServer())
-      .put(`/comments/${commentId}`)
-      .auth(accessToken, { type: 'bearer' })
-      .send(createdModel)
-      .expect(statusCode);
-  }
-
-  async delete(
-    accessToken: string,
-    commentId: string,
-    statusCode: number = HttpStatus.NO_CONTENT,
-  ) {
-    await request(this.app.getHttpServer())
-      .delete(`/comments/${commentId}`)
-      .auth(accessToken, { type: 'bearer' })
-      .expect(statusCode);
-  }
-
-  async updateLikeStatus(
-    accessToken: string,
-    commentId: string,
-    createdModel: LikeInputModel | string,
-    statusCode: number = HttpStatus.NO_CONTENT,
-  ) {
-    await request(this.app.getHttpServer())
-      .put(`/comments/${commentId}/like-status`)
-      .auth(accessToken, { type: 'bearer' })
-      .send(createdModel)
-      .expect(statusCode);
   }
 }
