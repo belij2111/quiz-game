@@ -14,21 +14,4 @@ export class CoreTestManager {
     await this.usersTestManager.createUser(validUserModel);
     return await this.authTestManager.loginUser(validUserModel);
   }
-
-  async loginSeveralUsers(count: number = 1) {
-    const validUserModel: UserCreateModel = createValidUserModel(count);
-    await this.usersTestManager.createUser(validUserModel);
-    const loginResults = await this.authTestManager.loginWithRateLimit(
-      validUserModel,
-      count,
-    );
-    return loginResults
-      .filter((el): el is { accessToken: string; refreshToken: string } => {
-        return (
-          (el as { accessToken: string; refreshToken: string }).refreshToken !==
-          undefined
-        );
-      })
-      .map((el) => el.refreshToken);
-  }
 }
