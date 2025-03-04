@@ -24,6 +24,10 @@ import {
   createInvalidPasswordRecoveryInputModel,
   createPasswordRecoveryInputModel,
 } from '../../models/user-accounts/password.recovery.input.model';
+import {
+  createInvalidNewPasswordRecoveryInputModel,
+  createNewPasswordRecoveryInputModel,
+} from '../../models/user-accounts/new.password.recovery.input.model';
 
 describe('e2e-Auth', () => {
   let app: INestApplication;
@@ -276,6 +280,42 @@ describe('e2e-Auth', () => {
           passwordRecoveryModel,
           6,
         );
+      authTestManager.expectTooManyRequests(createdResponse);
+    });
+  });
+
+  describe('POST/auth/new-password', () => {
+    it(`should confirm password recovery : STATUS 204`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await authTestManager.registration(validUserModel);
+      const recoveryCode = mailServiceMock.sentEmails[0]?.code;
+      const newPasswordRecoveryModel =
+        createNewPasswordRecoveryInputModel(recoveryCode);
+      await authTestManager.newPassword(
+        newPasswordRecoveryModel,
+        HttpStatus.NO_CONTENT,
+      );
+    });
+    it(`shouldn't confirm password recovery with incorrect input data : STATUS 400`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await authTestManager.registration(validUserModel);
+      const invalidNewPasswordRecoveryModel =
+        createInvalidNewPasswordRecoveryInputModel();
+      await authTestManager.newPassword(
+        invalidNewPasswordRecoveryModel,
+        HttpStatus.BAD_REQUEST,
+      );
+    });
+    it(`shouldn't confirm password recovery if the limit is exceeded : STATUS 429`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await authTestManager.registration(validUserModel);
+      const recoveryCode = mailServiceMock.sentEmails[0]?.code;
+      const newPasswordRecoveryModel =
+        createNewPasswordRecoveryInputModel(recoveryCode);
+      const createdResponse = await authTestManager.newPasswordWithRateLimit(
+        newPasswordRecoveryModel,
+        6,
+      );
       authTestManager.expectTooManyRequests(createdResponse);
     });
   });

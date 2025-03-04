@@ -8,6 +8,7 @@ import { UserViewModel } from '../../src/features/user-accounts/users/api/models
 import { RegistrationEmailResendingModel } from '../../src/features/user-accounts/auth/api/models/input/registration-email-resending.model';
 import { RegistrationConfirmationCodeModel } from '../../src/features/user-accounts/auth/api/models/input/registration-confirmation-code.model';
 import { PasswordRecoveryInputModel } from '../../src/features/user-accounts/auth/api/models/input/password-recovery-input.model';
+import { NewPasswordRecoveryInputModel } from '../../src/features/user-accounts/auth/api/models/input/new-password-recovery-input.model';
 
 export class AuthTestManager {
   constructor(
@@ -192,6 +193,27 @@ export class AuthTestManager {
     const promises: Promise<any>[] = [];
     for (let i = 0; i < countAttempts; i++) {
       promises.push(this.passwordRecovery(createdModel).catch((err) => err));
+    }
+    return await Promise.all(promises);
+  }
+
+  async newPassword(
+    createdModel: NewPasswordRecoveryInputModel,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    await request(this.app.getHttpServer())
+      .post('/auth/new-password')
+      .send(createdModel)
+      .expect(statusCode);
+  }
+
+  async newPasswordWithRateLimit(
+    createdModel: NewPasswordRecoveryInputModel,
+    countAttempts: number,
+  ) {
+    const promises: Promise<any>[] = [];
+    for (let i = 0; i < countAttempts; i++) {
+      promises.push(this.newPassword(createdModel).catch((err) => err));
     }
     return await Promise.all(promises);
   }
