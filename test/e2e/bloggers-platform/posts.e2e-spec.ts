@@ -9,11 +9,29 @@ import {
   createInValidPostModel,
   createValidPostModel,
 } from '../../models/bloggers-platform/post.input.model';
+import { CommentCreateModel } from '../../../src/features/bloggers-platform/comments/api/models/input/create-comment.input.model';
+import {
+  createInValidCommentModel,
+  createValidCommentModel,
+} from '../../models/bloggers-platform/comment.input.model';
+import { UsersTestManager } from '../../tests-managers/users-test.manager';
+import { AuthTestManager } from '../../tests-managers/auth-test.manager';
+import { CoreTestManager } from '../../tests-managers/core-test.manager';
+import { CommentsTestManager } from '../../tests-managers/comments-test.manager';
+import { PostViewModel } from '../../../src/features/bloggers-platform/posts/api/models/view/post.view.model';
+import { delay } from '../../helpers/delay';
+import { BlogViewModel } from '../../../src/features/bloggers-platform/blogs/api/models/view/blog.view.model';
 
 describe('e2e-Posts', () => {
   let app: INestApplication;
   let blogsTestManager: BlogsTestManager;
   let postsTestManager: PostsTestManager;
+  let usersTestManager: UsersTestManager;
+  let authTestManager: AuthTestManager;
+  let coreTestManager: CoreTestManager;
+  let commentsTestManager: CommentsTestManager;
+  let createdBlog: BlogViewModel;
+  let createdPost: PostViewModel;
 
   beforeAll(async () => {
     const result = await initSettings();
@@ -21,9 +39,15 @@ describe('e2e-Posts', () => {
     const coreConfig = result.coreConfig;
     blogsTestManager = new BlogsTestManager(app, coreConfig);
     postsTestManager = new PostsTestManager(app, coreConfig);
+    usersTestManager = new UsersTestManager(app, coreConfig);
+    authTestManager = new AuthTestManager(app, coreConfig);
+    coreTestManager = new CoreTestManager(usersTestManager, authTestManager);
+    commentsTestManager = new CommentsTestManager(app);
   });
   beforeEach(async () => {
     await deleteAllData(app);
+    const validBlogModel: BlogCreateModel = createValidBlogModel();
+    createdBlog = await blogsTestManager.createBlog(validBlogModel);
   });
   afterEach(async () => {
     await deleteAllData(app);
@@ -172,6 +196,61 @@ describe('e2e-Posts', () => {
     it(`shouldn't update post by ID if the post does not exist : STATUS 404`, async () => {
       const nonExistentId = '121212121212121212121212';
       await postsTestManager.deleteById(nonExistentId, HttpStatus.NOT_FOUND);
+    });
+  });
+
+  describe('POST/posts/:postId/comments', () => {
+    beforeEach(async () => {
+      const validPostModel = createValidPostModel(createdBlog.id);
+      createdPost = await postsTestManager.createPost(validPostModel);
+    });
+    it(`should create comment for specified post : STATUS 201`, async () => {
+      const validCommentModel: CommentCreateModel = createValidCommentModel();
+      const loginResult = await coreTestManager.loginUser();
+      const createdResponse = await commentsTestManager.createComment(
+        loginResult!.accessToken,
+        createdPost.id,
+        validCommentModel,
+        HttpStatus.CREATED,
+      );
+      //console.log('createdResponse :',createdResponse);
+      commentsTestManager.expectCorrectModel(
+        validCommentModel,
+        createdResponse,
+      );
+    });
+    it(`shouldn't create comment with incorrect input data : STATUS 400`, async () => {
+      const invalidCommentModel: CommentCreateModel =
+        createInValidCommentModel();
+      const loginResult = await coreTestManager.loginUser();
+      await commentsTestManager.createComment(
+        loginResult!.accessToken,
+        createdPost.id,
+        invalidCommentModel,
+        HttpStatus.BAD_REQUEST,
+      );
+    });
+    it(`shouldn't create comment with if accessTokens expired : STATUS 401`, async () => {
+      const validCommentModel: CommentCreateModel = createValidCommentModel();
+      const loginResult = await coreTestManager.loginUser();
+      await delay(10000);
+      await commentsTestManager.createComment(
+        loginResult!.accessToken,
+        createdPost.id,
+        validCommentModel,
+        HttpStatus.UNAUTHORIZED,
+      );
+    });
+    it(`shouldn't create comment if the postId does not exist : STATUS 404`, async () => {
+      const validCommentModel: CommentCreateModel = createValidCommentModel();
+      const loginResult = await coreTestManager.loginUser();
+      const nonExistentId = '121212121212121212121212';
+      await commentsTestManager.createComment(
+        loginResult!.accessToken,
+        nonExistentId,
+        validCommentModel,
+        HttpStatus.NOT_FOUND,
+      );
     });
   });
 });
