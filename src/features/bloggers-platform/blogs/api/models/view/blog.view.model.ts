@@ -10,7 +10,7 @@ export class BlogViewModel {
 
   static mapToView(blog: BlogDocument): BlogViewModel {
     const model = new BlogViewModel();
-    model.id = blog.id;
+    model.id = blog.id.toString();
     model.name = blog.name;
     model.description = blog.description;
     model.websiteUrl = blog.websiteUrl;
