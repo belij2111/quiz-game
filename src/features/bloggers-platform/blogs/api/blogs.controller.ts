@@ -59,7 +59,7 @@ export class BlogsController {
     @Query()
     query: GetBlogsQueryParams,
   ): Promise<PaginatedViewModel<BlogViewModel[]>> {
-    return await this.blogsQueryRepository.getAll(query);
+    return await this.blogsSqlQueryRepository.getAll(query);
   }
 
   @Get(':id')
