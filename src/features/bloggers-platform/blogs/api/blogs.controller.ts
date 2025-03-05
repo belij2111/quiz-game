@@ -34,12 +34,14 @@ import { CurrentUserId } from '../../../../core/decorators/param/current-user-id
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { BlogIdParamModel } from '../../posts/api/models/input/blogId-param.model';
+import { BlogsSqlQueryRepository } from '../infrastructure/blogs.sql.query-repository';
 
 @Controller('/blogs')
 export class BlogsController {
   constructor(
     private readonly blogsService: BlogsService,
     private readonly blogsQueryRepository: BlogsQueryRepository,
+    private readonly blogsSqlQueryRepository: BlogsSqlQueryRepository,
     private readonly postsService: PostsService,
     private readonly postsQueryRepository: PostsQueryRepository,
   ) {}
@@ -49,7 +51,7 @@ export class BlogsController {
   @ApiBasicAuth()
   async create(@Body() blogCreateModel: BlogCreateModel) {
     const createdBlogId = await this.blogsService.create(blogCreateModel);
-    return await this.blogsQueryRepository.getById(createdBlogId.id);
+    return await this.blogsSqlQueryRepository.getById(createdBlogId);
   }
 
   @Get()

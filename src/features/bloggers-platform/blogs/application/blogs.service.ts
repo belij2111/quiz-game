@@ -2,12 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { BlogsRepository } from '../infrastructure/blogs.repository';
 import { BlogCreateModel } from '../api/models/input/create-blog.input.model';
 import { Blog } from '../domain/blog.entity';
+import { BlogsSqlRepository } from '../infrastructure/blogs.sql.repository';
 
 @Injectable()
 export class BlogsService {
-  constructor(private readonly blogsRepository: BlogsRepository) {}
+  constructor(
+    private readonly blogsRepository: BlogsRepository,
+    private readonly blogsSqlRepository: BlogsSqlRepository,
+  ) {}
 
-  async create(blogCreateModel: BlogCreateModel): Promise<{ id: string }> {
+  async create(blogCreateModel: BlogCreateModel): Promise<number> {
     const newBlogDto: Blog = {
       name: blogCreateModel.name,
       description: blogCreateModel.description,
@@ -15,7 +19,7 @@ export class BlogsService {
       createdAt: new Date(),
       isMembership: false,
     };
-    return await this.blogsRepository.create(newBlogDto);
+    return await this.blogsSqlRepository.create(newBlogDto);
   }
 
   async update(

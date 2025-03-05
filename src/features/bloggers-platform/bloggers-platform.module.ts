@@ -19,6 +19,8 @@ import { Like, LikeSchema } from './likes/domain/like.entity';
 import { LikesRepository } from './likes/infrastructure/likes.repository';
 import { BlogIdIsExistConstraint } from './blogs/api/validation/blogId-is-exist.decorator';
 import { UserAccountsModule } from '../user-accounts/user-accounts.module';
+import { BlogsSqlRepository } from './blogs/infrastructure/blogs.sql.repository';
+import { BlogsSqlQueryRepository } from './blogs/infrastructure/blogs.sql.query-repository';
 
 @Module({
   imports: [
@@ -32,7 +34,9 @@ import { UserAccountsModule } from '../user-accounts/user-accounts.module';
   providers: [
     BlogsService,
     BlogsRepository,
+    BlogsSqlRepository,
     BlogsQueryRepository,
+    BlogsSqlQueryRepository,
     PostsService,
     PostsRepository,
     PostsQueryRepository,
