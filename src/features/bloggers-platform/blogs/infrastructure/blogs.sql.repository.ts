@@ -7,7 +7,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 export class BlogsSqlRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-  async create(newBlog: Blog): Promise<number> {
+  async create(newBlog: Blog): Promise<string> {
     const result = await this.dataSource.query(
       `INSERT INTO "blogs"("name","description","websiteUrl","createdAt","isMembership")
       VALUES ($1,$2,$3,$4,$5) RETURNING id`,

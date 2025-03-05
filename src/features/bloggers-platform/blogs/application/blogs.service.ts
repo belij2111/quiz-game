@@ -11,7 +11,7 @@ export class BlogsService {
     private readonly blogsSqlRepository: BlogsSqlRepository,
   ) {}
 
-  async create(blogCreateModel: BlogCreateModel): Promise<number> {
+  async create(blogCreateModel: BlogCreateModel): Promise<string> {
     const newBlogDto: Blog = {
       name: blogCreateModel.name,
       description: blogCreateModel.description,

@@ -9,7 +9,7 @@ import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.
 export class BlogsSqlQueryRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-  async getById(id: number): Promise<BlogViewModel | null> {
+  async getById(id: string): Promise<BlogViewModel | null> {
     const foundBlog = await this.dataSource.query(
       `SELECT * FROM "blogs"
         WHERE id = $1`,
