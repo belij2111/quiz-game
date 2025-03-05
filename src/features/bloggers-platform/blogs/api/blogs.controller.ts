@@ -15,7 +15,6 @@ import {
 
 import { BlogsService } from '../application/blogs.service';
 import { BlogViewModel } from './models/view/blog.view.model';
-import { BlogsQueryRepository } from '../infrastructure/blogs.query-repository';
 import {
   BlogCreateModel,
   GetBlogsQueryParams,
@@ -40,7 +39,6 @@ import { BlogsSqlQueryRepository } from '../infrastructure/blogs.sql.query-repos
 export class BlogsController {
   constructor(
     private readonly blogsService: BlogsService,
-    private readonly blogsQueryRepository: BlogsQueryRepository,
     private readonly blogsSqlQueryRepository: BlogsSqlQueryRepository,
     private readonly postsService: PostsService,
     private readonly postsQueryRepository: PostsQueryRepository,
@@ -64,7 +62,7 @@ export class BlogsController {
 
   @Get(':id')
   async getById(@Param('id') id: string): Promise<BlogViewModel> {
-    const foundBlog = await this.blogsQueryRepository.getById(id);
+    const foundBlog = await this.blogsSqlQueryRepository.getById(id);
     if (!foundBlog) {
       throw new NotFoundException(`Blog with id ${id} not found`);
     }
