@@ -12,8 +12,9 @@ export class UsersSqlQueryRepository {
 
   async getById(id: number): Promise<UserViewModel | null> {
     const foundUser = await this.dataSource.query(
-      `SELECT * FROM "users"
-         WHERE id=$1`,
+      `SELECT *
+       FROM "users"
+       WHERE id = $1`,
       [id],
     );
     if (foundUser.length === 0) return null;
@@ -26,8 +27,10 @@ export class UsersSqlQueryRepository {
     const searchLoginTerm = inputQuery.searchLoginTerm || '';
     const searchEmailTerm = inputQuery.searchEmailTerm || '';
     const query = `
-    SELECT * FROM "users"
-        WHERE login ILIKE $1 OR email ILIKE $2
+        SELECT *
+        FROM "users"
+        WHERE login ILIKE $1
+           OR email ILIKE $2
         ORDER BY "${inputQuery.sortBy}" ${inputQuery.sortDirection}
         LIMIT $3 OFFSET $4
     `;
@@ -39,8 +42,10 @@ export class UsersSqlQueryRepository {
     ];
     const foundUsers = await this.dataSource.query(query, values);
     const countQuery = `
-    SELECT COUNT(*) FROM "users"
-    WHERE login ILIKE $1 OR email ILIKE $2
+        SELECT COUNT(*)
+        FROM "users"
+        WHERE login ILIKE $1
+           OR email ILIKE $2
     `;
     const totalCountResult = await this.dataSource.query(countQuery, [
       `%${searchLoginTerm}%`,
@@ -59,8 +64,9 @@ export class UsersSqlQueryRepository {
 
   async getAuthUserById(id: number): Promise<MeViewModel | null> {
     const foundUser = await this.dataSource.query(
-      `SELECT * FROM "users"
-         WHERE id=$1`,
+      `SELECT *
+       FROM "users"
+       WHERE id = $1`,
       [id],
     );
     if (foundUser.length === 0) return null;

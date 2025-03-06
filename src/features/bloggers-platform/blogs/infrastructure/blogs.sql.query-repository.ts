@@ -11,8 +11,9 @@ export class BlogsSqlQueryRepository {
 
   async getById(id: string): Promise<BlogViewModel | null> {
     const foundBlog = await this.dataSource.query(
-      `SELECT * FROM "blogs"
-        WHERE id = $1`,
+      `SELECT *
+       FROM "blogs"
+       WHERE id = $1`,
       [id],
     );
 
@@ -25,10 +26,11 @@ export class BlogsSqlQueryRepository {
   ): Promise<PaginatedViewModel<BlogViewModel[]>> {
     const searchNameTerm = inputQuery.searchNameTerm || '';
     const query = `
-    SELECT * FROM "blogs"
-    WHERE "name" ILIKE $1
-    ORDER BY "${inputQuery.sortBy}" ${inputQuery.sortDirection}
-    LIMIT $2 OFFSET $3
+        SELECT *
+        FROM "blogs"
+        WHERE "name" ILIKE $1
+        ORDER BY "${inputQuery.sortBy}" ${inputQuery.sortDirection}
+        LIMIT $2 OFFSET $3
     `;
     const values = [
       `%${searchNameTerm}%`,
@@ -37,8 +39,9 @@ export class BlogsSqlQueryRepository {
     ];
     const foundBlogs = await this.dataSource.query(query, values);
     const countQuery = `
-    SELECT COUNT(*) FROM "blogs"
-    WHERE "name" ILIKE $1
+        SELECT COUNT(*)
+        FROM "blogs"
+        WHERE "name" ILIKE $1
     `;
     const totalCountResult = await this.dataSource.query(countQuery, [
       `%${searchNameTerm}%`,

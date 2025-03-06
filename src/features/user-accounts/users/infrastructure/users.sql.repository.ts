@@ -9,8 +9,9 @@ export class UsersSqlRepository {
 
   async create(newUser: User): Promise<number> {
     const result = await this.dataSource.query(
-      `INSERT INTO "users" ("login","password","email","createdAt","confirmationCode","expirationDate","isConfirmed")
-values ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
+      `INSERT INTO "users" ("login", "password", "email", "createdAt", "confirmationCode", "expirationDate",
+                            "isConfirmed")
+       values ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
       [
         newUser.login,
         newUser.password,
@@ -26,7 +27,9 @@ values ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
 
   async delete(id: string): Promise<boolean> {
     const result = await this.dataSource.query(
-      `DELETE FROM "users" WHERE id = $1`,
+      `DELETE
+       FROM "users"
+       WHERE id = $1`,
       [id],
     );
     return result[1] === 1;
@@ -34,8 +37,10 @@ values ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
 
   async findByLoginOrEmail(loginOrEmail: string) {
     const result = await this.dataSource.query(
-      `SELECT * FROM "users"
-    WHERE login = $1 or email  = $1`,
+      `SELECT *
+       FROM "users"
+       WHERE login = $1
+          or email = $1`,
       [loginOrEmail],
     );
     return result.length > 0 ? result[0] : null;
@@ -43,10 +48,11 @@ values ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
 
   async findByConfirmationCode(inputCode: string) {
     const result = await this.dataSource.query(
-      `SELECT * FROM "users"
-    WHERE "confirmationCode" = $1
-        AND "expirationDate" > NOW()
-        AND "isConfirmed" = FALSE`,
+      `SELECT *
+       FROM "users"
+       WHERE "confirmationCode" = $1
+         AND "expirationDate" > NOW()
+         AND "isConfirmed" = FALSE`,
       [inputCode],
     );
     return result.length > 0 ? result[0] : null;
@@ -70,7 +76,7 @@ values ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,
     const result = await this.dataSource.query(
       `UPDATE "users"
        SET "confirmationCode" = $1,
-          "expirationDate" = $2
+           "expirationDate"   = $2
        WHERE "id" = $3`,
       [code, expirationDate, id],
     );
