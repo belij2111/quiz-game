@@ -26,13 +26,13 @@ export class BlogsService {
     id: string,
     blogUpdateModel: BlogCreateModel,
   ): Promise<boolean | null> {
-    const foundBlog = await this.blogsRepository.findByIdOrNotFoundFail(id);
+    const foundBlog = await this.blogsSqlRepository.findByIdOrNotFoundFail(id);
     const updatedBlogDto: BlogCreateModel = {
       name: blogUpdateModel.name,
       description: blogUpdateModel.description,
       websiteUrl: blogUpdateModel.websiteUrl,
     };
-    return await this.blogsRepository.update(foundBlog, updatedBlogDto);
+    return await this.blogsSqlRepository.update(foundBlog, updatedBlogDto);
   }
 
   async delete(id: string): Promise<boolean> {
