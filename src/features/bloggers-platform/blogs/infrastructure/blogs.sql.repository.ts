@@ -61,4 +61,14 @@ export class BlogsSqlRepository {
     );
     return result[0];
   }
+
+  async delete(id: string): Promise<boolean> {
+    const result = await this.dataSource.query(
+      `DELETE
+       FROM "blogs"
+       WHERE id = $1`,
+      [id],
+    );
+    return result[1] === 1;
+  }
 }
