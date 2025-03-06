@@ -147,7 +147,7 @@ describe('e2e-Blogs', () => {
       );
     });
     it(`shouldn't delete blog by ID if it does not exist : STATUS 404`, async () => {
-      const nonExistentId = '121212121212121212121212';
+      const nonExistentId = '12121212-1212-1212-1212-121212121212';
       await blogsTestManager.deleteById(nonExistentId, HttpStatus.NOT_FOUND);
     });
   });
