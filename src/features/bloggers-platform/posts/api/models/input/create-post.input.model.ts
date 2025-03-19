@@ -1,5 +1,5 @@
 import { TrimIsString } from '../../../../../../core/decorators/validation/trim-is-string';
-import { IsEnum, IsMongoId, IsOptional, Length } from 'class-validator';
+import { IsEnum, IsOptional, IsUUID, Length } from 'class-validator';
 import { BaseSortablePaginationParams } from '../../../../../../core/models/base.query-params.input.model';
 import { BlogIdIsExist } from '../../../../blogs/api/validation/blogId-is-exist.decorator';
 
@@ -23,7 +23,7 @@ export class PostCreateModel {
   content: string;
 
   @TrimIsString()
-  @IsMongoId({
+  @IsUUID('1', {
     message: 'Invalid BlogId',
   })
   @BlogIdIsExist()

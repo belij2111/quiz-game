@@ -71,4 +71,14 @@ export class BlogsSqlRepository {
     );
     return result[1] === 1;
   }
+
+  async blogIdIsExist(blogId: string): Promise<boolean> {
+    const result = await this.dataSource.query(
+      `SELECT COUNT(*)
+       FROM "blogs"
+       WHERE "id" = $1`,
+      [blogId],
+    );
+    return result.length > 0;
+  }
 }
