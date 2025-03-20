@@ -33,7 +33,9 @@ export class TestingRepository {
         `TRUNCATE TABLE 
         public."users", 
         public."securityDevices",
-        public."blogs" 
+        public."blogs",
+        public."posts",
+        public."likesForPosts"
          RESTART IDENTITY`,
       ),
     ]);
