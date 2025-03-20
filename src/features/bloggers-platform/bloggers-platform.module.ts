@@ -21,6 +21,8 @@ import { BlogIdIsExistConstraint } from './blogs/api/validation/blogId-is-exist.
 import { UserAccountsModule } from '../user-accounts/user-accounts.module';
 import { BlogsSqlRepository } from './blogs/infrastructure/blogs.sql.repository';
 import { BlogsSqlQueryRepository } from './blogs/infrastructure/blogs.sql.query-repository';
+import { PostsSqlRepository } from './posts/infrastructure/posts.sql.repository';
+import { PostsSqlQueryRepository } from './posts/infrastructure/posts.sql.query-repository';
 
 @Module({
   imports: [
@@ -39,7 +41,9 @@ import { BlogsSqlQueryRepository } from './blogs/infrastructure/blogs.sql.query-
     BlogsSqlQueryRepository,
     PostsService,
     PostsRepository,
+    PostsSqlRepository,
     PostsQueryRepository,
+    PostsSqlQueryRepository,
     CommentsService,
     CommentsQueryRepository,
     CommentsRepository,

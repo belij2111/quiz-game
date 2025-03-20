@@ -11,12 +11,16 @@ import { LikesInfoModel } from '../../likes/api/models/input/likes.info.model';
 import { User } from '../../../user-accounts/users/domain/user.entity';
 import { LikeDetailsModel } from '../../likes/api/models/input/like.details.model';
 import { ExtendedLikesInfoModel } from '../api/models/input/extended.likes.info.model';
+import { PostsSqlRepository } from '../infrastructure/posts.sql.repository';
+import { BlogsSqlRepository } from '../../blogs/infrastructure/blogs.sql.repository';
 
 @Injectable()
 export class PostsService {
   constructor(
     private readonly postRepository: PostsRepository,
+    private readonly postsSqlRepository: PostsSqlRepository,
     private readonly blogsRepository: BlogsRepository,
+    private readonly blogsSqlRepository: BlogsSqlRepository,
     private readonly likesRepository: LikesRepository,
     private readonly usersRepository: UsersRepository,
   ) {}
@@ -64,8 +68,9 @@ export class PostsService {
   async createPostByBlogId(
     blogId: string,
     postCreateModel: PostCreateModel,
-  ): Promise<{ id: string }> {
-    const foundBlog = await this.blogsRepository.findByIdOrNotFoundFail(blogId);
+  ): Promise<string> {
+    const foundBlog =
+      await this.blogsSqlRepository.findByIdOrNotFoundFail(blogId);
     const newPostDto: Post = {
       title: postCreateModel.title,
       shortDescription: postCreateModel.shortDescription,
@@ -80,7 +85,7 @@ export class PostsService {
         newestLikes: [],
       },
     };
-    return await this.postRepository.create(newPostDto);
+    return await this.postsSqlRepository.create(newPostDto);
   }
 
   async updateLikeStatus(

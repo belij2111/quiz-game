@@ -34,6 +34,7 @@ import { IdentifyUser } from '../../../../core/decorators/param/identify-user.pa
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { BlogIdParamModel } from '../../posts/api/models/input/blogId-param.model';
 import { BlogsSqlQueryRepository } from '../infrastructure/blogs.sql.query-repository';
+import { PostsSqlQueryRepository } from '../../posts/infrastructure/posts.sql.query-repository';
 
 @Controller('/blogs')
 export class BlogsController {
@@ -42,6 +43,7 @@ export class BlogsController {
     private readonly blogsSqlQueryRepository: BlogsSqlQueryRepository,
     private readonly postsService: PostsService,
     private readonly postsQueryRepository: PostsQueryRepository,
+    private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
   ) {}
 
   @Post()
@@ -102,9 +104,9 @@ export class BlogsController {
       blogId,
       postCreateModel,
     );
-    return await this.postsQueryRepository.getById(
+    return await this.postsSqlQueryRepository.getById(
       currentUserId,
-      createdPostId.id,
+      createdPostId,
     );
   }
 
