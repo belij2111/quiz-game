@@ -1,9 +1,9 @@
 import { TrimIsString } from '../../../../../../core/decorators/validation/trim-is-string';
-import { IsMongoId } from 'class-validator';
+import { IsUUID } from 'class-validator';
 
 export class BlogIdParamModel {
   @TrimIsString()
-  @IsMongoId({
+  @IsUUID('1', {
     message: 'Invalid BlogId',
   })
   blogId: string;
