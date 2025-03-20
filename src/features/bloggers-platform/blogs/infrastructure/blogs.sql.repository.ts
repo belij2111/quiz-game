@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Blog, BlogDocument } from '../domain/blog.entity';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { BlogCreateModel } from '../api/models/input/create-blog.input.model';
+import { Blog } from '../domain/blog.sql.entity';
 
 @Injectable()
 export class BlogsSqlRepository {
@@ -25,7 +25,7 @@ export class BlogsSqlRepository {
   }
 
   async update(
-    foundBlog: BlogDocument,
+    foundBlog: Blog,
     blogUpdatedModel: BlogCreateModel,
   ): Promise<boolean | null> {
     const result = await this.dataSource.query(
@@ -44,7 +44,7 @@ export class BlogsSqlRepository {
     return result.rowCount !== 0;
   }
 
-  async findByIdOrNotFoundFail(id: string): Promise<BlogDocument> {
+  async findByIdOrNotFoundFail(id: string): Promise<Blog> {
     const foundBlog = await this.findById(id);
     if (!foundBlog) {
       throw new NotFoundException(`Blog with id ${id} not found`);
@@ -52,7 +52,7 @@ export class BlogsSqlRepository {
     return foundBlog;
   }
 
-  async findById(id: string): Promise<BlogDocument | null> {
+  async findById(id: string): Promise<Blog | null> {
     const result = await this.dataSource.query(
       `SELECT *
        FROM "blogs"
