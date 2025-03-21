@@ -23,6 +23,7 @@ import { BlogsSqlRepository } from './blogs/infrastructure/blogs.sql.repository'
 import { BlogsSqlQueryRepository } from './blogs/infrastructure/blogs.sql.query-repository';
 import { PostsSqlRepository } from './posts/infrastructure/posts.sql.repository';
 import { PostsSqlQueryRepository } from './posts/infrastructure/posts.sql.query-repository';
+import { UuidProvider } from '../../core/helpers/uuid.provider';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { PostsSqlQueryRepository } from './posts/infrastructure/posts.sql.query-
     CommentsRepository,
     LikesRepository,
     BlogIdIsExistConstraint,
+    UuidProvider,
   ],
 })
 export class BloggersPlatformModule {}

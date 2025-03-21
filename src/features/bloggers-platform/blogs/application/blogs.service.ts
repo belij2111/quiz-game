@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { BlogCreateModel } from '../api/models/input/create-blog.input.model';
-import { Blog } from '../domain/blog.entity';
+import { Blog } from '../domain/blog.sql.entity';
 import { BlogsSqlRepository } from '../infrastructure/blogs.sql.repository';
+import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 
 @Injectable()
 export class BlogsService {
-  constructor(private readonly blogsSqlRepository: BlogsSqlRepository) {}
+  constructor(
+    private readonly blogsSqlRepository: BlogsSqlRepository,
+    private readonly uuidProvider: UuidProvider,
+  ) {}
 
   async create(blogCreateModel: BlogCreateModel): Promise<string> {
     const newBlogDto: Blog = {
+      id: this.uuidProvider.generate(),
       name: blogCreateModel.name,
       description: blogCreateModel.description,
       websiteUrl: blogCreateModel.websiteUrl,

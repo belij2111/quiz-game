@@ -25,7 +25,6 @@ import {
 } from '../../posts/api/models/input/create-post.input.model';
 import { PostViewModel } from '../../posts/api/models/view/post.view.model';
 import { PostsService } from '../../posts/application/posts.service';
-import { PostsQueryRepository } from '../../posts/infrastructure/posts.query-repository';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { ApiBasicAuth } from '@nestjs/swagger';
 import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
@@ -42,7 +41,6 @@ export class BlogsController {
     private readonly blogsService: BlogsService,
     private readonly blogsSqlQueryRepository: BlogsSqlQueryRepository,
     private readonly postsService: PostsService,
-    private readonly postsQueryRepository: PostsQueryRepository,
     private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
   ) {}
 
@@ -118,7 +116,7 @@ export class BlogsController {
     @Query() query: GetPostQueryParams,
   ): Promise<PaginatedViewModel<PostViewModel[]>> {
     const blogId = param.blogId;
-    return await this.postsQueryRepository.getPostsByBlogId(
+    return await this.postsSqlQueryRepository.getPostsByBlogId(
       identifyUser,
       blogId,
       query,
