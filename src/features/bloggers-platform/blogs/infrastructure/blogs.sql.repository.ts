@@ -79,6 +79,6 @@ export class BlogsSqlRepository {
        WHERE "id" = $1`,
       [blogId],
     );
-    return result.length > 0;
+    return result[0].count > 0;
   }
 }
