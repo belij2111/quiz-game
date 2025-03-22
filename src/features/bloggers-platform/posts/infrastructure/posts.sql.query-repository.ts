@@ -12,6 +12,48 @@ import { Post } from '../domain/post.sql.entity';
 export class PostsSqlQueryRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
+  async getAll(
+    currentUserId: string,
+    query: GetPostQueryParams,
+  ): Promise<PaginatedViewModel<PostViewModel[]>> {
+    const foundPosts = await this.dataSource.query(
+      `SELECT p.*,
+              b."name"                                  AS "blogName",
+              COUNT(CASE WHEN l.status = $1 THEN 1 END) AS "likesCount",
+              COUNT(CASE WHEN l.status = $2 THEN 1 END) AS "dislikesCount",
+              l."userId"                                AS "userId",
+              l."createdAt"                             AS "addedAt",
+              u.login
+       FROM "posts" p
+                LEFT JOIN "likesForPosts" l ON p.id = l."postId"
+                LEFT JOIN "users" u ON l."userId" = u.id
+                LEFT JOIN "blogs" b ON p."blogId" = b.id
+       GROUP BY p.id, l."userId", l."createdAt", b."name", u.login
+       ORDER BY l."createdAt" DESC
+      `,
+      [LikeStatus.Like, LikeStatus.Dislike],
+    );
+    const countQuery = await this.dataSource.query(
+      `SELECT COUNT(*)
+       FROM "posts" p`,
+    );
+    const totalCount = parseInt(countQuery[0].count, 10);
+    const currentStatuses = await Promise.all(
+      foundPosts.map((post: { id: string }) =>
+        this.getStatus(post.id, currentUserId),
+      ),
+    );
+    const items = foundPosts.map((post: Post, index: string | number) =>
+      PostViewModel.mapToView(post, currentStatuses[index]),
+    );
+    return PaginatedViewModel.mapToView({
+      pageNumber: query.pageNumber,
+      pageSize: query.pageSize,
+      totalCount,
+      items,
+    });
+  }
+
   async getById(
     currentUserId: string,
     id: string,

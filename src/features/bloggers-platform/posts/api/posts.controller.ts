@@ -66,7 +66,7 @@ export class PostsController {
     @IdentifyUser() identifyUser: string,
     @Query() query: GetPostQueryParams,
   ): Promise<PaginatedViewModel<PostViewModel[]>> {
-    return await this.postsQueryRepository.getAll(identifyUser, query);
+    return await this.postsSqlQueryRepository.getAll(identifyUser, query);
   }
 
   @Get(':id')
