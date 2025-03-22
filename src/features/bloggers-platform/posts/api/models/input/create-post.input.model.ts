@@ -23,7 +23,7 @@ export class PostCreateModel {
   content: string;
 
   @TrimIsString()
-  @IsUUID('1', {
+  @IsUUID('4', {
     message: 'Invalid BlogId',
   })
   @BlogIdIsExist()

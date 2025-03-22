@@ -3,7 +3,7 @@ import { IsUUID } from 'class-validator';
 
 export class BlogIdParamModel {
   @TrimIsString()
-  @IsUUID('1', {
+  @IsUUID('4', {
     message: 'Invalid BlogId',
   })
   blogId: string;
