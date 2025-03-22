@@ -34,12 +34,14 @@ import { CommentViewModel } from '../../comments/api/models/view/comment.view.mo
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
+import { PostsSqlQueryRepository } from '../infrastructure/posts.sql.query-repository';
 
 @Controller('/posts')
 export class PostsController {
   constructor(
     private readonly postsService: PostsService,
     private readonly postsQueryRepository: PostsQueryRepository,
+    private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
     private readonly commentsService: CommentsService,
     private readonly commentsQueryRepository: CommentsQueryRepository,
   ) {}
@@ -73,7 +75,10 @@ export class PostsController {
     @IdentifyUser() identifyUser: string,
     @Param('id') id: string,
   ): Promise<PostViewModel> {
-    const foundPost = await this.postsQueryRepository.getById(identifyUser, id);
+    const foundPost = await this.postsSqlQueryRepository.getById(
+      identifyUser,
+      id,
+    );
     if (!foundPost) {
       throw new NotFoundException(`Post with id ${id} not found`);
     }
