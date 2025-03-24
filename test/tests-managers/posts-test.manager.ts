@@ -38,7 +38,7 @@ export class PostsTestManager {
         .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
         .send(createValidPostModel(blogId, i))
         .expect(statusCode);
-      posts.push(response.body);
+      posts.unshift(response.body);
     }
     return posts;
   }
