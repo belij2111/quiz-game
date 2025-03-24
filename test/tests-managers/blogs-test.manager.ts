@@ -19,7 +19,7 @@ export class BlogsTestManager {
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())
-      .post('/blogs')
+      .post('/sa/blogs')
       .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
       .send(createdModel)
       .expect(statusCode);
@@ -42,7 +42,7 @@ export class BlogsTestManager {
     const blogs: BlogViewModel[] = [];
     for (let i = 1; i <= count; i++) {
       const response = await request(this.app.getHttpServer())
-        .post('/blogs')
+        .post('/sa/blogs')
         .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
         .send(createValidBlogModel(i))
         .expect(statusCode);
@@ -83,7 +83,7 @@ export class BlogsTestManager {
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())
-      .post('/blogs')
+      .post('/sa/blogs')
       .auth('invalid login', 'invalid password')
       .send(createdModel)
       .expect(statusCode);
@@ -102,7 +102,7 @@ export class BlogsTestManager {
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     return request(this.app.getHttpServer())
-      .put('/blogs/' + id)
+      .put('/sa/blogs/' + id)
       .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
       .send(createdModel)
       .expect(statusCode);
@@ -114,7 +114,7 @@ export class BlogsTestManager {
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     return request(this.app.getHttpServer())
-      .put('/blogs/' + id)
+      .put('/sa/blogs/' + id)
       .auth('invalid login', 'invalid password')
       .send(createdModel)
       .expect(statusCode);
@@ -122,7 +122,7 @@ export class BlogsTestManager {
 
   async deleteById(id: string, statusCode: number = HttpStatus.NO_CONTENT) {
     return request(this.app.getHttpServer())
-      .delete('/blogs/' + id)
+      .delete('/sa/blogs/' + id)
       .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
       .expect(statusCode);
   }
@@ -132,7 +132,7 @@ export class BlogsTestManager {
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())
-      .delete('/blogs/' + id)
+      .delete('/sa/blogs/' + id)
       .auth('invalid login', 'invalid password')
       .expect(statusCode);
   }
@@ -143,7 +143,7 @@ export class BlogsTestManager {
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())
-      .post(`/blogs/${blogId}/posts`)
+      .post(`/sa/blogs/${blogId}/posts`)
       .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
       .send(createdModel)
       .expect(statusCode);
@@ -156,7 +156,7 @@ export class BlogsTestManager {
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())
-      .post(`/blogs/${blogId}/posts`)
+      .post(`/sa/blogs/${blogId}/posts`)
       .auth('invalid login', 'invalid password')
       .send(createdModel)
       .expect(statusCode);

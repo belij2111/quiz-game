@@ -35,7 +35,7 @@ import { BlogIdParamModel } from '../../posts/api/models/input/blogId-param.mode
 import { BlogsSqlQueryRepository } from '../infrastructure/blogs.sql.query-repository';
 import { PostsSqlQueryRepository } from '../../posts/infrastructure/posts.sql.query-repository';
 
-@Controller('/blogs')
+@Controller()
 export class BlogsController {
   constructor(
     private readonly blogsService: BlogsService,
@@ -44,7 +44,7 @@ export class BlogsController {
     private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
   ) {}
 
-  @Post()
+  @Post('sa/blogs')
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
   async create(@Body() blogCreateModel: BlogCreateModel) {
@@ -52,7 +52,7 @@ export class BlogsController {
     return await this.blogsSqlQueryRepository.getById(createdBlogId);
   }
 
-  @Get()
+  @Get('blogs')
   async getAll(
     @Query()
     query: GetBlogsQueryParams,
@@ -60,7 +60,7 @@ export class BlogsController {
     return await this.blogsSqlQueryRepository.getAll(query);
   }
 
-  @Get(':id')
+  @Get('blogs/:id')
   async getById(@Param('id') id: string): Promise<BlogViewModel> {
     const foundBlog = await this.blogsSqlQueryRepository.getById(id);
     if (!foundBlog) {
@@ -69,7 +69,7 @@ export class BlogsController {
     return foundBlog;
   }
 
-  @Put(':id')
+  @Put('sa/blogs/:id')
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -80,7 +80,7 @@ export class BlogsController {
     await this.blogsService.update(id, blogUpdateModel);
   }
 
-  @Delete(':id')
+  @Delete('sa/blogs/:id')
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -88,7 +88,7 @@ export class BlogsController {
     await this.blogsService.delete(id);
   }
 
-  @Post(':blogId/posts')
+  @Post('sa/blogs/:blogId/posts')
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
   @HttpCode(HttpStatus.CREATED)
@@ -108,7 +108,7 @@ export class BlogsController {
     );
   }
 
-  @Get(':blogId/posts')
+  @Get('blogs/:blogId/posts')
   @UseGuards(JwtOptionalAuthGuard)
   async getPostsByBlogId(
     @IdentifyUser() identifyUser: string,
