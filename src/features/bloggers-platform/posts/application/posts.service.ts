@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PostsRepository } from '../infrastructure/posts.repository';
 import { PostCreateModel } from '../api/models/input/create-post.input.model';
-import { Post } from '../domain/post.entity';
-import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { LikesRepository } from '../../likes/infrastructure/likes.repository';
 import { UsersRepository } from '../../../user-accounts/users/infrastructure/users.repository';
@@ -13,37 +11,34 @@ import { LikeDetailsModel } from '../../likes/api/models/input/like.details.mode
 import { ExtendedLikesInfoModel } from '../api/models/input/extended.likes.info.model';
 import { PostsSqlRepository } from '../infrastructure/posts.sql.repository';
 import { BlogsSqlRepository } from '../../blogs/infrastructure/blogs.sql.repository';
+import { Post } from '../domain/post.sql.entity';
+import { UuidProvider } from '../../../../core/helpers/uuid.provider';
+import { PostParamsModel } from '../api/models/input/post-params.model';
 
 @Injectable()
 export class PostsService {
   constructor(
     private readonly postRepository: PostsRepository,
     private readonly postsSqlRepository: PostsSqlRepository,
-    private readonly blogsRepository: BlogsRepository,
     private readonly blogsSqlRepository: BlogsSqlRepository,
     private readonly likesRepository: LikesRepository,
     private readonly usersRepository: UsersRepository,
+    private readonly uuidProvider: UuidProvider,
   ) {}
 
-  async create(postCreateModel: PostCreateModel): Promise<{ id: string }> {
-    const foundBlog = await this.blogsRepository.findByIdOrNotFoundFail(
+  async create(postCreateModel: PostCreateModel): Promise<string> {
+    const foundBlog = await this.blogsSqlRepository.findByIdOrNotFoundFail(
       postCreateModel.blogId,
     );
     const newPostDto: Post = {
+      id: this.uuidProvider.generate(),
       title: postCreateModel.title,
       shortDescription: postCreateModel.shortDescription,
       content: postCreateModel.content,
       blogId: foundBlog.id,
-      blogName: foundBlog.name,
       createdAt: new Date(),
-      extendedLikesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        myStatus: LikeStatus.None,
-        newestLikes: [],
-      },
     };
-    return await this.postRepository.create(newPostDto);
+    return await this.postsSqlRepository.create(newPostDto);
   }
 
   async delete(id: string): Promise<boolean> {
@@ -52,17 +47,19 @@ export class PostsService {
   }
 
   async update(
-    id: string,
+    params: PostParamsModel,
     postUpdateModel: PostCreateModel,
   ): Promise<boolean | null> {
-    const foundPost = await this.postRepository.findByIdOrNotFoundFail(id);
+    const foundPost = await this.postsSqlRepository.findByIdOrNotFoundFail(
+      params.postId,
+    );
     const updatedPostDto: PostCreateModel = {
       title: postUpdateModel.title,
       shortDescription: postUpdateModel.shortDescription,
       content: postUpdateModel.content,
-      blogId: postUpdateModel.blogId,
+      blogId: params.blogId,
     };
-    return await this.postRepository.update(foundPost, updatedPostDto);
+    return await this.postsSqlRepository.update(foundPost.id, updatedPostDto);
   }
 
   async createPostByBlogId(
@@ -72,18 +69,12 @@ export class PostsService {
     const foundBlog =
       await this.blogsSqlRepository.findByIdOrNotFoundFail(blogId);
     const newPostDto: Post = {
+      id: this.uuidProvider.generate(),
       title: postCreateModel.title,
       shortDescription: postCreateModel.shortDescription,
       content: postCreateModel.content,
       blogId: foundBlog.id,
-      blogName: foundBlog.name,
       createdAt: new Date(),
-      extendedLikesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        myStatus: LikeStatus.None,
-        newestLikes: [],
-      },
     };
     return await this.postsSqlRepository.create(newPostDto);
   }
@@ -93,7 +84,8 @@ export class PostsService {
     postId: string,
     likeInputModel: LikeInputModel,
   ) {
-    const foundPost = await this.postRepository.findByIdOrNotFoundFail(postId);
+    const foundPost: any =
+      await this.postRepository.findByIdOrNotFoundFail(postId);
     const foundUser =
       await this.usersRepository.findByIdOrNotFoundFail(currentUserId);
     const foundLike = await this.likesRepository.find(currentUserId, postId);
@@ -190,7 +182,7 @@ export class PostsService {
   }
 
   private updateNewestLikes(
-    foundPost: Post,
+    foundPost: any,
     userId: string,
     foundUser: User,
     inputLike: LikeInputModel,

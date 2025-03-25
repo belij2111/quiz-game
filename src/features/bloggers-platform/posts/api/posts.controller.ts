@@ -14,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { PostsService } from '../application/posts.service';
 import { PostViewModel } from './models/view/post.view.model';
-import { PostsQueryRepository } from '../infrastructure/posts.query-repository';
 import {
   GetPostQueryParams,
   PostCreateModel,
@@ -35,18 +34,18 @@ import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { PostsSqlQueryRepository } from '../infrastructure/posts.sql.query-repository';
+import { PostParamsModel } from './models/input/post-params.model';
 
-@Controller('/posts')
+@Controller()
 export class PostsController {
   constructor(
     private readonly postsService: PostsService,
-    private readonly postsQueryRepository: PostsQueryRepository,
     private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
     private readonly commentsService: CommentsService,
     private readonly commentsQueryRepository: CommentsQueryRepository,
   ) {}
 
-  @Post()
+  @Post('posts')
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
   async create(
@@ -54,13 +53,13 @@ export class PostsController {
     @Body() postCreateModel: PostCreateModel,
   ) {
     const createdPostId = await this.postsService.create(postCreateModel);
-    return await this.postsQueryRepository.getById(
+    return await this.postsSqlQueryRepository.getById(
       currentUserId,
-      createdPostId.id,
+      createdPostId,
     );
   }
 
-  @Get()
+  @Get('posts')
   @UseGuards(JwtOptionalAuthGuard)
   async getAll(
     @IdentifyUser() identifyUser: string,
@@ -69,7 +68,7 @@ export class PostsController {
     return await this.postsSqlQueryRepository.getAll(identifyUser, query);
   }
 
-  @Get(':id')
+  @Get('posts/:id')
   @UseGuards(JwtOptionalAuthGuard)
   async getById(
     @IdentifyUser() identifyUser: string,
@@ -85,15 +84,15 @@ export class PostsController {
     return foundPost;
   }
 
-  @Put(':id')
+  @Put('sa/blogs/:blogId/posts/:postId')
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
-    @Param('id') id: string,
+    @Param() params: PostParamsModel,
     @Body() postCreateModel: PostCreateModel,
   ) {
-    await this.postsService.update(id, postCreateModel);
+    await this.postsService.update(params, postCreateModel);
   }
 
   @Delete(':id')
