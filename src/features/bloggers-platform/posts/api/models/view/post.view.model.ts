@@ -1,5 +1,5 @@
 import { LikeStatus } from '../../../../likes/domain/like.entity';
-import { Post } from '../../../domain/post.sql.entity';
+import { PostDto } from '../../../domain/post.sql.entity';
 
 export class PostViewModel {
   id: string;
@@ -20,7 +20,7 @@ export class PostViewModel {
     }[];
   };
 
-  static mapToView(post: Post, currentStatus: LikeStatus): PostViewModel {
+  static mapToView(post: PostDto, currentStatus: LikeStatus): PostViewModel {
     const model = new PostViewModel();
     const newestLikes =
       post.addedAt && post.userId && post.login
