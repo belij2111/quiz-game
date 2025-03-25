@@ -6,7 +6,7 @@ import { DataSource } from 'typeorm';
 import { Blog } from '../../blogs/domain/blog.sql.entity';
 import { GetPostQueryParams } from '../api/models/input/create-post.input.model';
 import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
-import { Post } from '../domain/post.sql.entity';
+import { PostDto } from '../domain/post.sql.entity';
 
 @Injectable()
 export class PostsSqlQueryRepository {
@@ -29,9 +29,15 @@ export class PostsSqlQueryRepository {
                 LEFT JOIN "users" u ON l."userId" = u.id
                 LEFT JOIN "blogs" b ON p."blogId" = b.id
        GROUP BY p.id, l."userId", l."createdAt", b."name", u.login
-       ORDER BY l."createdAt" DESC
+       ORDER BY "${query.sortBy}" ${query.sortDirection}
+       LIMIT $3 OFFSET $4
       `,
-      [LikeStatus.Like, LikeStatus.Dislike],
+      [
+        LikeStatus.Like,
+        LikeStatus.Dislike,
+        query.pageSize,
+        query.calculateSkip(),
+      ],
     );
     const countQuery = await this.dataSource.query(
       `SELECT COUNT(*)
@@ -43,7 +49,7 @@ export class PostsSqlQueryRepository {
         this.getStatus(post.id, currentUserId),
       ),
     );
-    const items = foundPosts.map((post: Post, index: string | number) =>
+    const items = foundPosts.map((post: PostDto, index: string | number) =>
       PostViewModel.mapToView(post, currentStatuses[index]),
     );
     return PaginatedViewModel.mapToView({
@@ -127,9 +133,16 @@ export class PostsSqlQueryRepository {
                 LEFT JOIN "blogs" b ON p."blogId" = b.id
        WHERE p."blogId" = $3
        GROUP BY p.id, l."userId", l."createdAt", b."name", u.login
-       ORDER BY l."createdAt" DESC
+       ORDER BY "${query.sortBy}" ${query.sortDirection}
+       LIMIT $4 OFFSET $5
       `,
-      [LikeStatus.Like, LikeStatus.Dislike, blogId],
+      [
+        LikeStatus.Like,
+        LikeStatus.Dislike,
+        blogId,
+        query.pageSize,
+        query.calculateSkip(),
+      ],
     );
     const countQuery = await this.dataSource.query(
       `SELECT COUNT(*)
@@ -143,7 +156,7 @@ export class PostsSqlQueryRepository {
         this.getStatus(post.id, currentUserId),
       ),
     );
-    const items = foundPosts.map((post: Post, index: string | number) =>
+    const items = foundPosts.map((post: PostDto, index: string | number) =>
       PostViewModel.mapToView(post, currentStatuses[index]),
     );
     return PaginatedViewModel.mapToView({
