@@ -40,8 +40,8 @@ export class PostViewModel {
     model.blogName = post.blogName;
     model.createdAt = post.createdAt;
     model.extendedLikesInfo = {
-      likesCount: post.likesCount,
-      dislikesCount: post.dislikesCount,
+      likesCount: Number(post.likesCount),
+      dislikesCount: Number(post.dislikesCount),
       myStatus: currentStatus,
       newestLikes: newestLikes,
     };
