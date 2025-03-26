@@ -24,6 +24,7 @@ import { BlogViewModel } from '../../../src/features/bloggers-platform/blogs/api
 import { createLikeStatusModel } from '../../models/bloggers-platform/create-like-status.model';
 import { LikeStatus } from '../../../src/features/bloggers-platform/likes/domain/like.entity';
 import { LoginSuccessViewModel } from '../../../src/features/user-accounts/auth/api/models/view/login-success.view.model';
+import { getMockId } from '../../helpers/get-mock-id';
 
 describe('e2e-Posts', () => {
   let app: INestApplication;
@@ -111,7 +112,7 @@ describe('e2e-Posts', () => {
       await postsTestManager.getPostById(createdPost.id, HttpStatus.OK);
     });
     it(`shouldn't return post by ID if it does not exist : STATUS 404`, async () => {
-      const nonExistentId = '121212121212121212121212';
+      const nonExistentId = getMockId();
       await postsTestManager.getPostById(nonExistentId, HttpStatus.NOT_FOUND);
     });
   });
@@ -149,7 +150,7 @@ describe('e2e-Posts', () => {
     });
     it(`shouldn't update post by ID if it does not exist : STATUS 404`, async () => {
       const updatedPostModel = createValidPostModel(createdBlog.id, 555);
-      const nonExistentId = '121212121212121212121212';
+      const nonExistentId = getMockId();
       await postsTestManager.updatePost(
         nonExistentId,
         updatedPostModel,
@@ -173,7 +174,7 @@ describe('e2e-Posts', () => {
       );
     });
     it(`shouldn't update post by ID if it does not exist : STATUS 404`, async () => {
-      const nonExistentId = '121212121212121212121212';
+      const nonExistentId = getMockId();
       await postsTestManager.deleteById(nonExistentId, HttpStatus.NOT_FOUND);
     });
   });
@@ -223,7 +224,7 @@ describe('e2e-Posts', () => {
     it(`shouldn't create comment if the postId does not exist : STATUS 404`, async () => {
       const validCommentModel: CommentCreateModel = createValidCommentModel();
       const loginResult = await coreTestManager.loginUser();
-      const nonExistentId = '121212121212121212121212';
+      const nonExistentId = getMockId();
       await commentsTestManager.createComment(
         loginResult!.accessToken,
         nonExistentId,
@@ -262,7 +263,7 @@ describe('e2e-Posts', () => {
         createdPost.id,
         5,
       );
-      const nonExistentId = '121212121212121212121212';
+      const nonExistentId = getMockId();
       await commentsTestManager.getCommentsWithPaging(
         nonExistentId,
         HttpStatus.NOT_FOUND,
@@ -307,7 +308,7 @@ describe('e2e-Posts', () => {
     });
     it(`shouldn't update the like status if the postId does not exist : STATUS 404`, async () => {
       const updateLikeStatusModel = createLikeStatusModel(LikeStatus.Dislike);
-      const nonExistentId = '121212121212121212121212';
+      const nonExistentId = getMockId();
       await postsTestManager.updateLikeStatus(
         loginResult!.accessToken,
         nonExistentId,
