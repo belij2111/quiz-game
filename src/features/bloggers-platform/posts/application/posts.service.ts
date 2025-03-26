@@ -41,9 +41,12 @@ export class PostsService {
     return await this.postsSqlRepository.create(newPostDto);
   }
 
-  async delete(id: string): Promise<boolean> {
-    const foundPost = await this.postRepository.findByIdOrNotFoundFail(id);
-    return this.postRepository.delete(foundPost.id);
+  async delete(params: PostParamsModel): Promise<boolean> {
+    await this.blogsSqlRepository.findByIdOrNotFoundFail(params.blogId);
+    const foundPost = await this.postsSqlRepository.findByIdOrNotFoundFail(
+      params.postId,
+    );
+    return this.postsSqlRepository.delete(foundPost.id);
   }
 
   async update(

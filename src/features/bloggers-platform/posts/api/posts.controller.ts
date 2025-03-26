@@ -95,12 +95,12 @@ export class PostsController {
     await this.postsService.update(params, postCreateModel);
   }
 
-  @Delete(':id')
+  @Delete('sa/blogs/:blogId/posts/:postId')
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Param('id') id: string) {
-    await this.postsService.delete(id);
+  async delete(@Param() params: PostParamsModel) {
+    await this.postsService.delete(params);
   }
 
   @Post('/:postId/comments')

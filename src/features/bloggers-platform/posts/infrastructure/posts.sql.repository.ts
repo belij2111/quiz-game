@@ -47,6 +47,16 @@ export class PostsSqlRepository {
     return result.modifiedCount !== 0;
   }
 
+  async delete(id: string): Promise<boolean> {
+    const result = await this.dataSource.query(
+      `DELETE
+       FROM "posts"
+       WHERE "id" = $1`,
+      [id],
+    );
+    return result[1] === 1;
+  }
+
   async findByIdOrNotFoundFail(id: string): Promise<Post> {
     const foundPost = await this.findById(id);
     if (!foundPost) {
