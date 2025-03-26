@@ -59,6 +59,14 @@ export class BlogsController {
   ): Promise<PaginatedViewModel<BlogViewModel[]>> {
     return await this.blogsSqlQueryRepository.getAll(query);
   }
+  @Get('sa/blogs')
+  @UseGuards(BasicAuthGuard)
+  async getAllForAdmin(
+    @Query()
+    query: GetBlogsQueryParams,
+  ): Promise<PaginatedViewModel<BlogViewModel[]>> {
+    return await this.blogsSqlQueryRepository.getAll(query);
+  }
 
   @Get('blogs/:id')
   async getById(@Param('id') id: string): Promise<BlogViewModel> {
