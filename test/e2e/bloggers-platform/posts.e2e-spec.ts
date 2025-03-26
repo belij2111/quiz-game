@@ -117,13 +117,14 @@ describe('e2e-Posts', () => {
     });
   });
 
-  describe('PUT/posts/:id', () => {
+  describe('PUT/sa/blogs/:blogId/posts/:postId', () => {
     it(`should update post by ID : STATUS 204`, async () => {
       const validPostModel = createValidPostModel(createdBlog.id);
       const createdPost = await postsTestManager.createPost(validPostModel);
       const updatedPostModel = createValidPostModel(createdBlog.id, 555);
       await postsTestManager.updatePost(
         createdPost.id,
+        createdBlog.id,
         updatedPostModel,
         HttpStatus.NO_CONTENT,
       );
@@ -134,6 +135,7 @@ describe('e2e-Posts', () => {
       const invalidUpdatedPostModel = createInValidPostModel(createdBlog.id, 0);
       await postsTestManager.updatePost(
         createdPost.id,
+        createdBlog.id,
         invalidUpdatedPostModel,
         HttpStatus.BAD_REQUEST,
       );
@@ -144,6 +146,7 @@ describe('e2e-Posts', () => {
       const updatedPostModel = createValidPostModel(createdBlog.id, 555);
       await postsTestManager.updatePostIsNotAuthorized(
         createdPost.id,
+        createdBlog.id,
         updatedPostModel,
         HttpStatus.UNAUTHORIZED,
       );
@@ -153,6 +156,7 @@ describe('e2e-Posts', () => {
       const nonExistentId = getMockId();
       await postsTestManager.updatePost(
         nonExistentId,
+        createdBlog.id,
         updatedPostModel,
         HttpStatus.NOT_FOUND,
       );
