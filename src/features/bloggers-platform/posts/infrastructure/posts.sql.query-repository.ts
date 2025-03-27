@@ -173,12 +173,12 @@ export class PostsSqlQueryRepository {
   ): Promise<LikeStatus> {
     if (!userId || userId === true) return LikeStatus.None;
     const like = await this.dataSource.query(
-      `SELECT *
-       FROM "likesForPosts"
+      `SELECT lp."status"
+       FROM "likesForPosts" lp
        WHERE "postId" = $1
          AND "userId" = $2`,
       [postId, userId],
     );
-    return like.length !== 0 ? like[0].status : LikeStatus.None;
+    return like.length !== 0 ? like[0] : LikeStatus.None;
   }
 }
