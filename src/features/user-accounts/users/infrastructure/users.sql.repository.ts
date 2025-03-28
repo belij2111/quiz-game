@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '../domain/user.entity';
+import { User } from '../domain/user.sql.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
@@ -9,17 +9,18 @@ export class UsersSqlRepository {
 
   async create(newUser: User): Promise<number> {
     const result = await this.dataSource.query(
-      `INSERT INTO "users" ("login", "password", "email", "createdAt", "confirmationCode", "expirationDate",
+      `INSERT INTO "users" (id,"login", "password", "email", "createdAt", "confirmationCode", "expirationDate",
                             "isConfirmed")
-       values ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
+       values ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
       [
+        newUser.id,
         newUser.login,
         newUser.password,
         newUser.email,
         newUser.createdAt,
-        newUser.emailConfirmation.confirmationCode,
-        newUser.emailConfirmation.expirationDate,
-        newUser.emailConfirmation.isConfirmed,
+        newUser.confirmationCode,
+        newUser.expirationDate,
+        newUser.isConfirmed,
       ],
     );
     return result[0].id;

@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CryptoService } from '../../crypto/crypto.service';
 import { LoginInputModel } from '../api/models/input/login.input.model';
 import { LoginSuccessViewModel } from '../api/models/view/login-success.view.model';
-import { User } from '../../users/domain/user.entity';
+import { User } from '../../users/domain/user.sql.entity';
 import { UserCreateModel } from '../../users/api/models/input/create-user.input.model';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 import { MailService } from '../../../notifications/mail.service';
@@ -138,20 +138,19 @@ export class AuthService {
     );
     const expirationTime = this.userAccountConfig.CONFIRMATION_CODE_EXPIRATION;
     const newUser: User = {
+      id: this.uuidProvider.generate(),
       login: userCreateModel.login,
       password: passHash,
       email: userCreateModel.email,
       createdAt: new Date(),
-      emailConfirmation: {
-        confirmationCode: this.uuidProvider.generate(),
-        expirationDate: new Date(new Date().getTime() + expirationTime),
-        isConfirmed: false,
-      },
+      confirmationCode: this.uuidProvider.generate(),
+      expirationDate: new Date(new Date().getTime() + expirationTime),
+      isConfirmed: false,
     };
     await this.usersSqlRepository.create(newUser);
     this.mailService.sendEmail(
       newUser.email,
-      newUser.emailConfirmation.confirmationCode,
+      newUser.confirmationCode,
       'registration',
     );
   }

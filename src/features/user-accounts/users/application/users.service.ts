@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersRepository } from '../infrastructure/users.repository';
 import { UserCreateModel } from '../api/models/input/create-user.input.model';
 import { CryptoService } from '../../crypto/crypto.service';
-import { User } from '../domain/user.entity';
+import { User } from '../domain/user.sql.entity';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 import { UserAccountConfig } from '../../config/user-account.config';
 import { UsersSqlRepository } from '../infrastructure/users.sql.repository';
@@ -37,15 +37,14 @@ export class UsersService {
     );
     const expirationTime = this.userAccountConfig.CONFIRMATION_CODE_EXPIRATION;
     const newUser: User = {
+      id: this.uuidProvider.generate(),
       login: userCreateModel.login,
       password: passHash,
       email: userCreateModel.email,
       createdAt: new Date(),
-      emailConfirmation: {
-        confirmationCode: this.uuidProvider.generate(),
-        expirationDate: new Date(new Date().getTime() + expirationTime),
-        isConfirmed: true,
-      },
+      confirmationCode: this.uuidProvider.generate(),
+      expirationDate: new Date(new Date().getTime() + expirationTime),
+      isConfirmed: true,
     };
     return this.usersSqlRepository.create(newUser);
   }

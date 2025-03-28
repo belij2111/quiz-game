@@ -1,4 +1,4 @@
-import { UserDocument } from '../../../domain/user.entity';
+import { User } from '../../../domain/user.sql.entity';
 
 export class UserViewModel {
   id: string;
@@ -6,9 +6,9 @@ export class UserViewModel {
   email: string;
   createdAt: Date;
 
-  static mapToView(user: UserDocument): UserViewModel {
+  static mapToView(user: User): UserViewModel {
     const model = new UserViewModel();
-    model.id = user.id.toString();
+    model.id = user.id;
     model.login = user.login;
     model.email = user.email;
     model.createdAt = user.createdAt;
