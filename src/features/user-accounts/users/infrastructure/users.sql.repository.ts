@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from '../domain/user.sql.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
@@ -9,7 +9,7 @@ export class UsersSqlRepository {
 
   async create(newUser: User): Promise<number> {
     const result = await this.dataSource.query(
-      `INSERT INTO "users" (id,"login", "password", "email", "createdAt", "confirmationCode", "expirationDate",
+      `INSERT INTO "users" (id, "login", "password", "email", "createdAt", "confirmationCode", "expirationDate",
                             "isConfirmed")
        values ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
       [
@@ -92,5 +92,24 @@ export class UsersSqlRepository {
       [newPasswordHash, id],
     );
     return result.rowCount !== 0;
+  }
+
+  async findById(id: string): Promise<User | null> {
+    const result = await this.dataSource.query(
+      `SELECT *
+       FROM "users" u
+       WHERE u.id = $1
+      `,
+      [id],
+    );
+    return result[0];
+  }
+
+  async findByIdOrNotFoundFail(id: string) {
+    const foundUser = await this.findById(id);
+    if (!foundUser) {
+      throw new UnauthorizedException(`User with id ${id} not found`);
+    }
+    return foundUser;
   }
 }
