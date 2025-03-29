@@ -15,7 +15,7 @@ export class TestingRepository {
         public."blogs",
         public."posts",
         public."likesForPosts",
-        public."comments"
+        public."comments",
         public."likesForComments"
          RESTART IDENTITY`,
       ),
