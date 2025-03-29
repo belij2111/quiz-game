@@ -63,13 +63,13 @@ export class CommentsService {
 
   async delete(userId: string, commentId: string) {
     const foundComment =
-      await this.commentsRepository.findByIdOrNotFoundFail(commentId);
-    if (foundComment.commentatorInfo.userId !== userId) {
+      await this.commentsSqlRepository.findByIdOrNotFoundFail(commentId);
+    if (foundComment.userId !== userId) {
       throw new ForbiddenException([
         { field: 'user', message: 'The comment is not your own' },
       ]);
     }
-    return await this.commentsRepository.delete(foundComment.id);
+    return await this.commentsSqlRepository.delete(foundComment.id);
   }
 
   async updateLikeStatus(

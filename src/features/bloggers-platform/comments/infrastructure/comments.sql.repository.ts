@@ -56,4 +56,14 @@ export class CommentsSqlRepository {
     );
     return result.rowCount !== 0;
   }
+
+  async delete(commentId: string): Promise<boolean | null> {
+    const result = await this.dataSource.query(
+      `DELETE
+       FROM "comments" c
+       WHERE c.id = $1`,
+      [commentId],
+    );
+    return result[1] === 1;
+  }
 }
