@@ -69,6 +69,6 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
       useClass: ThrottlerGuard,
     },
   ],
-  exports: [UsersRepository],
+  exports: [UsersRepository, UsersSqlRepository],
 })
 export class UserAccountsModule {}

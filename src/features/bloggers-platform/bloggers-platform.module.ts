@@ -24,6 +24,8 @@ import { BlogsSqlQueryRepository } from './blogs/infrastructure/blogs.sql.query-
 import { PostsSqlRepository } from './posts/infrastructure/posts.sql.repository';
 import { PostsSqlQueryRepository } from './posts/infrastructure/posts.sql.query-repository';
 import { UuidProvider } from '../../core/helpers/uuid.provider';
+import { CommentsSqlRepository } from './comments/infrastructure/comments.sql.repository';
+import { CommentsSqlQueryRepository } from './comments/infrastructure/comments.sql.query-repository';
 
 @Module({
   imports: [
@@ -47,7 +49,9 @@ import { UuidProvider } from '../../core/helpers/uuid.provider';
     PostsSqlQueryRepository,
     CommentsService,
     CommentsQueryRepository,
+    CommentsSqlQueryRepository,
     CommentsRepository,
+    CommentsSqlRepository,
     LikesRepository,
     BlogIdIsExistConstraint,
     UuidProvider,

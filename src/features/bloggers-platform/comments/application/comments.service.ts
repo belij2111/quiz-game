@@ -1,44 +1,43 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CommentCreateModel } from '../api/models/input/create-comment.input.model';
-import { PostsRepository } from '../../posts/infrastructure/posts.repository';
-import { UsersRepository } from '../../../user-accounts/users/infrastructure/users.repository';
-import { Comment } from '../domain/comment.entity';
+import { Comment } from '../domain/comment.sql.entity';
 import { CommentsRepository } from '../infrastructure/comments.repository';
 import { LikesRepository } from '../../likes/infrastructure/likes.repository';
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { Like, LikeStatus } from '../../likes/domain/like.entity';
+import { UsersSqlRepository } from '../../../user-accounts/users/infrastructure/users.sql.repository';
+import { PostsSqlRepository } from '../../posts/infrastructure/posts.sql.repository';
+import { CommentsSqlRepository } from '../infrastructure/comments.sql.repository';
+import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 
 @Injectable()
 export class CommentsService {
   constructor(
-    private readonly usersRepository: UsersRepository,
-    private readonly postsRepository: PostsRepository,
+    private readonly usersSqlRepository: UsersSqlRepository,
+    private readonly postsSqlRepository: PostsSqlRepository,
     private readonly commentsRepository: CommentsRepository,
+    private readonly commentsSqlRepository: CommentsSqlRepository,
     private readonly likesRepository: LikesRepository,
+    private readonly uuidProvider: UuidProvider,
   ) {}
 
   async create(
     userId: string,
     postId: string,
     commentCreateModel: CommentCreateModel,
-  ): Promise<{ id: string }> {
-    const fondUser = await this.usersRepository.findByIdOrNotFoundFail(userId);
-    const fondPost = await this.postsRepository.findByIdOrNotFoundFail(postId);
+  ): Promise<string> {
+    const fondUser =
+      await this.usersSqlRepository.findByIdOrNotFoundFail(userId);
+    const fondPost =
+      await this.postsSqlRepository.findByIdOrNotFoundFail(postId);
     const createCommentDto: Comment = {
+      id: this.uuidProvider.generate(),
       content: commentCreateModel.content,
-      commentatorInfo: {
-        userId: fondUser.id,
-        userLogin: fondUser.login,
-      },
       createdAt: new Date(),
       postId: fondPost.id,
-      likesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        myStatus: 'None',
-      },
+      userId: fondUser.id,
     };
-    return await this.commentsRepository.create(createCommentDto);
+    return await this.commentsSqlRepository.create(createCommentDto);
   }
 
   async update(

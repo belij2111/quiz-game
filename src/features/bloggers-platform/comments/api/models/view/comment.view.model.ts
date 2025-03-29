@@ -1,5 +1,5 @@
-import { CommentDocument } from '../../../domain/comment.entity';
 import { LikeStatus } from '../../../../likes/domain/like.entity';
+import { CommentDto } from '../../../domain/comment.sql.entity';
 
 export class CommentViewModel {
   id: string;
@@ -16,17 +16,20 @@ export class CommentViewModel {
   };
 
   static mapToView(
-    comment: CommentDocument,
+    comment: CommentDto,
     currentStatus: LikeStatus,
   ): CommentViewModel {
     const model = new CommentViewModel();
     model.id = comment.id;
     model.content = comment.content;
-    model.commentatorInfo = comment.commentatorInfo;
+    model.commentatorInfo = {
+      userId: comment.userId,
+      userLogin: comment.userLogin,
+    };
     model.createdAt = comment.createdAt;
     model.likesInfo = {
-      likesCount: comment.likesInfo.likesCount,
-      dislikesCount: comment.likesInfo.dislikesCount,
+      likesCount: Number(comment.likesCount),
+      dislikesCount: Number(comment.dislikesCount),
       myStatus: currentStatus,
     };
 

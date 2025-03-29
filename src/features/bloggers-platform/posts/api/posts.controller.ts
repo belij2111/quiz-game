@@ -35,6 +35,7 @@ import { IdentifyUser } from '../../../../core/decorators/param/identify-user.pa
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { PostsSqlQueryRepository } from '../infrastructure/posts.sql.query-repository';
 import { PostParamsModel } from './models/input/post-params.model';
+import { CommentsSqlQueryRepository } from '../../comments/infrastructure/comments.sql.query-repository';
 
 @Controller()
 export class PostsController {
@@ -43,6 +44,7 @@ export class PostsController {
     private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
     private readonly commentsService: CommentsService,
     private readonly commentsQueryRepository: CommentsQueryRepository,
+    private readonly commentsSqlQueryRepository: CommentsSqlQueryRepository,
   ) {}
 
   @Post('posts')
@@ -103,7 +105,7 @@ export class PostsController {
     await this.postsService.delete(params);
   }
 
-  @Post('/:postId/comments')
+  @Post('posts/:postId/comments')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   async createCommentByPostId(
@@ -111,14 +113,14 @@ export class PostsController {
     @Param('postId') postId: string,
     @Body() commentCreateModel: CommentCreateModel,
   ) {
-    const createdUserId = await this.commentsService.create(
+    const createdCommentId = await this.commentsService.create(
       currentUserId,
       postId,
       commentCreateModel,
     );
-    return await this.commentsQueryRepository.getCommentById(
+    return await this.commentsSqlQueryRepository.getCommentById(
       currentUserId,
-      createdUserId.id,
+      createdCommentId,
     );
   }
 
