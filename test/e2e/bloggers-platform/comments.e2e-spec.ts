@@ -162,7 +162,7 @@ describe('e2e-Comments', () => {
       );
     });
     it(`shouldn't delete comment by commentId if it does not exist : STATUS 404`, async () => {
-      const nonExistentId = '121212121212121212121212';
+      const nonExistentId = getMockId();
       await commentsTestManager.delete(
         loginResult!.accessToken,
         nonExistentId,
