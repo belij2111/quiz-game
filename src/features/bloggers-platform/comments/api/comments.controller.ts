@@ -5,12 +5,12 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   Put,
   UseGuards,
 } from '@nestjs/common';
 import { CommentViewModel } from './models/view/comment.view.model';
-import { CommentsQueryRepository } from '../infrastructure/comments.query-repository';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { CommentsService } from '../application/comments.service';
@@ -19,11 +19,12 @@ import { CommentCreateModel } from './models/input/create-comment.input.model';
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
+import { CommentsSqlQueryRepository } from '../infrastructure/comments.sql.query-repository';
 
 @Controller('/comments')
 export class CommentsController {
   constructor(
-    private readonly commentsQueryRepository: CommentsQueryRepository,
+    private readonly commentsSqlQueryRepository: CommentsSqlQueryRepository,
     private readonly commentsService: CommentsService,
   ) {}
 
@@ -33,7 +34,14 @@ export class CommentsController {
     @IdentifyUser() identifyUser: string,
     @Param('id') id: string,
   ): Promise<CommentViewModel | null> {
-    return await this.commentsQueryRepository.getCommentById(identifyUser, id);
+    const foundComment = await this.commentsSqlQueryRepository.getCommentById(
+      identifyUser,
+      id,
+    );
+    if (!foundComment) {
+      throw new NotFoundException(`Comment with id ${id} not found`);
+    }
+    return foundComment;
   }
 
   @Put('/:commentId')
