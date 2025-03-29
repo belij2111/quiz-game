@@ -46,8 +46,8 @@ export class CommentsService {
     commentCreateModel: CommentCreateModel,
   ): Promise<boolean | null> {
     const foundComment =
-      await this.commentsRepository.findByIdOrNotFoundFail(commentId);
-    if (foundComment.commentatorInfo.userId !== userId) {
+      await this.commentsSqlRepository.findByIdOrNotFoundFail(commentId);
+    if (foundComment.userId !== userId) {
       throw new ForbiddenException([
         { field: 'user', message: 'The comment is not your own' },
       ]);
@@ -55,7 +55,10 @@ export class CommentsService {
     const updateCommentDto: CommentCreateModel = {
       content: commentCreateModel.content,
     };
-    return await this.commentsRepository.update(foundComment, updateCommentDto);
+    return await this.commentsSqlRepository.update(
+      foundComment,
+      updateCommentDto,
+    );
   }
 
   async delete(userId: string, commentId: string) {
