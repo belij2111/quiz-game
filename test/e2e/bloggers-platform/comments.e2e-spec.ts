@@ -22,6 +22,7 @@ import { LoginSuccessViewModel } from '../../../src/features/user-accounts/auth/
 import { delay } from '../../helpers/delay';
 import { createLikeStatusModel } from '../../models/bloggers-platform/create-like-status.model';
 import { LikeStatus } from '../../../src/features/bloggers-platform/likes/domain/like.entity';
+import { getMockId } from '../../helpers/get-mock-id';
 
 describe('e2e-Comments', () => {
   let app: INestApplication;
@@ -77,7 +78,7 @@ describe('e2e-Comments', () => {
       );
     });
     it(`shouldn't return comment by ID if it does not exist : STATUS 404`, async () => {
-      const nonExistentId = '121212121212121212121212';
+      const nonExistentId = getMockId();
       await commentsTestManager.getCommentById(
         nonExistentId,
         HttpStatus.NOT_FOUND,
