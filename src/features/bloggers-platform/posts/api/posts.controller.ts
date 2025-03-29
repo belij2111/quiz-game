@@ -28,7 +28,6 @@ import {
 import { CommentsService } from '../../comments/application/comments.service';
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param.decorator';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
-import { CommentsQueryRepository } from '../../comments/infrastructure/comments.query-repository';
 import { CommentViewModel } from '../../comments/api/models/view/comment.view.model';
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
@@ -43,7 +42,6 @@ export class PostsController {
     private readonly postsService: PostsService,
     private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
     private readonly commentsService: CommentsService,
-    private readonly commentsQueryRepository: CommentsQueryRepository,
     private readonly commentsSqlQueryRepository: CommentsSqlQueryRepository,
   ) {}
 
@@ -124,14 +122,14 @@ export class PostsController {
     );
   }
 
-  @Get('/:postId/comments')
+  @Get('posts/:postId/comments')
   @UseGuards(JwtOptionalAuthGuard)
   async getCommentsByPostId(
     @IdentifyUser() identifyUser: string,
     @Param('postId') postId: string,
     @Query() query: GetCommentQueryParams,
   ): Promise<PaginatedViewModel<CommentViewModel[]>> {
-    return await this.commentsQueryRepository.getCommentsByPostId(
+    return await this.commentsSqlQueryRepository.getCommentsByPostId(
       identifyUser,
       postId,
       query,

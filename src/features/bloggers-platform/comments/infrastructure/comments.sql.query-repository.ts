@@ -1,8 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommentViewModel } from '../api/models/view/comment.view.model';
 import { LikeStatus } from '../../likes/domain/like.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { GetCommentQueryParams } from '../api/models/input/create-comment.input.model';
+import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
+import { Post } from '../../posts/domain/post.sql.entity';
+import { CommentDto } from '../domain/comment.sql.entity';
 
 @Injectable()
 export class CommentsSqlQueryRepository {
@@ -30,6 +34,75 @@ export class CommentsSqlQueryRepository {
       currentUserId,
     );
     return CommentViewModel.mapToView(foundComment[0], currentStatus);
+  }
+
+  async getCommentsByPostId(
+    currentUserId: string,
+    postId: string,
+    query: GetCommentQueryParams,
+  ): Promise<PaginatedViewModel<CommentViewModel[]>> {
+    const foundPost = await this.findPostByIdOrNotFoundFail(postId);
+    const foundComments = await this.dataSource.query(
+      `SELECT c.*,
+              u.login                                    AS "userLogin",
+              COUNT(CASE WHEN lc.status = $1 THEN 1 END) AS "likesCount",
+              COUNT(CASE WHEN lc.status = $2 THEN 1 END) AS "dislikesCount"
+       FROM "comments" c
+                LEFT JOIN "likesForComments" lc ON c.id = lc."commentId"
+                LEFT JOIN "users" u ON c."userId" = u.id
+       WHERE c."postId" = $3
+       GROUP BY c.id, u.login
+       ORDER BY "${query.sortBy}" ${query.sortDirection}
+       LIMIT $4 OFFSET $5
+      `,
+      [
+        LikeStatus.Like,
+        LikeStatus.Dislike,
+        foundPost.id,
+        query.pageSize,
+        query.calculateSkip(),
+      ],
+    );
+    const countQuery = await this.dataSource.query(
+      `SELECT COUNT(*)
+       FROM "comments" c
+       WHERE c."postId" = $1`,
+      [foundPost.id],
+    );
+    const totalCount = parseInt(countQuery[0].count, 10);
+    const currentStatuses = await Promise.all(
+      foundComments.map((comment: { id: string }) =>
+        this.getStatus(comment.id, currentUserId),
+      ),
+    );
+    const items = foundComments.map(
+      (comment: CommentDto, index: string | number) =>
+        CommentViewModel.mapToView(comment, currentStatuses[index]),
+    );
+    return PaginatedViewModel.mapToView({
+      pageNumber: query.pageNumber,
+      pageSize: query.pageSize,
+      totalCount,
+      items,
+    });
+  }
+
+  private async findPostByIdOrNotFoundFail(postId: string): Promise<Post> {
+    const foundPost = await this.findPostById(postId);
+    if (!foundPost) {
+      throw new NotFoundException(`Post with id ${postId} not found`);
+    }
+    return foundPost;
+  }
+
+  private async findPostById(postId: string): Promise<Post | null> {
+    const result = await this.dataSource.query(
+      `SELECT p.*
+       FROM "posts" p
+       WHERE p.id = $1`,
+      [postId],
+    );
+    return result[0];
   }
 
   private async getStatus(
