@@ -22,9 +22,9 @@ import { PostViewModel } from '../../../src/features/bloggers-platform/posts/api
 import { delay } from '../../helpers/delay';
 import { BlogViewModel } from '../../../src/features/bloggers-platform/blogs/api/models/view/blog.view.model';
 import { createLikeStatusModel } from '../../models/bloggers-platform/create-like-status.model';
-import { LikeStatus } from '../../../src/features/bloggers-platform/likes/domain/like.entity';
 import { LoginSuccessViewModel } from '../../../src/features/user-accounts/auth/api/models/view/login-success.view.model';
 import { getMockId } from '../../helpers/get-mock-id';
+import { LikeStatus } from '../../../src/features/bloggers-platform/likes/api/models/enums/like-status-enum';
 
 describe('e2e-Posts', () => {
   let app: INestApplication;

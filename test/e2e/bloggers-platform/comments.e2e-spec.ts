@@ -21,8 +21,8 @@ import { CommentViewModel } from '../../../src/features/bloggers-platform/commen
 import { LoginSuccessViewModel } from '../../../src/features/user-accounts/auth/api/models/view/login-success.view.model';
 import { delay } from '../../helpers/delay';
 import { createLikeStatusModel } from '../../models/bloggers-platform/create-like-status.model';
-import { LikeStatus } from '../../../src/features/bloggers-platform/likes/domain/like.entity';
 import { getMockId } from '../../helpers/get-mock-id';
+import { LikeStatus } from '../../../src/features/bloggers-platform/likes/api/models/enums/like-status-enum';
 
 describe('e2e-Comments', () => {
   let app: INestApplication;

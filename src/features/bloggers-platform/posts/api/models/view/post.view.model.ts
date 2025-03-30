@@ -1,5 +1,5 @@
-import { LikeStatus } from '../../../../likes/domain/like.entity';
 import { PostDto } from '../../../domain/post.sql.entity';
+import { LikeStatus } from '../../../../likes/api/models/enums/like-status-enum';
 
 export class PostViewModel {
   id: string;

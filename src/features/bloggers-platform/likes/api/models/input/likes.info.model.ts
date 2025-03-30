@@ -1,4 +1,4 @@
-import { LikeStatus } from '../../../domain/like.entity';
+import { LikeStatus } from '../enums/like-status-enum';
 
 export class LikesInfoModel {
   currentStatus: LikeStatus;

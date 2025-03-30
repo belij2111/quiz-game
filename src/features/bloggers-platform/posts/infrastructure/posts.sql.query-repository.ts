@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PostViewModel } from '../api/models/view/post.view.model';
-import { LikeStatus } from '../../likes/domain/like.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { Blog } from '../../blogs/domain/blog.sql.entity';
 import { GetPostQueryParams } from '../api/models/input/create-post.input.model';
 import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
 import { PostDto } from '../domain/post.sql.entity';
+import { LikeStatus } from '../../likes/api/models/enums/like-status-enum';
 
 @Injectable()
 export class PostsSqlQueryRepository {

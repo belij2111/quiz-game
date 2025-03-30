@@ -4,7 +4,7 @@ import { PostCreateModel } from '../api/models/input/create-post.input.model';
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { LikesRepository } from '../../likes/infrastructure/likes.repository';
 import { UsersRepository } from '../../../user-accounts/users/infrastructure/users.repository';
-import { Like, LikeStatus } from '../../likes/domain/like.entity';
+import { Like } from '../../likes/domain/like.entity';
 import { LikesInfoModel } from '../../likes/api/models/input/likes.info.model';
 import { User } from '../../../user-accounts/users/domain/user.entity';
 import { LikeDetailsModel } from '../../likes/api/models/input/like.details.model';
@@ -14,6 +14,7 @@ import { BlogsSqlRepository } from '../../blogs/infrastructure/blogs.sql.reposit
 import { Post } from '../domain/post.sql.entity';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 import { PostParamsModel } from '../api/models/input/post-params.model';
+import { LikeStatus } from '../../likes/api/models/enums/like-status-enum';
 
 @Injectable()
 export class PostsService {

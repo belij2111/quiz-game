@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommentViewModel } from '../api/models/view/comment.view.model';
-import { LikeStatus } from '../../likes/domain/like.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { GetCommentQueryParams } from '../api/models/input/create-comment.input.model';
 import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
 import { Post } from '../../posts/domain/post.sql.entity';
 import { CommentDto } from '../domain/comment.sql.entity';
+import { LikeStatus } from '../../likes/api/models/enums/like-status-enum';
 
 @Injectable()
 export class CommentsSqlQueryRepository {

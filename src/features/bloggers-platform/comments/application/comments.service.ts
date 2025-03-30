@@ -4,11 +4,12 @@ import { Comment } from '../domain/comment.sql.entity';
 import { CommentsRepository } from '../infrastructure/comments.repository';
 import { LikesRepository } from '../../likes/infrastructure/likes.repository';
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
-import { Like, LikeStatus } from '../../likes/domain/like.entity';
+import { Like } from '../../likes/domain/like.entity';
 import { UsersSqlRepository } from '../../../user-accounts/users/infrastructure/users.sql.repository';
 import { PostsSqlRepository } from '../../posts/infrastructure/posts.sql.repository';
 import { CommentsSqlRepository } from '../infrastructure/comments.sql.repository';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
+import { LikeStatus } from '../../likes/api/models/enums/like-status-enum';
 
 @Injectable()
 export class CommentsService {

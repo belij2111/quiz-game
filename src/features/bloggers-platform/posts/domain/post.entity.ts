@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
-import { LikeStatus } from '../../likes/domain/like.entity';
+
+import { LikeStatus } from '../../likes/api/models/enums/like-status-enum';
 
 @Schema({ _id: false })
 class NewestLikes {
