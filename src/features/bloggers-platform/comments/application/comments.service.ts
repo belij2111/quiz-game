@@ -82,6 +82,7 @@ export class CommentsService {
     );
     if (foundLike) {
       await this.likesForCommentSqlRepository.update(foundLike, likeInputModel);
+      return;
     }
     const likeDto: LikeForComment = {
       id: this.uuidProvider.generate(),
