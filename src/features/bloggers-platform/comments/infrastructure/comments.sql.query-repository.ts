@@ -117,6 +117,6 @@ export class CommentsSqlQueryRepository {
          AND "userId" = $2`,
       [commentId, userId],
     );
-    return like.length !== 0 ? like[0] : LikeStatus.None;
+    return like.length !== 0 ? like[0].status : LikeStatus.None;
   }
 }
