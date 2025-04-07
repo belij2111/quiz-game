@@ -18,20 +18,26 @@ export class PostsSqlQueryRepository {
   ): Promise<PaginatedViewModel<PostViewModel[]>> {
     const foundPosts = await this.dataSource.query(
       `SELECT p.*,
-              b."name"                                  AS "blogName",
-              COUNT(CASE WHEN l.status = $1 THEN 1 END) AS "likesCount",
-              COUNT(CASE WHEN l.status = $2 THEN 1 END) AS "dislikesCount",
-              l."userId"                                AS "userId",
-              l."createdAt"                             AS "addedAt",
-              u.login
+              b."name"                                   AS "blogName",
+              COUNT(CASE WHEN lp.status = $1 THEN 1 END) AS "likesCount",
+              COUNT(CASE WHEN lp.status = $2 THEN 1 END) AS "dislikesCount",
+              json_agg(
+              json_build_object(
+                      'addedAt', lp."createdAt",
+                      'userId', lp."userId",
+                      'login', u.login
+              )
+              ORDER BY lp."createdAt" DESC
+                      ) FILTER (WHERE lp.status = $1)    AS "newestLikes"
        FROM "posts" p
-                LEFT JOIN "likesForPosts" l ON p.id = l."postId"
-                LEFT JOIN "users" u ON l."userId" = u.id
+                LEFT JOIN "likesForPosts" lp ON p.id = lp."postId"
+                LEFT JOIN "users" u ON lp."userId" = u.id
                 LEFT JOIN "blogs" b ON p."blogId" = b.id
-       GROUP BY p.id, l."userId", l."createdAt", b."name", u.login
+       GROUP BY p.id, b."name"
        ORDER BY "${query.sortBy}" ${query.sortDirection}
        LIMIT $3 OFFSET $4
       `,
+
       [
         LikeStatus.Like,
         LikeStatus.Dislike,
@@ -66,19 +72,23 @@ export class PostsSqlQueryRepository {
   ): Promise<PostViewModel | null> {
     const foundPost = await this.dataSource.query(
       `SELECT p.*,
-              b."name"                                  AS "blogName",
-              COUNT(CASE WHEN l.status = $1 THEN 1 END) AS "likesCount",
-              COUNT(CASE WHEN l.status = $2 THEN 1 END) AS "dislikesCount",
-              l."userId"                                AS "userId",
-              l."createdAt"                             AS "addedAt",
-              u.login
+              b."name"                                   AS "blogName",
+              COUNT(CASE WHEN lp.status = $1 THEN 1 END) AS "likesCount",
+              COUNT(CASE WHEN lp.status = $2 THEN 1 END) AS "dislikesCount",
+              json_agg(
+              json_build_object(
+                      'addedAt', lp."createdAt",
+                      'userId', lp."userId",
+                      'login', u.login
+              )
+              ORDER BY lp."createdAt" DESC
+                      ) FILTER (WHERE lp.status = $1)    AS "newestLikes"
        FROM "posts" p
-                LEFT JOIN "likesForPosts" l ON p.id = l."postId"
-                LEFT JOIN "users" u ON l."userId" = u.id
+                LEFT JOIN "likesForPosts" lp ON p.id = lp."postId"
+                LEFT JOIN "users" u ON lp."userId" = u.id
                 LEFT JOIN "blogs" b ON p."blogId" = b.id
        WHERE p.id = $3
-       GROUP BY p.id, l."userId", l."createdAt", b."name", u.login
-       ORDER BY l."createdAt" DESC
+       GROUP BY p.id, b."name"
       `,
       [LikeStatus.Like, LikeStatus.Dislike, id],
     );
@@ -121,21 +131,27 @@ export class PostsSqlQueryRepository {
   ): Promise<PaginatedViewModel<PostViewModel[]>> {
     const foundPosts = await this.dataSource.query(
       `SELECT p.*,
-              b."name"                                  AS "blogName",
-              COUNT(CASE WHEN l.status = $1 THEN 1 END) AS "likesCount",
-              COUNT(CASE WHEN l.status = $2 THEN 1 END) AS "dislikesCount",
-              l."userId"                                AS "userId",
-              l."createdAt"                             AS "addedAt",
-              u.login
+              b."name"                                   AS "blogName",
+              COUNT(CASE WHEN lp.status = $1 THEN 1 END) AS "likesCount",
+              COUNT(CASE WHEN lp.status = $2 THEN 1 END) AS "dislikesCount",
+              json_agg(
+              json_build_object(
+                      'addedAt', lp."createdAt",
+                      'userId', lp."userId",
+                      'login', u.login
+              )
+              ORDER BY lp."createdAt" DESC
+                      ) FILTER (WHERE lp.status = $1)    AS "newestLikes"
        FROM "posts" p
-                LEFT JOIN "likesForPosts" l ON p.id = l."postId"
-                LEFT JOIN "users" u ON l."userId" = u.id
+                LEFT JOIN "likesForPosts" lp ON p.id = lp."postId"
+                LEFT JOIN "users" u ON lp."userId" = u.id
                 LEFT JOIN "blogs" b ON p."blogId" = b.id
        WHERE p."blogId" = $3
-       GROUP BY p.id, l."userId", l."createdAt", b."name", u.login
+       GROUP BY p.id, b."name"
        ORDER BY "${query.sortBy}" ${query.sortDirection}
        LIMIT $4 OFFSET $5
       `,
+
       [
         LikeStatus.Like,
         LikeStatus.Dislike,

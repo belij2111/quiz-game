@@ -27,6 +27,7 @@ import { UuidProvider } from '../../core/helpers/uuid.provider';
 import { CommentsSqlRepository } from './comments/infrastructure/comments.sql.repository';
 import { CommentsSqlQueryRepository } from './comments/infrastructure/comments.sql.query-repository';
 import { LikesForCommentSqlRepository } from './likes/infrastructure/likes-for-comment.sql.repository';
+import { LikesForPostSqlRepository } from './likes/infrastructure/likes-for-post.sql.repository';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { LikesForCommentSqlRepository } from './likes/infrastructure/likes-for-c
     CommentsSqlRepository,
     LikesRepository,
     LikesForCommentSqlRepository,
+    LikesForPostSqlRepository,
     BlogIdIsExistConstraint,
     UuidProvider,
   ],
