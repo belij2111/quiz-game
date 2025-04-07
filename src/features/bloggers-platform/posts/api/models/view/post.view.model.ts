@@ -23,14 +23,8 @@ export class PostViewModel {
   static mapToView(post: PostDto, currentStatus: LikeStatus): PostViewModel {
     const model = new PostViewModel();
     const newestLikes =
-      post.addedAt && post.userId && post.login
-        ? [
-            {
-              addedAt: post.addedAt,
-              userId: post.userId,
-              login: post.login,
-            },
-          ]
+      Array.isArray(post.newestLikes) && post.newestLikes.length > 0
+        ? post.newestLikes.slice(0, 3)
         : [];
     model.id = post.id;
     model.title = post.title;
