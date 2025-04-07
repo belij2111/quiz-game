@@ -136,7 +136,7 @@ export class PostsController {
     );
   }
 
-  @Put('/:postId/like-status')
+  @Put('posts/:postId/like-status')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
