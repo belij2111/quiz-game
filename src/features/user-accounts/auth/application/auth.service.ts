@@ -17,7 +17,7 @@ import { RegistrationEmailResendingModel } from '../api/models/input/registratio
 import { PasswordRecoveryInputModel } from '../api/models/input/password-recovery-input.model';
 import { NewPasswordRecoveryInputModel } from '../api/models/input/new-password-recovery-input.model';
 import { randomUUID } from 'node:crypto';
-import { SecurityDevices } from '../../security-devices/domain/security-devices.entity';
+import { SecurityDevices } from '../../security-devices/domain/security-devices.sql.entity';
 import { UserAccountConfig } from '../../config/user-account.config';
 import { UsersSqlRepository } from '../../users/infrastructure/users.sql.repository';
 import { SecurityDevicesSqlRepository } from '../../security-devices/infrastructure/security-devices.sql.repository';
@@ -80,8 +80,8 @@ export class AuthService {
       deviceId: decodePayload.deviceId,
       ip: ip,
       deviceName: deviceName,
-      iatDate: new Date(decodePayload.iat! * 1000).toISOString(),
-      expDate: new Date(decodePayload.exp! * 1000).toISOString(),
+      iatDate: new Date(decodePayload.iat! * 1000),
+      expDate: new Date(decodePayload.exp! * 1000),
     };
     await this.securityDevicesSqlRepository.create(deviceSession);
     return {

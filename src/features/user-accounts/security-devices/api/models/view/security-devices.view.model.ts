@@ -1,12 +1,12 @@
-import { SecurityDevicesDocument } from '../../../domain/security-devices.entity';
+import { SecurityDevices } from '../../../domain/security-devices.sql.entity';
 
 export class SecurityDevicesViewModel {
   ip: string;
   title: string;
-  lastActiveDate: string;
+  lastActiveDate: Date;
   deviceId: string;
 
-  static mapToView(devices: SecurityDevicesDocument): SecurityDevicesViewModel {
+  static mapToView(devices: SecurityDevices): SecurityDevicesViewModel {
     const model = new SecurityDevicesViewModel();
     model.ip = devices.ip;
     model.title = devices.deviceName;

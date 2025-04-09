@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SecurityDevices } from '../domain/security-devices.entity';
+import { SecurityDevices } from '../domain/security-devices.sql.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
