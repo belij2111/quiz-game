@@ -1,12 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  IsBoolean,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsNumber, IsString } from 'class-validator';
 import { configValidationUtility } from '../setup/config-validation.utility';
 
 export enum Environments {
@@ -20,12 +14,6 @@ export enum Environments {
 export class CoreConfig {
   @IsNumber({}, { message: 'Set Env variable PORT, example: 3000' })
   port: number = Number(this.configService.get('PORT'));
-  @IsNotEmpty({
-    message:
-      'Set Env variable MONGO_URI, example: mongodb://localhost:27017/my-app-local-db',
-  })
-  mongoURI: string = this.configService.get('MONGO_URI');
-
   @IsString({
     message: 'Set Env variable ADMIN_LOGIN, dangerous for security!',
   })

@@ -1,6 +1,4 @@
 import { Test, TestingModuleBuilder } from '@nestjs/testing';
-import { Connection } from 'mongoose';
-import { getConnectionToken } from '@nestjs/mongoose';
 import { appSetup } from '../../src/setup/app.setup';
 import { CoreConfig } from '../../src/core/core.config';
 import { initAppModule } from '../../src/init-app-module';
@@ -28,13 +26,11 @@ export const initSettings = async (
   await appSetup(app, coreConfig);
   await app.init();
 
-  const databaseConnection = app.get<Connection>(getConnectionToken());
   const httpServer = app.getHttpServer();
   await deleteAllData(app);
 
   return {
     app,
-    databaseConnection,
     httpServer,
     coreConfig,
   };

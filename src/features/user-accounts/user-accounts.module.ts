@@ -1,11 +1,5 @@
 import { UserAccountConfig } from './config/user-account.config';
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './users/domain/user.entity';
-import {
-  SecurityDevices,
-  SecurityDevicesSchema,
-} from './security-devices/domain/security-devices.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
@@ -19,8 +13,6 @@ import { APP_GUARD } from '@nestjs/core';
 import { UsersController } from './users/api/users.controller';
 import { SecurityDevicesController } from './security-devices/api/security-devices.controller';
 import { UsersService } from './users/application/users.service';
-import { UsersRepository } from './users/infrastructure/users.repository';
-import { UsersQueryRepository } from './users/infrastructure/users.query-repository';
 import { SecurityDevicesService } from './security-devices/application/security-devices.service';
 import { CryptoService } from './crypto/crypto.service';
 import { NotificationsModule } from '../notifications/notifications.module';
@@ -32,10 +24,6 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    MongooseModule.forFeature([
-      { name: SecurityDevices.name, schema: SecurityDevicesSchema },
-    ]),
     PassportModule,
     NotificationsModule,
     ThrottlerModule.forRoot([
@@ -49,8 +37,6 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
   providers: [
     UserAccountConfig,
     UsersService,
-    UsersRepository,
-    UsersQueryRepository,
     UuidProvider,
     AuthService,
     BasicStrategy,
@@ -69,6 +55,6 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
       useClass: ThrottlerGuard,
     },
   ],
-  exports: [UsersRepository, UsersSqlRepository],
+  exports: [UsersSqlRepository],
 })
 export class UserAccountsModule {}

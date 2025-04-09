@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UsersRepository } from '../infrastructure/users.repository';
 import { UserCreateModel } from '../api/models/input/create-user.input.model';
 import { CryptoService } from '../../crypto/crypto.service';
 import { User } from '../domain/user.sql.entity';
@@ -10,7 +9,6 @@ import { UsersSqlRepository } from '../infrastructure/users.sql.repository';
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly usersRepository: UsersRepository,
     private readonly bcryptService: CryptoService,
     private readonly uuidProvider: UuidProvider,
     private readonly userAccountConfig: UserAccountConfig,
