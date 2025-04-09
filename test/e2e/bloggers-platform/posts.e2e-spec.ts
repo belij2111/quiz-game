@@ -163,23 +163,32 @@ describe('e2e-Posts', () => {
     });
   });
 
-  describe(`DELETE/posts/:id`, () => {
+  describe(`DELETE/sa/blogs/:blogId/posts/:id`, () => {
     it(`should delete post by ID : STATUS 204`, async () => {
       const validPostModel = createValidPostModel(createdBlog.id);
       const createdPost = await postsTestManager.createPost(validPostModel);
-      await postsTestManager.deleteById(createdPost.id, HttpStatus.NO_CONTENT);
+      await postsTestManager.deleteById(
+        createdPost.id,
+        createdBlog.id,
+        HttpStatus.NO_CONTENT,
+      );
     });
     it(`shouldn't delete post by ID if the request is unauthorized : STATUS 401`, async () => {
       const validPostModel = createValidPostModel(createdBlog.id);
       const createdPost = await postsTestManager.createPost(validPostModel);
       await postsTestManager.deleteByIdIsNotAuthorized(
         createdPost.id,
+        createdBlog.id,
         HttpStatus.UNAUTHORIZED,
       );
     });
     it(`shouldn't update post by ID if it does not exist : STATUS 404`, async () => {
       const nonExistentId = getMockId();
-      await postsTestManager.deleteById(nonExistentId, HttpStatus.NOT_FOUND);
+      await postsTestManager.deleteById(
+        nonExistentId,
+        createdBlog.id,
+        HttpStatus.NOT_FOUND,
+      );
     });
   });
 

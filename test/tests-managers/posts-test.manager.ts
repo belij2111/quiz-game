@@ -38,7 +38,7 @@ export class PostsTestManager {
         .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
         .send(createValidPostModel(blogId, i))
         .expect(statusCode);
-      posts.unshift(response.body);
+      posts.push(response.body);
     }
     return posts;
   }
@@ -122,19 +122,24 @@ export class PostsTestManager {
       .expect(statusCode);
   }
 
-  async deleteById(id: string, statusCode: number = HttpStatus.NO_CONTENT) {
+  async deleteById(
+    id: string,
+    blogId: string,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
     return request(this.app.getHttpServer())
-      .delete('/posts/' + id)
+      .delete(`/sa/blogs/${blogId}/posts/${id}/`)
       .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
       .expect(statusCode);
   }
 
   async deleteByIdIsNotAuthorized(
     id: string,
+    blogId: string,
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())
-      .delete('/posts/' + id)
+      .delete(`/sa/blogs/${blogId}/posts/${id}/`)
       .auth('invalid login', 'invalid password')
       .expect(statusCode);
   }
