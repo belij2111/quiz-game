@@ -45,6 +45,7 @@ export class PostsService {
     params: PostParamsModel,
     postUpdateModel: PostCreateModel,
   ): Promise<boolean | null> {
+    await this.blogsSqlRepository.findByIdOrNotFoundFail(params.blogId);
     const foundPost = await this.postsSqlRepository.findByIdOrNotFoundFail(
       params.postId,
     );
