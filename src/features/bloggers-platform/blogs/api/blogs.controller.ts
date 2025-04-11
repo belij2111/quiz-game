@@ -12,8 +12,6 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-
-import { BlogsService } from '../application/blogs.service';
 import { BlogViewModel } from './models/view/blog.view.model';
 import {
   BlogCreateModel,
@@ -37,12 +35,12 @@ import { PostsSqlQueryRepository } from '../../posts/infrastructure/posts.sql.qu
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateBlogCommand } from '../application/use-cases/create-blog.use-case';
 import { UpdateBlogCommand } from '../application/use-cases/update-blog.use-case';
+import { DeleteBlogCommand } from '../application/use-cases/delete-blog.use-case';
 
 @Controller()
 export class BlogsController {
   constructor(
     private readonly commandBus: CommandBus,
-    private readonly blogsService: BlogsService,
     private readonly blogsSqlQueryRepository: BlogsSqlQueryRepository,
     private readonly postsService: PostsService,
     private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
@@ -99,7 +97,7 @@ export class BlogsController {
   @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {
-    await this.blogsService.delete(id);
+    await this.commandBus.execute(new DeleteBlogCommand(id));
   }
 
   @Post('sa/blogs/:blogId/posts')

@@ -19,8 +19,9 @@ import { LikesForPostSqlRepository } from './likes/infrastructure/likes-for-post
 import { CreateBlogUseCase } from './blogs/application/use-cases/create-blog.use-case';
 import { CqrsModule } from '@nestjs/cqrs';
 import { UpdateBlogUseCase } from './blogs/application/use-cases/update-blog.use-case';
+import { DeleteBlogUseCase } from './blogs/application/use-cases/delete-blog.use-case';
 
-const useCases = [CreateBlogUseCase, UpdateBlogUseCase];
+const useCases = [CreateBlogUseCase, UpdateBlogUseCase, DeleteBlogUseCase];
 
 @Module({
   imports: [CqrsModule, UserAccountsModule],
