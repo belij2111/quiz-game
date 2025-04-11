@@ -36,6 +36,7 @@ import { BlogsSqlQueryRepository } from '../infrastructure/blogs.sql.query-repos
 import { PostsSqlQueryRepository } from '../../posts/infrastructure/posts.sql.query-repository';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateBlogCommand } from '../application/use-cases/create-blog.use-case';
+import { UpdateBlogCommand } from '../application/use-cases/update-blog.use-case';
 
 @Controller()
 export class BlogsController {
@@ -90,7 +91,7 @@ export class BlogsController {
     @Param('id') id: string,
     @Body() blogUpdateModel: BlogCreateModel,
   ) {
-    await this.blogsService.update(id, blogUpdateModel);
+    await this.commandBus.execute(new UpdateBlogCommand(id, blogUpdateModel));
   }
 
   @Delete('sa/blogs/:id')
