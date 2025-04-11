@@ -18,21 +18,6 @@ export class PostsService {
     private readonly uuidProvider: UuidProvider,
   ) {}
 
-  async create(postCreateModel: PostCreateModel): Promise<string> {
-    const foundBlog = await this.blogsSqlRepository.findByIdOrNotFoundFail(
-      postCreateModel.blogId,
-    );
-    const newPostDto: Post = {
-      id: this.uuidProvider.generate(),
-      title: postCreateModel.title,
-      shortDescription: postCreateModel.shortDescription,
-      content: postCreateModel.content,
-      blogId: foundBlog.id,
-      createdAt: new Date(),
-    };
-    return await this.postsSqlRepository.create(newPostDto);
-  }
-
   async delete(params: PostParamsModel): Promise<boolean> {
     await this.blogsSqlRepository.findByIdOrNotFoundFail(params.blogId);
     const foundPost = await this.postsSqlRepository.findByIdOrNotFoundFail(

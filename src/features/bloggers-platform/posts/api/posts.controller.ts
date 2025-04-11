@@ -35,10 +35,13 @@ import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { PostsSqlQueryRepository } from '../infrastructure/posts.sql.query-repository';
 import { PostParamsModel } from './models/input/post-params.model';
 import { CommentsSqlQueryRepository } from '../../comments/infrastructure/comments.sql.query-repository';
+import { CommandBus } from '@nestjs/cqrs';
+import { CreatePostCommand } from '../application/use-cases/create-post.use-case';
 
 @Controller()
 export class PostsController {
   constructor(
+    private readonly commandBus: CommandBus,
     private readonly postsService: PostsService,
     private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
     private readonly commentsService: CommentsService,
@@ -52,7 +55,9 @@ export class PostsController {
     @CurrentUserId() currentUserId: string,
     @Body() postCreateModel: PostCreateModel,
   ) {
-    const createdPostId = await this.postsService.create(postCreateModel);
+    const createdPostId = await this.commandBus.execute(
+      new CreatePostCommand(postCreateModel),
+    );
     return await this.postsSqlQueryRepository.getById(
       currentUserId,
       createdPostId,
