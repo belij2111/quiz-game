@@ -34,10 +34,13 @@ import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { BlogIdParamModel } from '../../posts/api/models/input/blogId-param.model';
 import { BlogsSqlQueryRepository } from '../infrastructure/blogs.sql.query-repository';
 import { PostsSqlQueryRepository } from '../../posts/infrastructure/posts.sql.query-repository';
+import { CommandBus } from '@nestjs/cqrs';
+import { CreateBlogCommand } from '../application/use-cases/create-blog.use-case';
 
 @Controller()
 export class BlogsController {
   constructor(
+    private readonly commandBus: CommandBus,
     private readonly blogsService: BlogsService,
     private readonly blogsSqlQueryRepository: BlogsSqlQueryRepository,
     private readonly postsService: PostsService,
@@ -48,7 +51,9 @@ export class BlogsController {
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
   async create(@Body() blogCreateModel: BlogCreateModel) {
-    const createdBlogId = await this.blogsService.create(blogCreateModel);
+    const createdBlogId = await this.commandBus.execute(
+      new CreateBlogCommand(blogCreateModel),
+    );
     return await this.blogsSqlQueryRepository.getById(createdBlogId);
   }
 

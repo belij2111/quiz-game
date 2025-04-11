@@ -16,11 +16,16 @@ import { CommentsSqlRepository } from './comments/infrastructure/comments.sql.re
 import { CommentsSqlQueryRepository } from './comments/infrastructure/comments.sql.query-repository';
 import { LikesForCommentSqlRepository } from './likes/infrastructure/likes-for-comment.sql.repository';
 import { LikesForPostSqlRepository } from './likes/infrastructure/likes-for-post.sql.repository';
+import { CreateBlogUseCase } from './blogs/application/use-cases/create-blog.use-case';
+import { CqrsModule } from '@nestjs/cqrs';
+
+const useCases = [CreateBlogUseCase];
 
 @Module({
-  imports: [UserAccountsModule],
+  imports: [CqrsModule, UserAccountsModule],
   controllers: [BlogsController, PostsController, CommentsController],
   providers: [
+    ...useCases,
     BlogsService,
     BlogsSqlRepository,
     BlogsSqlQueryRepository,
