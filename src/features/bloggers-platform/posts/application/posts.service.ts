@@ -5,7 +5,6 @@ import { PostsSqlRepository } from '../infrastructure/posts.sql.repository';
 import { BlogsSqlRepository } from '../../blogs/infrastructure/blogs.sql.repository';
 import { Post } from '../domain/post.sql.entity';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
-import { PostParamsModel } from '../api/models/input/post-params.model';
 import { LikesForPostSqlRepository } from '../../likes/infrastructure/likes-for-post.sql.repository';
 import { LikeForPost } from '../../likes/domain/like-for-post.sql.entity';
 
@@ -17,14 +16,6 @@ export class PostsService {
     private readonly likesForPostSqlRepository: LikesForPostSqlRepository,
     private readonly uuidProvider: UuidProvider,
   ) {}
-
-  async delete(params: PostParamsModel): Promise<boolean> {
-    await this.blogsSqlRepository.findByIdOrNotFoundFail(params.blogId);
-    const foundPost = await this.postsSqlRepository.findByIdOrNotFoundFail(
-      params.postId,
-    );
-    return this.postsSqlRepository.delete(foundPost.id);
-  }
 
   async createPostByBlogId(
     blogId: string,
