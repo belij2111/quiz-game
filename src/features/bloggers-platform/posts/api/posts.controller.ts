@@ -37,6 +37,7 @@ import { PostParamsModel } from './models/input/post-params.model';
 import { CommentsSqlQueryRepository } from '../../comments/infrastructure/comments.sql.query-repository';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreatePostCommand } from '../application/use-cases/create-post.use-case';
+import { UpdatePostCommand } from '../application/use-cases/update-post.use-case';
 
 @Controller()
 export class PostsController {
@@ -97,7 +98,9 @@ export class PostsController {
     @Param() params: PostParamsModel,
     @Body() postCreateModel: PostCreateModel,
   ) {
-    await this.postsService.update(params, postCreateModel);
+    await this.commandBus.execute(
+      new UpdatePostCommand(params, postCreateModel),
+    );
   }
 
   @Delete('sa/blogs/:blogId/posts/:postId')

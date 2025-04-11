@@ -26,23 +26,6 @@ export class PostsService {
     return this.postsSqlRepository.delete(foundPost.id);
   }
 
-  async update(
-    params: PostParamsModel,
-    postUpdateModel: PostCreateModel,
-  ): Promise<boolean | null> {
-    await this.blogsSqlRepository.findByIdOrNotFoundFail(params.blogId);
-    const foundPost = await this.postsSqlRepository.findByIdOrNotFoundFail(
-      params.postId,
-    );
-    const updatedPostDto: PostCreateModel = {
-      title: postUpdateModel.title,
-      shortDescription: postUpdateModel.shortDescription,
-      content: postUpdateModel.content,
-      blogId: params.blogId,
-    };
-    return await this.postsSqlRepository.update(foundPost.id, updatedPostDto);
-  }
-
   async createPostByBlogId(
     blogId: string,
     postCreateModel: PostCreateModel,
