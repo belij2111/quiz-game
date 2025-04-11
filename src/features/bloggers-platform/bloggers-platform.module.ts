@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { PostsController } from './posts/api/posts.controller';
-import { BlogsService } from './blogs/application/blogs.service';
 import { PostsService } from './posts/application/posts.service';
 import { BlogsController } from './blogs/api/blogs.controller';
 import { CommentsController } from './comments/api/comments.controller';
@@ -28,7 +27,6 @@ const useCases = [CreateBlogUseCase, UpdateBlogUseCase, DeleteBlogUseCase];
   controllers: [BlogsController, PostsController, CommentsController],
   providers: [
     ...useCases,
-    BlogsService,
     BlogsSqlRepository,
     BlogsSqlQueryRepository,
     PostsService,
