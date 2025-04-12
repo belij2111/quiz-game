@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PostCreateModel } from '../api/models/input/create-post.input.model';
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { PostsSqlRepository } from '../infrastructure/posts.sql.repository';
-import { BlogsSqlRepository } from '../../blogs/infrastructure/blogs.sql.repository';
-import { Post } from '../domain/post.sql.entity';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 import { LikesForPostSqlRepository } from '../../likes/infrastructure/likes-for-post.sql.repository';
 import { LikeForPost } from '../../likes/domain/like-for-post.sql.entity';
@@ -12,27 +9,9 @@ import { LikeForPost } from '../../likes/domain/like-for-post.sql.entity';
 export class PostsService {
   constructor(
     private readonly postsSqlRepository: PostsSqlRepository,
-    private readonly blogsSqlRepository: BlogsSqlRepository,
     private readonly likesForPostSqlRepository: LikesForPostSqlRepository,
     private readonly uuidProvider: UuidProvider,
   ) {}
-
-  async createPostByBlogId(
-    blogId: string,
-    postCreateModel: PostCreateModel,
-  ): Promise<string> {
-    const foundBlog =
-      await this.blogsSqlRepository.findByIdOrNotFoundFail(blogId);
-    const newPostDto: Post = {
-      id: this.uuidProvider.generate(),
-      title: postCreateModel.title,
-      shortDescription: postCreateModel.shortDescription,
-      content: postCreateModel.content,
-      blogId: foundBlog.id,
-      createdAt: new Date(),
-    };
-    return await this.postsSqlRepository.create(newPostDto);
-  }
 
   async updateLikeStatus(
     currentUserId: string,

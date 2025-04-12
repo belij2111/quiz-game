@@ -22,7 +22,6 @@ import {
   PostCreateModel,
 } from '../../posts/api/models/input/create-post.input.model';
 import { PostViewModel } from '../../posts/api/models/view/post.view.model';
-import { PostsService } from '../../posts/application/posts.service';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { ApiBasicAuth } from '@nestjs/swagger';
 import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
@@ -36,13 +35,13 @@ import { CommandBus } from '@nestjs/cqrs';
 import { CreateBlogCommand } from '../application/use-cases/create-blog.use-case';
 import { UpdateBlogCommand } from '../application/use-cases/update-blog.use-case';
 import { DeleteBlogCommand } from '../application/use-cases/delete-blog.use-case';
+import { CreatePostCommand } from '../../posts/application/use-cases/create-post.use-case';
 
 @Controller()
 export class BlogsController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly blogsSqlQueryRepository: BlogsSqlQueryRepository,
-    private readonly postsService: PostsService,
     private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
   ) {}
 
@@ -110,9 +109,8 @@ export class BlogsController {
     @Body() postCreateModel: PostCreateModel,
   ): Promise<PostViewModel | null> {
     const blogId = param.blogId;
-    const createdPostId = await this.postsService.createPostByBlogId(
-      blogId,
-      postCreateModel,
+    const createdPostId = await this.commandBus.execute(
+      new CreatePostCommand(postCreateModel, blogId),
     );
     return await this.postsSqlQueryRepository.getById(
       currentUserId,

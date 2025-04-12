@@ -6,7 +6,10 @@ import { PostsSqlRepository } from '../../infrastructure/posts.sql.repository';
 import { BlogsSqlRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
 
 export class CreatePostCommand {
-  constructor(public postCreateModel: PostCreateModel) {}
+  constructor(
+    public postCreateModel: PostCreateModel,
+    public blogId?: string,
+  ) {}
 }
 
 @CommandHandler(CreatePostCommand)
@@ -20,9 +23,9 @@ export class CreatePostUseCase
   ) {}
 
   async execute(command: CreatePostCommand): Promise<string> {
-    const foundBlog = await this.blogsSqlRepository.findByIdOrNotFoundFail(
-      command.postCreateModel.blogId,
-    );
+    const blogId = command.blogId || command.postCreateModel.blogId;
+    const foundBlog =
+      await this.blogsSqlRepository.findByIdOrNotFoundFail(blogId);
     const newPostDto: Post = {
       id: this.uuidProvider.generate(),
       title: command.postCreateModel.title,
