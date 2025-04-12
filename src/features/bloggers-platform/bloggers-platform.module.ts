@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { PostsController } from './posts/api/posts.controller';
-import { PostsService } from './posts/application/posts.service';
 import { BlogsController } from './blogs/api/blogs.controller';
 import { CommentsController } from './comments/api/comments.controller';
 import { CommentsService } from './comments/application/comments.service';
@@ -22,6 +21,7 @@ import { DeleteBlogUseCase } from './blogs/application/use-cases/delete-blog.use
 import { CreatePostUseCase } from './posts/application/use-cases/create-post.use-case';
 import { UpdatePostUseCase } from './posts/application/use-cases/update-post.use-case';
 import { DeletePostUseCase } from './posts/application/use-cases/delete-post.use-case';
+import { UpdateLikeStatusUseCase } from './posts/application/use-cases/update-like-status.use-case';
 
 const useCases = [
   CreateBlogUseCase,
@@ -30,6 +30,7 @@ const useCases = [
   CreatePostUseCase,
   UpdatePostUseCase,
   DeletePostUseCase,
+  UpdateLikeStatusUseCase,
 ];
 
 @Module({
@@ -39,7 +40,6 @@ const useCases = [
     ...useCases,
     BlogsSqlRepository,
     BlogsSqlQueryRepository,
-    PostsService,
     PostsSqlRepository,
     PostsSqlQueryRepository,
     CommentsService,

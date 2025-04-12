@@ -12,7 +12,6 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { PostsService } from '../application/posts.service';
 import { PostViewModel } from './models/view/post.view.model';
 import {
   GetPostQueryParams,
@@ -39,12 +38,12 @@ import { CommandBus } from '@nestjs/cqrs';
 import { CreatePostCommand } from '../application/use-cases/create-post.use-case';
 import { UpdatePostCommand } from '../application/use-cases/update-post.use-case';
 import { DeletePostCommand } from '../application/use-cases/delete-post.use-case';
+import { UpdateLikeStatusCommand } from '../application/use-cases/update-like-status.use-case';
 
 @Controller()
 export class PostsController {
   constructor(
     private readonly commandBus: CommandBus,
-    private readonly postsService: PostsService,
     private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
     private readonly commentsService: CommentsService,
     private readonly commentsSqlQueryRepository: CommentsSqlQueryRepository,
@@ -154,10 +153,8 @@ export class PostsController {
     @Param('postId') postId: string,
     @Body() likeInputModel: LikeInputModel,
   ) {
-    await this.postsService.updateLikeStatus(
-      currentUserId,
-      postId,
-      likeInputModel,
+    await this.commandBus.execute(
+      new UpdateLikeStatusCommand(currentUserId, postId, likeInputModel),
     );
   }
 }
