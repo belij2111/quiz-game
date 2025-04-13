@@ -24,6 +24,7 @@ import { DeletePostUseCase } from './posts/application/use-cases/delete-post.use
 import { UpdateLikeStatusUseCase } from './posts/application/use-cases/update-like-status.use-case';
 import { CreateCommentUseCase } from './comments/application/use-cases/create-comment.use-case';
 import { UpdateCommentUseCase } from './comments/application/use-cases/update-comment.use-case';
+import { DeleteCommentUseCase } from './comments/application/use-cases/delete-comment.use-case';
 
 const useCases = [
   CreateBlogUseCase,
@@ -35,6 +36,7 @@ const useCases = [
   UpdateLikeStatusUseCase,
   CreateCommentUseCase,
   UpdateCommentUseCase,
+  DeleteCommentUseCase,
 ];
 
 @Module({

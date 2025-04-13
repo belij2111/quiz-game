@@ -22,6 +22,7 @@ import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { CommentsSqlQueryRepository } from '../infrastructure/comments.sql.query-repository';
 import { UpdateCommentCommand } from '../application/use-cases/update-comment.use-case';
 import { CommandBus } from '@nestjs/cqrs';
+import { DeleteCommentCommand } from '../application/use-cases/delete-comment.use-case';
 
 @Controller('/comments')
 export class CommentsController {
@@ -68,7 +69,9 @@ export class CommentsController {
     @CurrentUserId() currentUserId: string,
     @Param('commentId') commentId: string,
   ) {
-    await this.commentsService.delete(currentUserId, commentId);
+    await this.commandBus.execute(
+      new DeleteCommentCommand(currentUserId, commentId),
+    );
   }
 
   @Put('/:commentId/like-status')
