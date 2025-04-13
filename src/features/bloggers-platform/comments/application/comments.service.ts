@@ -1,5 +1,4 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { CommentCreateModel } from '../api/models/input/create-comment.input.model';
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { CommentsSqlRepository } from '../infrastructure/comments.sql.repository';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
@@ -13,27 +12,6 @@ export class CommentsService {
     private readonly likesForCommentSqlRepository: LikesForCommentSqlRepository,
     private readonly uuidProvider: UuidProvider,
   ) {}
-
-  async update(
-    userId: string,
-    commentId: string,
-    commentCreateModel: CommentCreateModel,
-  ): Promise<boolean | null> {
-    const foundComment =
-      await this.commentsSqlRepository.findByIdOrNotFoundFail(commentId);
-    if (foundComment.userId !== userId) {
-      throw new ForbiddenException([
-        { field: 'user', message: 'The comment is not your own' },
-      ]);
-    }
-    const updateCommentDto: CommentCreateModel = {
-      content: commentCreateModel.content,
-    };
-    return await this.commentsSqlRepository.update(
-      foundComment,
-      updateCommentDto,
-    );
-  }
 
   async delete(userId: string, commentId: string) {
     const foundComment =

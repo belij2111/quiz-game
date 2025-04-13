@@ -20,10 +20,13 @@ import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { CommentsSqlQueryRepository } from '../infrastructure/comments.sql.query-repository';
+import { UpdateCommentCommand } from '../application/use-cases/update-comment.use-case';
+import { CommandBus } from '@nestjs/cqrs';
 
 @Controller('/comments')
 export class CommentsController {
   constructor(
+    private readonly commandBus: CommandBus,
     private readonly commentsSqlQueryRepository: CommentsSqlQueryRepository,
     private readonly commentsService: CommentsService,
   ) {}
@@ -53,10 +56,8 @@ export class CommentsController {
     @Param('commentId') commentId: string,
     @Body() commentCreateModel: CommentCreateModel,
   ) {
-    await this.commentsService.update(
-      currentUserId,
-      commentId,
-      commentCreateModel,
+    await this.commandBus.execute(
+      new UpdateCommentCommand(currentUserId, commentId, commentCreateModel),
     );
   }
 
