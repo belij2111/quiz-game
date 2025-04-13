@@ -24,7 +24,6 @@ import {
   CommentCreateModel,
   GetCommentQueryParams,
 } from '../../comments/api/models/input/create-comment.input.model';
-import { CommentsService } from '../../comments/application/comments.service';
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param.decorator';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
 import { CommentViewModel } from '../../comments/api/models/view/comment.view.model';
@@ -39,13 +38,13 @@ import { CreatePostCommand } from '../application/use-cases/create-post.use-case
 import { UpdatePostCommand } from '../application/use-cases/update-post.use-case';
 import { DeletePostCommand } from '../application/use-cases/delete-post.use-case';
 import { UpdateLikeStatusCommand } from '../application/use-cases/update-like-status.use-case';
+import { CreateCommentCommand } from '../../comments/application/use-cases/create-comment.use-case';
 
 @Controller()
 export class PostsController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
-    private readonly commentsService: CommentsService,
     private readonly commentsSqlQueryRepository: CommentsSqlQueryRepository,
   ) {}
 
@@ -119,10 +118,8 @@ export class PostsController {
     @Param('postId') postId: string,
     @Body() commentCreateModel: CommentCreateModel,
   ) {
-    const createdCommentId = await this.commentsService.create(
-      currentUserId,
-      postId,
-      commentCreateModel,
+    const createdCommentId = await this.commandBus.execute(
+      new CreateCommentCommand(currentUserId, postId, commentCreateModel),
     );
     return await this.commentsSqlQueryRepository.getCommentById(
       currentUserId,
