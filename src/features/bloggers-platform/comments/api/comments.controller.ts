@@ -13,7 +13,6 @@ import {
 import { CommentViewModel } from './models/view/comment.view.model';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { CommentsService } from '../application/comments.service';
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param.decorator';
 import { CommentCreateModel } from './models/input/create-comment.input.model';
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
@@ -23,13 +22,13 @@ import { CommentsSqlQueryRepository } from '../infrastructure/comments.sql.query
 import { UpdateCommentCommand } from '../application/use-cases/update-comment.use-case';
 import { CommandBus } from '@nestjs/cqrs';
 import { DeleteCommentCommand } from '../application/use-cases/delete-comment.use-case';
+import { UpdateLikeStatusForCommentCommand } from '../application/use-cases/update-like-status-for-comment.use-case';
 
 @Controller('/comments')
 export class CommentsController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly commentsSqlQueryRepository: CommentsSqlQueryRepository,
-    private readonly commentsService: CommentsService,
   ) {}
 
   @Get('/:id')
@@ -82,10 +81,12 @@ export class CommentsController {
     @Param('commentId') commentId: string,
     @Body() likeInputModel: LikeInputModel,
   ) {
-    await this.commentsService.updateLikeStatus(
-      currentUserId,
-      commentId,
-      likeInputModel,
+    await this.commandBus.execute(
+      new UpdateLikeStatusForCommentCommand(
+        currentUserId,
+        commentId,
+        likeInputModel,
+      ),
     );
   }
 }

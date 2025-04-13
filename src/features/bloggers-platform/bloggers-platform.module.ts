@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { PostsController } from './posts/api/posts.controller';
 import { BlogsController } from './blogs/api/blogs.controller';
 import { CommentsController } from './comments/api/comments.controller';
-import { CommentsService } from './comments/application/comments.service';
 import { BlogIdIsExistConstraint } from './blogs/api/validation/blogId-is-exist.decorator';
 import { UserAccountsModule } from '../user-accounts/user-accounts.module';
 import { BlogsSqlRepository } from './blogs/infrastructure/blogs.sql.repository';
@@ -25,6 +24,7 @@ import { UpdateLikeStatusUseCase } from './posts/application/use-cases/update-li
 import { CreateCommentUseCase } from './comments/application/use-cases/create-comment.use-case';
 import { UpdateCommentUseCase } from './comments/application/use-cases/update-comment.use-case';
 import { DeleteCommentUseCase } from './comments/application/use-cases/delete-comment.use-case';
+import { UpdateLikeStatusForCommentUseCase } from './comments/application/use-cases/update-like-status-for-comment.use-case';
 
 const useCases = [
   CreateBlogUseCase,
@@ -37,6 +37,7 @@ const useCases = [
   CreateCommentUseCase,
   UpdateCommentUseCase,
   DeleteCommentUseCase,
+  UpdateLikeStatusForCommentUseCase,
 ];
 
 @Module({
@@ -48,7 +49,6 @@ const useCases = [
     BlogsSqlQueryRepository,
     PostsSqlRepository,
     PostsSqlQueryRepository,
-    CommentsService,
     CommentsSqlQueryRepository,
     CommentsSqlRepository,
     LikesForCommentSqlRepository,
