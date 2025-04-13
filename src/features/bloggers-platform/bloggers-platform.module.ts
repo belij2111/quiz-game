@@ -20,7 +20,7 @@ import { DeleteBlogUseCase } from './blogs/application/use-cases/delete-blog.use
 import { CreatePostUseCase } from './posts/application/use-cases/create-post.use-case';
 import { UpdatePostUseCase } from './posts/application/use-cases/update-post.use-case';
 import { DeletePostUseCase } from './posts/application/use-cases/delete-post.use-case';
-import { UpdateLikeStatusUseCase } from './posts/application/use-cases/update-like-status.use-case';
+import { UpdateLikeStatusForPostUseCase } from './posts/application/use-cases/update-like-status-for post.use-case';
 import { CreateCommentUseCase } from './comments/application/use-cases/create-comment.use-case';
 import { UpdateCommentUseCase } from './comments/application/use-cases/update-comment.use-case';
 import { DeleteCommentUseCase } from './comments/application/use-cases/delete-comment.use-case';
@@ -33,7 +33,7 @@ const useCases = [
   CreatePostUseCase,
   UpdatePostUseCase,
   DeletePostUseCase,
-  UpdateLikeStatusUseCase,
+  UpdateLikeStatusForPostUseCase,
   CreateCommentUseCase,
   UpdateCommentUseCase,
   DeleteCommentUseCase,

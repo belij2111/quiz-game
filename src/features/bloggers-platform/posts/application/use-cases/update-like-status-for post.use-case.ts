@@ -5,7 +5,7 @@ import { LikesForPostSqlRepository } from '../../../likes/infrastructure/likes-f
 import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
 import { LikeForPost } from '../../../likes/domain/like-for-post.sql.entity';
 
-export class UpdateLikeStatusCommand {
+export class UpdateLikeStatusForPostCommand {
   constructor(
     public currentUserId: string,
     public postId: string,
@@ -13,9 +13,9 @@ export class UpdateLikeStatusCommand {
   ) {}
 }
 
-@CommandHandler(UpdateLikeStatusCommand)
-export class UpdateLikeStatusUseCase
-  implements ICommandHandler<UpdateLikeStatusCommand, boolean | null>
+@CommandHandler(UpdateLikeStatusForPostCommand)
+export class UpdateLikeStatusForPostUseCase
+  implements ICommandHandler<UpdateLikeStatusForPostCommand, boolean | null>
 {
   constructor(
     private readonly postsSqlRepository: PostsSqlRepository,
@@ -23,7 +23,9 @@ export class UpdateLikeStatusUseCase
     private readonly uuidProvider: UuidProvider,
   ) {}
 
-  async execute(command: UpdateLikeStatusCommand): Promise<boolean | null> {
+  async execute(
+    command: UpdateLikeStatusForPostCommand,
+  ): Promise<boolean | null> {
     await this.postsSqlRepository.findByIdOrNotFoundFail(command.postId);
     const foundLike = await this.likesForPostSqlRepository.find(
       command.currentUserId,
