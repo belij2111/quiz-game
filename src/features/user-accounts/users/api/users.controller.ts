@@ -11,7 +11,6 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { UsersService } from '../application/users.service';
 import { UserViewModel } from './models/view/user.view.model';
 import {
   GetUsersQueryParams,
@@ -21,12 +20,16 @@ import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { ApiBasicAuth } from '@nestjs/swagger';
 import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
 import { UsersSqlQueryRepository } from '../infrastructure/users.sql.query-repository';
+import { CommandBus } from '@nestjs/cqrs';
+import { CreateUserCommand } from '../application/use-cases/create-user.use-case';
+import { UsersService } from '../application/users.service';
 
 @Controller('/sa/users')
 @UseGuards(BasicAuthGuard)
 @ApiBasicAuth()
 export class UsersController {
   constructor(
+    private readonly commandBus: CommandBus,
     private readonly usersSqlQueryRepository: UsersSqlQueryRepository,
     private readonly usersService: UsersService,
   ) {}
@@ -34,7 +37,9 @@ export class UsersController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() userCreateModel: UserCreateModel) {
-    const createdUserId = await this.usersService.create(userCreateModel);
+    const createdUserId = await this.commandBus.execute(
+      new CreateUserCommand(userCreateModel),
+    );
     return await this.usersSqlQueryRepository.getById(createdUserId);
   }
 

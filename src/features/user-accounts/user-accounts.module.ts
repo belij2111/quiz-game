@@ -23,8 +23,10 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { DeleteAllSecurityDevicesExcludingCurrentUseCase } from './security-devices/application/use-cases/delete-all-security-devices-excluding-current.use-case';
 import { CqrsModule } from '@nestjs/cqrs';
 import { DeleteSecurityDeviceUseCase } from './security-devices/application/use-cases/delete-security-device.use-case';
+import { CreateUserUseCase } from './users/application/use-cases/create-user.use-case';
 
 const useCases = [
+  CreateUserUseCase,
   DeleteAllSecurityDevicesExcludingCurrentUseCase,
   DeleteSecurityDeviceUseCase,
 ];
