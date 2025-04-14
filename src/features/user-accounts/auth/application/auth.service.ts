@@ -6,8 +6,6 @@ import {
 } from '@nestjs/common';
 import { CryptoService } from '../../crypto/crypto.service';
 import { LoginInputModel } from '../api/models/input/login.input.model';
-import { User } from '../../users/domain/user.sql.entity';
-import { UserCreateModel } from '../../users/api/models/input/create-user.input.model';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 import { MailService } from '../../../notifications/mail.service';
 import { RegistrationConfirmationCodeModel } from '../api/models/input/registration-confirmation-code.model';
@@ -43,43 +41,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
     return user.id.toString();
-  }
-
-  async registerUser(userCreateModel: UserCreateModel) {
-    const existingUserByLogin =
-      await this.usersSqlRepository.findByLoginOrEmail(userCreateModel.login);
-    if (existingUserByLogin) {
-      throw new BadRequestException([
-        { field: 'login', message: 'Login is not unique' },
-      ]);
-    }
-    const existingUserByEmail =
-      await this.usersSqlRepository.findByLoginOrEmail(userCreateModel.email);
-    if (existingUserByEmail) {
-      throw new BadRequestException([
-        { field: 'email', message: 'Email is not unique' },
-      ]);
-    }
-    const passHash = await this.bcryptService.generateHash(
-      userCreateModel.password,
-    );
-    const expirationTime = this.userAccountConfig.CONFIRMATION_CODE_EXPIRATION;
-    const newUser: User = {
-      id: this.uuidProvider.generate(),
-      login: userCreateModel.login,
-      password: passHash,
-      email: userCreateModel.email,
-      createdAt: new Date(),
-      confirmationCode: this.uuidProvider.generate(),
-      expirationDate: new Date(new Date().getTime() + expirationTime),
-      isConfirmed: false,
-    };
-    await this.usersSqlRepository.create(newUser);
-    this.mailService.sendEmail(
-      newUser.email,
-      newUser.confirmationCode,
-      'registration',
-    );
   }
 
   async confirmationRegistrationUser(

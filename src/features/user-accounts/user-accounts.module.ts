@@ -26,12 +26,14 @@ import { CreateUserUseCase } from './users/application/use-cases/create-user.use
 import { DeleteUserUseCase } from './users/application/use-cases/delete-user.use-case';
 import { LoginUserUseCase } from './auth/application/use-cases/login-user.use-case';
 import { RefreshTokenUseCase } from './auth/application/use-cases/refresh-token.use-case';
+import { RegisterUserUseCase } from './auth/application/use-cases/register-user.use-case';
 
 const useCases = [
   CreateUserUseCase,
   DeleteUserUseCase,
   LoginUserUseCase,
   RefreshTokenUseCase,
+  RegisterUserUseCase,
   DeleteAllSecurityDevicesExcludingCurrentUseCase,
   DeleteSecurityDeviceUseCase,
 ];

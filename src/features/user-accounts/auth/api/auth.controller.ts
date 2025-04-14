@@ -32,6 +32,7 @@ import { UsersSqlQueryRepository } from '../../users/infrastructure/users.sql.qu
 import { CommandBus } from '@nestjs/cqrs';
 import { LoginUserCommand } from '../application/use-cases/login-user.use-case';
 import { RefreshTokenCommand } from '../application/use-cases/refresh-token.use-case';
+import { RegisterUserCommand } from '../application/use-cases/register-user.use-case';
 
 @Controller('/auth')
 export class AuthController {
@@ -102,7 +103,7 @@ export class AuthController {
   @Throttle({ default: { limit: 5, ttl: 10000 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async registration(@Body() userCreateModel: UserCreateModel) {
-    await this.authService.registerUser(userCreateModel);
+    await this.commandBus.execute(new RegisterUserCommand(userCreateModel));
   }
 
   @Post('/registration-confirmation')
