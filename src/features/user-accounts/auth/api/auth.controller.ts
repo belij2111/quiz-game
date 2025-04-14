@@ -29,10 +29,13 @@ import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
 import { CurrentDeviceId } from '../../../../core/decorators/param/current-device-id.param.decorator';
 import { Throttle } from '@nestjs/throttler';
 import { UsersSqlQueryRepository } from '../../users/infrastructure/users.sql.query-repository';
+import { CommandBus } from '@nestjs/cqrs';
+import { LoginUserCommand } from '../application/use-cases/login-user.use-case';
 
 @Controller('/auth')
 export class AuthController {
   constructor(
+    private readonly commandBus: CommandBus,
     private readonly authService: AuthService,
     private readonly usersSqlQueryRepository: UsersSqlQueryRepository,
   ) {}
@@ -54,7 +57,9 @@ export class AuthController {
     }
     const ip = req.ip;
     const deviceName = req.headers['user-agent'];
-    const result = await this.authService.login(user, ip, deviceName);
+    const result = await this.commandBus.execute(
+      new LoginUserCommand(user, ip, deviceName),
+    );
     const { accessToken, refreshToken } = result as LoginSuccessViewModel;
     res
       .cookie('refreshToken', refreshToken, {

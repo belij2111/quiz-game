@@ -24,10 +24,12 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { DeleteSecurityDeviceUseCase } from './security-devices/application/use-cases/delete-security-device.use-case';
 import { CreateUserUseCase } from './users/application/use-cases/create-user.use-case';
 import { DeleteUserUseCase } from './users/application/use-cases/delete-user.use-case';
+import { LoginUserUseCase } from './auth/application/use-cases/login-user.use-case';
 
 const useCases = [
   CreateUserUseCase,
   DeleteUserUseCase,
+  LoginUserUseCase,
   DeleteAllSecurityDevicesExcludingCurrentUseCase,
   DeleteSecurityDeviceUseCase,
 ];

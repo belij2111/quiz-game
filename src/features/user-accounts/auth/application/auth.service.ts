@@ -7,7 +7,6 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { CryptoService } from '../../crypto/crypto.service';
 import { LoginInputModel } from '../api/models/input/login.input.model';
-import { LoginSuccessViewModel } from '../api/models/view/login-success.view.model';
 import { User } from '../../users/domain/user.sql.entity';
 import { UserCreateModel } from '../../users/api/models/input/create-user.input.model';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
@@ -16,8 +15,6 @@ import { RegistrationConfirmationCodeModel } from '../api/models/input/registrat
 import { RegistrationEmailResendingModel } from '../api/models/input/registration-email-resending.model';
 import { PasswordRecoveryInputModel } from '../api/models/input/password-recovery-input.model';
 import { NewPasswordRecoveryInputModel } from '../api/models/input/new-password-recovery-input.model';
-import { randomUUID } from 'node:crypto';
-import { SecurityDevices } from '../../security-devices/domain/security-devices.sql.entity';
 import { UserAccountConfig } from '../../config/user-account.config';
 import { UsersSqlRepository } from '../../users/infrastructure/users.sql.repository';
 import { SecurityDevicesSqlRepository } from '../../security-devices/infrastructure/security-devices.sql.repository';
@@ -48,46 +45,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
     return user.id.toString();
-  }
-
-  async login(
-    userId: string,
-    ip: string,
-    deviceName: string,
-  ): Promise<LoginSuccessViewModel> {
-    const payloadForAccessToken = {
-      userId: userId,
-    };
-    const payloadForRefreshToken = {
-      userId: userId,
-      deviceId: randomUUID(),
-    };
-    const accessToken = await this.jwtService.signAsync(payloadForAccessToken, {
-      secret: this.userAccountConfig.ACCESS_TOKEN_SECRET,
-      expiresIn: this.userAccountConfig.ACCESS_TOKEN_EXPIRATION,
-    });
-
-    const refreshToken = await this.jwtService.signAsync(
-      payloadForRefreshToken,
-      {
-        secret: this.userAccountConfig.REFRESH_TOKEN_SECRET,
-        expiresIn: this.userAccountConfig.REFRESH_TOKEN_EXPIRATION,
-      },
-    );
-    const decodePayload = this.jwtService.decode(refreshToken);
-    const deviceSession: SecurityDevices = {
-      userId: decodePayload.userId,
-      deviceId: decodePayload.deviceId,
-      ip: ip,
-      deviceName: deviceName,
-      iatDate: new Date(decodePayload.iat! * 1000),
-      expDate: new Date(decodePayload.exp! * 1000),
-    };
-    await this.securityDevicesSqlRepository.create(deviceSession);
-    return {
-      accessToken,
-      refreshToken,
-    };
   }
 
   async refreshToken(userId: string, deviceId: string) {
