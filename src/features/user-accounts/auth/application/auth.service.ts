@@ -8,7 +8,6 @@ import { CryptoService } from '../../crypto/crypto.service';
 import { LoginInputModel } from '../api/models/input/login.input.model';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 import { MailService } from '../../../notifications/mail.service';
-import { RegistrationEmailResendingModel } from '../api/models/input/registration-email-resending.model';
 import { PasswordRecoveryInputModel } from '../api/models/input/password-recovery-input.model';
 import { NewPasswordRecoveryInputModel } from '../api/models/input/new-password-recovery-input.model';
 import { UserAccountConfig } from '../../config/user-account.config';
@@ -40,40 +39,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
     return user.id.toString();
-  }
-
-  async registrationEmailResending(
-    inputEmail: RegistrationEmailResendingModel,
-  ) {
-    const existingUserByEmail =
-      await this.usersSqlRepository.findByLoginOrEmail(inputEmail.email);
-    if (!existingUserByEmail) {
-      throw new BadRequestException([
-        { field: 'email', message: 'User with this email does not exist' },
-      ]);
-    }
-    if (existingUserByEmail.isConfirmed) {
-      throw new BadRequestException([
-        {
-          field: 'email',
-          message: 'The account has already been confirmed',
-        },
-      ]);
-    }
-    const expirationTime = this.userAccountConfig.CONFIRMATION_CODE_EXPIRATION;
-    const newConfirmationCode = this.uuidProvider.generate();
-    const newExpirationDate = new Date(new Date().getTime() + expirationTime);
-
-    await this.usersSqlRepository.updateRegistrationConfirmation(
-      existingUserByEmail.id,
-      newConfirmationCode,
-      newExpirationDate,
-    );
-    this.mailService.sendEmail(
-      inputEmail.email,
-      newConfirmationCode,
-      'registration',
-    );
   }
 
   async passwordRecovery(inputEmail: PasswordRecoveryInputModel) {

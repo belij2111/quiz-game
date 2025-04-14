@@ -28,6 +28,7 @@ import { LoginUserUseCase } from './auth/application/use-cases/login-user.use-ca
 import { RefreshTokenUseCase } from './auth/application/use-cases/refresh-token.use-case';
 import { RegisterUserUseCase } from './auth/application/use-cases/register-user.use-case';
 import { ConfirmationRegistrationUserUseCase } from './auth/application/use-cases/confirmation-registration-user.use-case';
+import { RegistrationEmailResendingUseCase } from './auth/application/use-cases/registration-email-resending.use-case';
 
 const useCases = [
   CreateUserUseCase,
@@ -36,6 +37,7 @@ const useCases = [
   RefreshTokenUseCase,
   RegisterUserUseCase,
   ConfirmationRegistrationUserUseCase,
+  RegistrationEmailResendingUseCase,
   DeleteAllSecurityDevicesExcludingCurrentUseCase,
   DeleteSecurityDeviceUseCase,
 ];
