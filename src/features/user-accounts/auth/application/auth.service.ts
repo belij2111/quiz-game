@@ -8,7 +8,6 @@ import { CryptoService } from '../../crypto/crypto.service';
 import { LoginInputModel } from '../api/models/input/login.input.model';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 import { MailService } from '../../../notifications/mail.service';
-import { RegistrationConfirmationCodeModel } from '../api/models/input/registration-confirmation-code.model';
 import { RegistrationEmailResendingModel } from '../api/models/input/registration-email-resending.model';
 import { PasswordRecoveryInputModel } from '../api/models/input/password-recovery-input.model';
 import { NewPasswordRecoveryInputModel } from '../api/models/input/new-password-recovery-input.model';
@@ -41,24 +40,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
     return user.id.toString();
-  }
-
-  async confirmationRegistrationUser(
-    inputCode: RegistrationConfirmationCodeModel,
-  ) {
-    const confirmedUser = await this.usersSqlRepository.findByConfirmationCode(
-      inputCode.code,
-    );
-    if (!confirmedUser) {
-      throw new BadRequestException([
-        { field: 'code', message: 'Confirmation code is incorrect' },
-      ]);
-    }
-    const isConfirmed = true;
-    await this.usersSqlRepository.updateEmailConfirmation(
-      confirmedUser.id,
-      isConfirmed,
-    );
   }
 
   async registrationEmailResending(

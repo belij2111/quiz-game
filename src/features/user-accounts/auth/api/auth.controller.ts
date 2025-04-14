@@ -33,6 +33,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { LoginUserCommand } from '../application/use-cases/login-user.use-case';
 import { RefreshTokenCommand } from '../application/use-cases/refresh-token.use-case';
 import { RegisterUserCommand } from '../application/use-cases/register-user.use-case';
+import { ConfirmationRegistrationUserCommand } from '../application/use-cases/confirmation-registration-user.use-case';
 
 @Controller('/auth')
 export class AuthController {
@@ -113,8 +114,10 @@ export class AuthController {
     @Body()
     registrationConfirmationCodeModel: RegistrationConfirmationCodeModel,
   ) {
-    await this.authService.confirmationRegistrationUser(
-      registrationConfirmationCodeModel,
+    await this.commandBus.execute(
+      new ConfirmationRegistrationUserCommand(
+        registrationConfirmationCodeModel,
+      ),
     );
   }
 
