@@ -25,11 +25,13 @@ import { DeleteSecurityDeviceUseCase } from './security-devices/application/use-
 import { CreateUserUseCase } from './users/application/use-cases/create-user.use-case';
 import { DeleteUserUseCase } from './users/application/use-cases/delete-user.use-case';
 import { LoginUserUseCase } from './auth/application/use-cases/login-user.use-case';
+import { RefreshTokenUseCase } from './auth/application/use-cases/refresh-token.use-case';
 
 const useCases = [
   CreateUserUseCase,
   DeleteUserUseCase,
   LoginUserUseCase,
+  RefreshTokenUseCase,
   DeleteAllSecurityDevicesExcludingCurrentUseCase,
   DeleteSecurityDeviceUseCase,
 ];

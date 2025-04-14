@@ -4,7 +4,6 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { CryptoService } from '../../crypto/crypto.service';
 import { LoginInputModel } from '../api/models/input/login.input.model';
 import { User } from '../../users/domain/user.sql.entity';
@@ -23,7 +22,6 @@ import { SecurityDevicesSqlRepository } from '../../security-devices/infrastruct
 export class AuthService {
   constructor(
     private readonly bcryptService: CryptoService,
-    private readonly jwtService: JwtService,
     private readonly userAccountConfig: UserAccountConfig,
     private readonly uuidProvider: UuidProvider,
     private readonly mailService: MailService,
@@ -45,34 +43,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
     return user.id.toString();
-  }
-
-  async refreshToken(userId: string, deviceId: string) {
-    const payloadForAccessToken = {
-      userId: userId,
-    };
-    const payloadForRefreshToken = {
-      userId: userId,
-      deviceId: deviceId,
-    };
-    const accessToken = await this.jwtService.signAsync(payloadForAccessToken, {
-      secret: this.userAccountConfig.ACCESS_TOKEN_SECRET,
-      expiresIn: this.userAccountConfig.ACCESS_TOKEN_EXPIRATION,
-    });
-    const refreshToken = await this.jwtService.signAsync(
-      payloadForRefreshToken,
-      {
-        secret: this.userAccountConfig.REFRESH_TOKEN_SECRET,
-        expiresIn: this.userAccountConfig.REFRESH_TOKEN_EXPIRATION,
-      },
-    );
-    const decodePayload = this.jwtService.decode(refreshToken);
-    const iatDate = new Date(decodePayload.iat! * 1000).toISOString();
-    await this.securityDevicesSqlRepository.update(deviceId, iatDate);
-    return {
-      accessToken,
-      refreshToken,
-    };
   }
 
   async registerUser(userCreateModel: UserCreateModel) {

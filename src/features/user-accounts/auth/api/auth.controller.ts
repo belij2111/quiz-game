@@ -31,6 +31,7 @@ import { Throttle } from '@nestjs/throttler';
 import { UsersSqlQueryRepository } from '../../users/infrastructure/users.sql.query-repository';
 import { CommandBus } from '@nestjs/cqrs';
 import { LoginUserCommand } from '../application/use-cases/login-user.use-case';
+import { RefreshTokenCommand } from '../application/use-cases/refresh-token.use-case';
 
 @Controller('/auth')
 export class AuthController {
@@ -77,7 +78,9 @@ export class AuthController {
     @Res() res: ExpressResponse,
     @Req() { user, deviceId }: UserInfoInputModel,
   ) {
-    const result = await this.authService.refreshToken(user, deviceId);
+    const result = await this.commandBus.execute(
+      new RefreshTokenCommand(user, deviceId),
+    );
     const { accessToken, refreshToken } = result as LoginSuccessViewModel;
     res
       .cookie('refreshToken', refreshToken, {
