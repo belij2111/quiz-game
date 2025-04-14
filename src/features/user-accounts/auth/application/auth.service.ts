@@ -1,12 +1,10 @@
 import {
-  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CryptoService } from '../../crypto/crypto.service';
 import { LoginInputModel } from '../api/models/input/login.input.model';
-import { NewPasswordRecoveryInputModel } from '../api/models/input/new-password-recovery-input.model';
 import { UsersSqlRepository } from '../../users/infrastructure/users.sql.repository';
 import { SecurityDevicesSqlRepository } from '../../security-devices/infrastructure/security-devices.sql.repository';
 
@@ -32,22 +30,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
     return user.id.toString();
-  }
-
-  async newPassword(inputData: NewPasswordRecoveryInputModel) {
-    const { newPassword, recoveryCode } = inputData;
-    const existingUserByRecoveryCode =
-      await this.usersSqlRepository.findByConfirmationCode(recoveryCode);
-    if (!existingUserByRecoveryCode) {
-      throw new BadRequestException([
-        { field: 'code', message: 'Confirmation code is incorrect' },
-      ]);
-    }
-    const newPasswordHash = await this.bcryptService.generateHash(newPassword);
-    await this.usersSqlRepository.updatePassword(
-      existingUserByRecoveryCode.id,
-      newPasswordHash,
-    );
   }
 
   async logout(deviceId: string) {

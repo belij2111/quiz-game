@@ -36,6 +36,7 @@ import { RegisterUserCommand } from '../application/use-cases/register-user.use-
 import { ConfirmationRegistrationUserCommand } from '../application/use-cases/confirmation-registration-user.use-case';
 import { RegistrationEmailResendingCommand } from '../application/use-cases/registration-email-resending.use-case';
 import { PasswordRecoveryCommand } from '../application/use-cases/password-recovery.use-case';
+import { NewPasswordCommand } from '../application/use-cases/new-password.use-case';
 
 @Controller('/auth')
 export class AuthController {
@@ -151,7 +152,9 @@ export class AuthController {
   async newPassword(
     @Body() newPasswordRecoveryInputModel: NewPasswordRecoveryInputModel,
   ) {
-    await this.authService.newPassword(newPasswordRecoveryInputModel);
+    await this.commandBus.execute(
+      new NewPasswordCommand(newPasswordRecoveryInputModel),
+    );
   }
 
   @Post('/logout')
