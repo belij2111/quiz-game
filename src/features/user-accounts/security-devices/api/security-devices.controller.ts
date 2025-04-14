@@ -12,10 +12,13 @@ import { CurrentUserId } from '../../../../core/decorators/param/current-user-id
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
 import { CurrentDeviceId } from '../../../../core/decorators/param/current-device-id.param.decorator';
 import { SecurityDevicesSqlQueryRepository } from '../infrastructure/security-devices.sql.query-repository';
+import { CommandBus } from '@nestjs/cqrs';
+import { DeleteAllSecurityDevicesExcludingCurrentCommand } from '../application/use-cases/delete-all-security-devices-excluding-current.use-case';
 
 @Controller('/security')
 export class SecurityDevicesController {
   constructor(
+    private readonly commandBus: CommandBus,
     private readonly securityDevicesService: SecurityDevicesService,
     private readonly securityDevicesSqlQueryRepository: SecurityDevicesSqlQueryRepository,
   ) {}
@@ -34,7 +37,12 @@ export class SecurityDevicesController {
     @CurrentUserId() currentUserId: string,
     @CurrentDeviceId() currentDeviceId: string,
   ) {
-    await this.securityDevicesService.delete(currentUserId, currentDeviceId);
+    await this.commandBus.execute(
+      new DeleteAllSecurityDevicesExcludingCurrentCommand(
+        currentUserId,
+        currentDeviceId,
+      ),
+    );
   }
 
   @Delete('/devices/:deviceId')

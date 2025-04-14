@@ -21,9 +21,14 @@ import { UsersSqlQueryRepository } from './users/infrastructure/users.sql.query-
 import { SecurityDevicesSqlRepository } from './security-devices/infrastructure/security-devices.sql.repository';
 import { SecurityDevicesSqlQueryRepository } from './security-devices/infrastructure/security-devices.sql.query-repository';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
+import { DeleteAllSecurityDevicesExcludingCurrentUseCase } from './security-devices/application/use-cases/delete-all-security-devices-excluding-current.use-case';
+import { CqrsModule } from '@nestjs/cqrs';
+
+const useCases = [DeleteAllSecurityDevicesExcludingCurrentUseCase];
 
 @Module({
   imports: [
+    CqrsModule,
     PassportModule,
     NotificationsModule,
     ThrottlerModule.forRoot([
@@ -35,6 +40,7 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
   ],
   controllers: [UsersController, AuthController, SecurityDevicesController],
   providers: [
+    ...useCases,
     UserAccountConfig,
     UsersService,
     UuidProvider,

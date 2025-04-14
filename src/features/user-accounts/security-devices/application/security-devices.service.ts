@@ -11,16 +11,6 @@ export class SecurityDevicesService {
     private readonly securityDevicesSqlRepository: SecurityDevicesSqlRepository,
   ) {}
 
-  async delete(
-    currentUserId: string,
-    currentDeviceId: string,
-  ): Promise<boolean> {
-    return await this.securityDevicesSqlRepository.delete(
-      currentUserId,
-      currentDeviceId,
-    );
-  }
-
   async deleteById(currentUserId: string, deviceId: string) {
     const foundDevice =
       await this.securityDevicesSqlRepository.findById(deviceId);
