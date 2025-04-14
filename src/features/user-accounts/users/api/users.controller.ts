@@ -22,7 +22,7 @@ import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.
 import { UsersSqlQueryRepository } from '../infrastructure/users.sql.query-repository';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/use-cases/create-user.use-case';
-import { UsersService } from '../application/users.service';
+import { DeleteUserCommand } from '../application/use-cases/delete-user.use-case';
 
 @Controller('/sa/users')
 @UseGuards(BasicAuthGuard)
@@ -31,7 +31,6 @@ export class UsersController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly usersSqlQueryRepository: UsersSqlQueryRepository,
-    private readonly usersService: UsersService,
   ) {}
 
   @Post()
@@ -55,7 +54,9 @@ export class UsersController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(@Param('id') id: string) {
-    const deletionResult: boolean = await this.usersService.delete(id);
+    const deletionResult: boolean = await this.commandBus.execute(
+      new DeleteUserCommand(id),
+    );
     if (!deletionResult) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
