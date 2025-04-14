@@ -35,6 +35,7 @@ import { RefreshTokenCommand } from '../application/use-cases/refresh-token.use-
 import { RegisterUserCommand } from '../application/use-cases/register-user.use-case';
 import { ConfirmationRegistrationUserCommand } from '../application/use-cases/confirmation-registration-user.use-case';
 import { RegistrationEmailResendingCommand } from '../application/use-cases/registration-email-resending.use-case';
+import { PasswordRecoveryCommand } from '../application/use-cases/password-recovery.use-case';
 
 @Controller('/auth')
 export class AuthController {
@@ -139,7 +140,9 @@ export class AuthController {
   async passwordRecovery(
     @Body() passwordRecoveryInputModel: PasswordRecoveryInputModel,
   ) {
-    await this.authService.passwordRecovery(passwordRecoveryInputModel);
+    await this.commandBus.execute(
+      new PasswordRecoveryCommand(passwordRecoveryInputModel),
+    );
   }
 
   @Post('/new-password')

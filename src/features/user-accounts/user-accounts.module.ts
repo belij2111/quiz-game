@@ -29,6 +29,7 @@ import { RefreshTokenUseCase } from './auth/application/use-cases/refresh-token.
 import { RegisterUserUseCase } from './auth/application/use-cases/register-user.use-case';
 import { ConfirmationRegistrationUserUseCase } from './auth/application/use-cases/confirmation-registration-user.use-case';
 import { RegistrationEmailResendingUseCase } from './auth/application/use-cases/registration-email-resending.use-case';
+import { PasswordRecoveryUseCase } from './auth/application/use-cases/password-recovery.use-case';
 
 const useCases = [
   CreateUserUseCase,
@@ -38,6 +39,7 @@ const useCases = [
   RegisterUserUseCase,
   ConfirmationRegistrationUserUseCase,
   RegistrationEmailResendingUseCase,
+  PasswordRecoveryUseCase,
   DeleteAllSecurityDevicesExcludingCurrentUseCase,
   DeleteSecurityDeviceUseCase,
 ];

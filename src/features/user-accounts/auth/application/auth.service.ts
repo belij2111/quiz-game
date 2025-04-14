@@ -6,11 +6,7 @@ import {
 } from '@nestjs/common';
 import { CryptoService } from '../../crypto/crypto.service';
 import { LoginInputModel } from '../api/models/input/login.input.model';
-import { UuidProvider } from '../../../../core/helpers/uuid.provider';
-import { MailService } from '../../../notifications/mail.service';
-import { PasswordRecoveryInputModel } from '../api/models/input/password-recovery-input.model';
 import { NewPasswordRecoveryInputModel } from '../api/models/input/new-password-recovery-input.model';
-import { UserAccountConfig } from '../../config/user-account.config';
 import { UsersSqlRepository } from '../../users/infrastructure/users.sql.repository';
 import { SecurityDevicesSqlRepository } from '../../security-devices/infrastructure/security-devices.sql.repository';
 
@@ -18,9 +14,6 @@ import { SecurityDevicesSqlRepository } from '../../security-devices/infrastruct
 export class AuthService {
   constructor(
     private readonly bcryptService: CryptoService,
-    private readonly userAccountConfig: UserAccountConfig,
-    private readonly uuidProvider: UuidProvider,
-    private readonly mailService: MailService,
     private readonly usersSqlRepository: UsersSqlRepository,
     private readonly securityDevicesSqlRepository: SecurityDevicesSqlRepository,
   ) {}
@@ -39,25 +32,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
     return user.id.toString();
-  }
-
-  async passwordRecovery(inputEmail: PasswordRecoveryInputModel) {
-    const existingUserByEmail =
-      await this.usersSqlRepository.findByLoginOrEmail(inputEmail.email);
-    if (!existingUserByEmail) return;
-    const expirationTime = this.userAccountConfig.CONFIRMATION_CODE_EXPIRATION;
-    const recoveryCode = this.uuidProvider.generate();
-    const newExpirationDate = new Date(new Date().getTime() + expirationTime);
-    await this.usersSqlRepository.updateRegistrationConfirmation(
-      existingUserByEmail.id,
-      recoveryCode,
-      newExpirationDate,
-    );
-    this.mailService.sendEmail(
-      inputEmail.email,
-      recoveryCode,
-      'passwordRecovery',
-    );
   }
 
   async newPassword(inputData: NewPasswordRecoveryInputModel) {
