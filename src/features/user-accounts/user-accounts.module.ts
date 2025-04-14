@@ -12,7 +12,6 @@ import { UuidProvider } from '../../core/helpers/uuid.provider';
 import { APP_GUARD } from '@nestjs/core';
 import { UsersController } from './users/api/users.controller';
 import { SecurityDevicesController } from './security-devices/api/security-devices.controller';
-import { UsersService } from './users/application/users.service';
 import { CryptoService } from './crypto/crypto.service';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { UsersSqlRepository } from './users/infrastructure/users.sql.repository';
@@ -49,7 +48,6 @@ const useCases = [
   providers: [
     ...useCases,
     UserAccountConfig,
-    UsersService,
     UuidProvider,
     AuthService,
     BasicStrategy,
