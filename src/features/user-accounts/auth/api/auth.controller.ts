@@ -10,7 +10,6 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { AuthService } from '../application/auth.service';
 import { LocalAuthGuard } from '../../guards/local-auth.guard';
 import {
   Request as ExpressRequest,
@@ -37,12 +36,12 @@ import { ConfirmationRegistrationUserCommand } from '../application/use-cases/co
 import { RegistrationEmailResendingCommand } from '../application/use-cases/registration-email-resending.use-case';
 import { PasswordRecoveryCommand } from '../application/use-cases/password-recovery.use-case';
 import { NewPasswordCommand } from '../application/use-cases/new-password.use-case';
+import { LogoutCommand } from '../application/use-cases/logout.use-case';
 
 @Controller('/auth')
 export class AuthController {
   constructor(
     private readonly commandBus: CommandBus,
-    private readonly authService: AuthService,
     private readonly usersSqlQueryRepository: UsersSqlQueryRepository,
   ) {}
 
@@ -164,7 +163,7 @@ export class AuthController {
     @Res() res: ExpressResponse,
     @CurrentDeviceId() deviceId: string,
   ) {
-    await this.authService.logout(deviceId);
+    await this.commandBus.execute(new LogoutCommand(deviceId));
     res.clearCookie('refreshToken').json({});
     return;
   }
