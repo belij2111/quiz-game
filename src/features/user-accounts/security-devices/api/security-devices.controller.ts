@@ -7,19 +7,18 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
-import { SecurityDevicesService } from '../application/security-devices.service';
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param.decorator';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
 import { CurrentDeviceId } from '../../../../core/decorators/param/current-device-id.param.decorator';
 import { SecurityDevicesSqlQueryRepository } from '../infrastructure/security-devices.sql.query-repository';
 import { CommandBus } from '@nestjs/cqrs';
 import { DeleteAllSecurityDevicesExcludingCurrentCommand } from '../application/use-cases/delete-all-security-devices-excluding-current.use-case';
+import { DeleteSecurityDeviceCommand } from '../application/use-cases/delete-security-device.use-case';
 
 @Controller('/security')
 export class SecurityDevicesController {
   constructor(
     private readonly commandBus: CommandBus,
-    private readonly securityDevicesService: SecurityDevicesService,
     private readonly securityDevicesSqlQueryRepository: SecurityDevicesSqlQueryRepository,
   ) {}
 
@@ -52,6 +51,8 @@ export class SecurityDevicesController {
     @CurrentUserId() currentUserId: string,
     @Param('deviceId') deviceId: string,
   ) {
-    await this.securityDevicesService.deleteById(currentUserId, deviceId);
+    await this.commandBus.execute(
+      new DeleteSecurityDeviceCommand(currentUserId, deviceId),
+    );
   }
 }
