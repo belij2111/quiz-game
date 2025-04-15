@@ -32,6 +32,7 @@ import { RegistrationEmailResendingUseCase } from './auth/application/use-cases/
 import { PasswordRecoveryUseCase } from './auth/application/use-cases/password-recovery.use-case';
 import { NewPasswordUseCase } from './auth/application/use-cases/new-password.use-case';
 import { LogoutUseCase } from './auth/application/use-cases/logout.use-case';
+import { GetInfoAboutCurrentUserQueryHandler } from './auth/application/queries/get-info-about-current-user.query';
 
 const useCases = [
   CreateUserUseCase,
@@ -48,6 +49,8 @@ const useCases = [
   DeleteSecurityDeviceUseCase,
 ];
 
+const queries = [GetInfoAboutCurrentUserQueryHandler];
+
 @Module({
   imports: [
     CqrsModule,
@@ -63,6 +66,7 @@ const useCases = [
   controllers: [UsersController, AuthController, SecurityDevicesController],
   providers: [
     ...useCases,
+    ...queries,
     UserAccountConfig,
     UuidProvider,
     AuthService,

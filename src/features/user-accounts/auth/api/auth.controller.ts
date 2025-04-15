@@ -27,8 +27,7 @@ import { NewPasswordRecoveryInputModel } from './models/input/new-password-recov
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
 import { CurrentDeviceId } from '../../../../core/decorators/param/current-device-id.param.decorator';
 import { Throttle } from '@nestjs/throttler';
-import { UsersSqlQueryRepository } from '../../users/infrastructure/users.sql.query-repository';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { LoginUserCommand } from '../application/use-cases/login-user.use-case';
 import { RefreshTokenCommand } from '../application/use-cases/refresh-token.use-case';
 import { RegisterUserCommand } from '../application/use-cases/register-user.use-case';
@@ -37,12 +36,13 @@ import { RegistrationEmailResendingCommand } from '../application/use-cases/regi
 import { PasswordRecoveryCommand } from '../application/use-cases/password-recovery.use-case';
 import { NewPasswordCommand } from '../application/use-cases/new-password.use-case';
 import { LogoutCommand } from '../application/use-cases/logout.use-case';
+import { GetInfoAboutCurrentUserQuery } from '../application/queries/get-info-about-current-user.query';
 
 @Controller('/auth')
 export class AuthController {
   constructor(
     private readonly commandBus: CommandBus,
-    private readonly usersSqlQueryRepository: UsersSqlQueryRepository,
+    private readonly queryBus: QueryBus,
   ) {}
 
   @Post('/login')
@@ -99,7 +99,9 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async get(@CurrentUserId() currentUserId: number) {
-    return this.usersSqlQueryRepository.getAuthUserById(currentUserId);
+    return this.queryBus.execute(
+      new GetInfoAboutCurrentUserQuery(currentUserId),
+    );
   }
 
   @Post('/registration')
