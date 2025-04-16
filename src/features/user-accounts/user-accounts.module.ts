@@ -37,6 +37,8 @@ import { GetAllUsersQueryHandler } from './users/application/queries/get-all-use
 import { GetUserByIdQueryHandler } from './users/application/queries/get-user-by-id.query';
 import { GetDevicesQueryHandler } from './security-devices/application/queries/get-devices.query';
 
+const strategies = [BasicStrategy, LocalStrategy, JwtStrategy];
+const services = [AuthService, JwtService, CryptoService];
 const useCases = [
   CreateUserUseCase,
   DeleteUserUseCase,
@@ -51,12 +53,17 @@ const useCases = [
   DeleteAllSecurityDevicesExcludingCurrentUseCase,
   DeleteSecurityDeviceUseCase,
 ];
-
 const queries = [
   GetInfoAboutCurrentUserQueryHandler,
   GetAllUsersQueryHandler,
   GetUserByIdQueryHandler,
   GetDevicesQueryHandler,
+];
+const repositories = [
+  SecurityDevicesSqlRepository,
+  SecurityDevicesSqlQueryRepository,
+  UsersSqlRepository,
+  UsersSqlQueryRepository,
 ];
 
 @Module({
@@ -73,21 +80,14 @@ const queries = [
   ],
   controllers: [UsersController, AuthController, SecurityDevicesController],
   providers: [
-    ...useCases,
-    ...queries,
     UserAccountConfig,
     UuidProvider,
-    AuthService,
-    BasicStrategy,
-    LocalStrategy,
-    JwtStrategy,
-    SecurityDevicesSqlRepository,
-    SecurityDevicesSqlQueryRepository,
-    JwtService,
-    CryptoService,
-    UsersSqlRepository,
-    UsersSqlQueryRepository,
     RefreshTokenGuard,
+    ...strategies,
+    ...services,
+    ...useCases,
+    ...queries,
+    ...repositories,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

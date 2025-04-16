@@ -39,22 +39,25 @@ const useCases = [
   DeleteCommentUseCase,
   UpdateLikeStatusForCommentUseCase,
 ];
+const repositories = [
+  BlogsSqlRepository,
+  BlogsSqlQueryRepository,
+  PostsSqlRepository,
+  PostsSqlQueryRepository,
+  CommentsSqlQueryRepository,
+  CommentsSqlRepository,
+  LikesForCommentSqlRepository,
+  LikesForPostSqlRepository,
+];
 
 @Module({
   imports: [CqrsModule, UserAccountsModule],
   controllers: [BlogsController, PostsController, CommentsController],
   providers: [
-    ...useCases,
-    BlogsSqlRepository,
-    BlogsSqlQueryRepository,
-    PostsSqlRepository,
-    PostsSqlQueryRepository,
-    CommentsSqlQueryRepository,
-    CommentsSqlRepository,
-    LikesForCommentSqlRepository,
-    LikesForPostSqlRepository,
     BlogIdIsExistConstraint,
     UuidProvider,
+    ...useCases,
+    ...repositories,
   ],
 })
 export class BloggersPlatformModule {}
