@@ -98,7 +98,7 @@ export class AuthController {
   @Get('/me')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
-  async get(@CurrentUserId() currentUserId: number) {
+  async get(@CurrentUserId() currentUserId: string) {
     return this.queryBus.execute(
       new GetInfoAboutCurrentUserQuery(currentUserId),
     );

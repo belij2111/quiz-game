@@ -3,7 +3,7 @@ import { MeViewModel } from '../../api/models/view/me.view.model';
 import { UsersSqlQueryRepository } from '../../../users/infrastructure/users.sql.query-repository';
 
 export class GetInfoAboutCurrentUserQuery {
-  constructor(public currentUserId: number) {}
+  constructor(public currentUserId: string) {}
 }
 
 @QueryHandler(GetInfoAboutCurrentUserQuery)

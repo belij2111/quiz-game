@@ -62,7 +62,7 @@ export class UsersSqlQueryRepository {
     });
   }
 
-  async getAuthUserById(id: number): Promise<MeViewModel | null> {
+  async getAuthUserById(id: string): Promise<MeViewModel | null> {
     const foundUser = await this.dataSource.query(
       `SELECT *
        FROM "users"
