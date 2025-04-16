@@ -37,6 +37,7 @@ import { UpdateBlogCommand } from '../application/use-cases/update-blog.use-case
 import { DeleteBlogCommand } from '../application/use-cases/delete-blog.use-case';
 import { CreatePostCommand } from '../../posts/application/use-cases/create-post.use-case';
 import { GetBlogByIdQuery } from '../application/queries/get-blog-by-id.query';
+import { GetBlogsQuery } from '../application/queries/get-blogs.query';
 
 @Controller()
 export class BlogsController {
@@ -60,17 +61,17 @@ export class BlogsController {
   @Get('blogs')
   async getAll(
     @Query()
-    query: GetBlogsQueryParams,
+    inputQuery: GetBlogsQueryParams,
   ): Promise<PaginatedViewModel<BlogViewModel[]>> {
-    return await this.blogsSqlQueryRepository.getAll(query);
+    return await this.queryBus.execute(new GetBlogsQuery(inputQuery));
   }
   @Get('sa/blogs')
   @UseGuards(BasicAuthGuard)
   async getAllForAdmin(
     @Query()
-    query: GetBlogsQueryParams,
+    inputQuery: GetBlogsQueryParams,
   ): Promise<PaginatedViewModel<BlogViewModel[]>> {
-    return await this.blogsSqlQueryRepository.getAll(query);
+    return await this.queryBus.execute(new GetBlogsQuery(inputQuery));
   }
 
   @Get('blogs/:id')
