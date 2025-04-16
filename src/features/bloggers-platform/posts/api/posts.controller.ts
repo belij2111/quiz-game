@@ -31,7 +31,6 @@ import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { PostParamsModel } from './models/input/post-params.model';
-import { CommentsSqlQueryRepository } from '../../comments/infrastructure/comments.sql.query-repository';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreatePostCommand } from '../application/use-cases/create-post.use-case';
 import { UpdatePostCommand } from '../application/use-cases/update-post.use-case';
@@ -41,13 +40,13 @@ import { CreateCommentCommand } from '../../comments/application/use-cases/creat
 import { GetPostByIdQuery } from '../application/queries/get-post-by-id.query';
 import { GetPostsQuery } from '../application/queries/get-posts.query';
 import { GetCommentByIdQuery } from '../../comments/application/queries/get-comment-by-id.query';
+import { GetCommentsForSpecificPostQuery } from '../../comments/application/queries/get-comments-for-specified-post.query';
 
 @Controller()
 export class PostsController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-    private readonly commentsSqlQueryRepository: CommentsSqlQueryRepository,
   ) {}
 
   @Post('posts')
@@ -133,10 +132,8 @@ export class PostsController {
     @Param('postId') postId: string,
     @Query() query: GetCommentQueryParams,
   ): Promise<PaginatedViewModel<CommentViewModel[]>> {
-    return await this.commentsSqlQueryRepository.getCommentsByPostId(
-      identifyUser,
-      postId,
-      query,
+    return await this.queryBus.execute(
+      new GetCommentsForSpecificPostQuery(identifyUser, postId, query),
     );
   }
 
