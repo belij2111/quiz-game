@@ -31,16 +31,18 @@ import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { BlogIdParamModel } from '../../posts/api/models/input/blogId-param.model';
 import { BlogsSqlQueryRepository } from '../infrastructure/blogs.sql.query-repository';
 import { PostsSqlQueryRepository } from '../../posts/infrastructure/posts.sql.query-repository';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateBlogCommand } from '../application/use-cases/create-blog.use-case';
 import { UpdateBlogCommand } from '../application/use-cases/update-blog.use-case';
 import { DeleteBlogCommand } from '../application/use-cases/delete-blog.use-case';
 import { CreatePostCommand } from '../../posts/application/use-cases/create-post.use-case';
+import { GetBlogByIdQuery } from '../application/queries/get-blog-by-id.query';
 
 @Controller()
 export class BlogsController {
   constructor(
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     private readonly blogsSqlQueryRepository: BlogsSqlQueryRepository,
     private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
   ) {}
@@ -52,7 +54,7 @@ export class BlogsController {
     const createdBlogId = await this.commandBus.execute(
       new CreateBlogCommand(blogCreateModel),
     );
-    return await this.blogsSqlQueryRepository.getById(createdBlogId);
+    return await this.queryBus.execute(new GetBlogByIdQuery(createdBlogId));
   }
 
   @Get('blogs')

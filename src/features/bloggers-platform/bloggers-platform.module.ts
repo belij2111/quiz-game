@@ -25,6 +25,7 @@ import { CreateCommentUseCase } from './comments/application/use-cases/create-co
 import { UpdateCommentUseCase } from './comments/application/use-cases/update-comment.use-case';
 import { DeleteCommentUseCase } from './comments/application/use-cases/delete-comment.use-case';
 import { UpdateLikeStatusForCommentUseCase } from './comments/application/use-cases/update-like-status-for-comment.use-case';
+import { GetBlogByIdQueryHandler } from './blogs/application/queries/get-blog-by-id.query';
 
 const useCases = [
   CreateBlogUseCase,
@@ -39,6 +40,7 @@ const useCases = [
   DeleteCommentUseCase,
   UpdateLikeStatusForCommentUseCase,
 ];
+const queries = [GetBlogByIdQueryHandler];
 const repositories = [
   BlogsSqlRepository,
   BlogsSqlQueryRepository,
@@ -57,6 +59,7 @@ const repositories = [
     BlogIdIsExistConstraint,
     UuidProvider,
     ...useCases,
+    ...queries,
     ...repositories,
   ],
 })
