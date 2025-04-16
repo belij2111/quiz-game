@@ -29,6 +29,7 @@ import { GetBlogByIdQueryHandler } from './blogs/application/queries/get-blog-by
 import { GetBlogsQueryHandler } from './blogs/application/queries/get-blogs.query';
 import { GetPostByIdHandler } from './posts/application/queries/get-post-by-id.query';
 import { GetPostsForSpecifiedBlogQueryHandler } from './posts/application/queries/get-posts-for-specified-blog.query';
+import { GetPostsQueryHandler } from './posts/application/queries/get-posts.query';
 
 const useCases = [
   CreateBlogUseCase,
@@ -48,6 +49,7 @@ const queries = [
   GetBlogsQueryHandler,
   GetPostByIdHandler,
   GetPostsForSpecifiedBlogQueryHandler,
+  GetPostsQueryHandler,
 ];
 const repositories = [
   BlogsSqlRepository,
