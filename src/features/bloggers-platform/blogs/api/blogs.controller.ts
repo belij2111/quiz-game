@@ -29,7 +29,6 @@ import { CurrentUserId } from '../../../../core/decorators/param/current-user-id
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { BlogIdParamModel } from '../../posts/api/models/input/blogId-param.model';
-import { BlogsSqlQueryRepository } from '../infrastructure/blogs.sql.query-repository';
 import { PostsSqlQueryRepository } from '../../posts/infrastructure/posts.sql.query-repository';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateBlogCommand } from '../application/use-cases/create-blog.use-case';
@@ -44,7 +43,6 @@ export class BlogsController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-    private readonly blogsSqlQueryRepository: BlogsSqlQueryRepository,
     private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
   ) {}
 
@@ -76,7 +74,7 @@ export class BlogsController {
 
   @Get('blogs/:id')
   async getById(@Param('id') id: string): Promise<BlogViewModel> {
-    const foundBlog = await this.blogsSqlQueryRepository.getById(id);
+    const foundBlog = await this.queryBus.execute(new GetBlogByIdQuery(id));
     if (!foundBlog) {
       throw new NotFoundException(`Blog with id ${id} not found`);
     }
