@@ -19,11 +19,11 @@ import {
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { ApiBasicAuth } from '@nestjs/swagger';
 import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
-import { UsersSqlQueryRepository } from '../infrastructure/users.sql.query-repository';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/use-cases/create-user.use-case';
 import { DeleteUserCommand } from '../application/use-cases/delete-user.use-case';
 import { GetAllUsersQuery } from '../application/queries/get-all-users.query';
+import { GetUserByIdQuery } from '../application/queries/get-user-by-id.query';
 
 @Controller('/sa/users')
 @UseGuards(BasicAuthGuard)
@@ -32,7 +32,6 @@ export class UsersController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-    private readonly usersSqlQueryRepository: UsersSqlQueryRepository,
   ) {}
 
   @Post()
@@ -41,7 +40,7 @@ export class UsersController {
     const createdUserId = await this.commandBus.execute(
       new CreateUserCommand(userCreateModel),
     );
-    return await this.usersSqlQueryRepository.getById(createdUserId);
+    return await this.queryBus.execute(new GetUserByIdQuery(createdUserId));
   }
 
   @Get()
