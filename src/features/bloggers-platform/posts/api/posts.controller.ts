@@ -40,6 +40,7 @@ import { UpdateLikeStatusForPostCommand } from '../application/use-cases/update-
 import { CreateCommentCommand } from '../../comments/application/use-cases/create-comment.use-case';
 import { GetPostByIdQuery } from '../application/queries/get-post-by-id.query';
 import { GetPostsQuery } from '../application/queries/get-posts.query';
+import { GetCommentByIdQuery } from '../../comments/application/queries/get-comment-by-id.query';
 
 @Controller()
 export class PostsController {
@@ -120,9 +121,8 @@ export class PostsController {
     const createdCommentId = await this.commandBus.execute(
       new CreateCommentCommand(currentUserId, postId, commentCreateModel),
     );
-    return await this.commentsSqlQueryRepository.getCommentById(
-      currentUserId,
-      createdCommentId,
+    return await this.queryBus.execute(
+      new GetCommentByIdQuery(currentUserId, createdCommentId),
     );
   }
 

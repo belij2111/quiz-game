@@ -18,17 +18,17 @@ import { CommentCreateModel } from './models/input/create-comment.input.model';
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
-import { CommentsSqlQueryRepository } from '../infrastructure/comments.sql.query-repository';
 import { UpdateCommentCommand } from '../application/use-cases/update-comment.use-case';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { DeleteCommentCommand } from '../application/use-cases/delete-comment.use-case';
 import { UpdateLikeStatusForCommentCommand } from '../application/use-cases/update-like-status-for-comment.use-case';
+import { GetCommentByIdQuery } from '../application/queries/get-comment-by-id.query';
 
 @Controller('/comments')
 export class CommentsController {
   constructor(
     private readonly commandBus: CommandBus,
-    private readonly commentsSqlQueryRepository: CommentsSqlQueryRepository,
+    private readonly queryBus: QueryBus,
   ) {}
 
   @Get('/:id')
@@ -37,9 +37,8 @@ export class CommentsController {
     @IdentifyUser() identifyUser: string,
     @Param('id') id: string,
   ): Promise<CommentViewModel | null> {
-    const foundComment = await this.commentsSqlQueryRepository.getCommentById(
-      identifyUser,
-      id,
+    const foundComment = await this.queryBus.execute(
+      new GetCommentByIdQuery(identifyUser, id),
     );
     if (!foundComment) {
       throw new NotFoundException(`Comment with id ${id} not found`);
