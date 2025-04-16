@@ -20,9 +20,10 @@ import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { ApiBasicAuth } from '@nestjs/swagger';
 import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
 import { UsersSqlQueryRepository } from '../infrastructure/users.sql.query-repository';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/use-cases/create-user.use-case';
 import { DeleteUserCommand } from '../application/use-cases/delete-user.use-case';
+import { GetAllUsersQuery } from '../application/queries/get-all-users.query';
 
 @Controller('/sa/users')
 @UseGuards(BasicAuthGuard)
@@ -30,6 +31,7 @@ import { DeleteUserCommand } from '../application/use-cases/delete-user.use-case
 export class UsersController {
   constructor(
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     private readonly usersSqlQueryRepository: UsersSqlQueryRepository,
   ) {}
 
@@ -46,9 +48,9 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async getAll(
     @Query()
-    query: GetUsersQueryParams,
+    inputQuery: GetUsersQueryParams,
   ): Promise<PaginatedViewModel<UserViewModel[]>> {
-    return await this.usersSqlQueryRepository.getAll(query);
+    return await this.queryBus.execute(new GetAllUsersQuery(inputQuery));
   }
 
   @Delete(':id')
