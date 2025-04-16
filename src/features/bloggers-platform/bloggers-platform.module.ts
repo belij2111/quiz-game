@@ -27,6 +27,7 @@ import { DeleteCommentUseCase } from './comments/application/use-cases/delete-co
 import { UpdateLikeStatusForCommentUseCase } from './comments/application/use-cases/update-like-status-for-comment.use-case';
 import { GetBlogByIdQueryHandler } from './blogs/application/queries/get-blog-by-id.query';
 import { GetBlogsQueryHandler } from './blogs/application/queries/get-blogs.query';
+import { GetPostByIdHandler } from './posts/application/queries/get-post-by-id.query';
 
 const useCases = [
   CreateBlogUseCase,
@@ -41,7 +42,11 @@ const useCases = [
   DeleteCommentUseCase,
   UpdateLikeStatusForCommentUseCase,
 ];
-const queries = [GetBlogByIdQueryHandler, GetBlogsQueryHandler];
+const queries = [
+  GetBlogByIdQueryHandler,
+  GetBlogsQueryHandler,
+  GetPostByIdHandler,
+];
 const repositories = [
   BlogsSqlRepository,
   BlogsSqlQueryRepository,

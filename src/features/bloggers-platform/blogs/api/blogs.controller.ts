@@ -37,6 +37,7 @@ import { DeleteBlogCommand } from '../application/use-cases/delete-blog.use-case
 import { CreatePostCommand } from '../../posts/application/use-cases/create-post.use-case';
 import { GetBlogByIdQuery } from '../application/queries/get-blog-by-id.query';
 import { GetBlogsQuery } from '../application/queries/get-blogs.query';
+import { GetPostByIdQuery } from '../../posts/application/queries/get-post-by-id.query';
 
 @Controller()
 export class BlogsController {
@@ -113,9 +114,8 @@ export class BlogsController {
     const createdPostId = await this.commandBus.execute(
       new CreatePostCommand(postCreateModel, blogId),
     );
-    return await this.postsSqlQueryRepository.getById(
-      currentUserId,
-      createdPostId,
+    return await this.queryBus.execute(
+      new GetPostByIdQuery(currentUserId, createdPostId),
     );
   }
 

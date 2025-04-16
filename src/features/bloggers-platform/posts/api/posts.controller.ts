@@ -33,17 +33,19 @@ import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { PostsSqlQueryRepository } from '../infrastructure/posts.sql.query-repository';
 import { PostParamsModel } from './models/input/post-params.model';
 import { CommentsSqlQueryRepository } from '../../comments/infrastructure/comments.sql.query-repository';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreatePostCommand } from '../application/use-cases/create-post.use-case';
 import { UpdatePostCommand } from '../application/use-cases/update-post.use-case';
 import { DeletePostCommand } from '../application/use-cases/delete-post.use-case';
 import { UpdateLikeStatusForPostCommand } from '../application/use-cases/update-like-status-for post.use-case';
 import { CreateCommentCommand } from '../../comments/application/use-cases/create-comment.use-case';
+import { GetPostByIdQuery } from '../application/queries/get-post-by-id.query';
 
 @Controller()
 export class PostsController {
   constructor(
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
     private readonly commentsSqlQueryRepository: CommentsSqlQueryRepository,
   ) {}
@@ -58,9 +60,8 @@ export class PostsController {
     const createdPostId = await this.commandBus.execute(
       new CreatePostCommand(postCreateModel),
     );
-    return await this.postsSqlQueryRepository.getById(
-      currentUserId,
-      createdPostId,
+    return await this.queryBus.execute(
+      new GetPostByIdQuery(currentUserId, createdPostId),
     );
   }
 
@@ -79,9 +80,8 @@ export class PostsController {
     @IdentifyUser() identifyUser: string,
     @Param('id') id: string,
   ): Promise<PostViewModel> {
-    const foundPost = await this.postsSqlQueryRepository.getById(
-      identifyUser,
-      id,
+    const foundPost = await this.queryBus.execute(
+      new GetPostByIdQuery(identifyUser, id),
     );
     if (!foundPost) {
       throw new NotFoundException(`Post with id ${id} not found`);
