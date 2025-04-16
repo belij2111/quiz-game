@@ -35,6 +35,7 @@ import { LogoutUseCase } from './auth/application/use-cases/logout.use-case';
 import { GetInfoAboutCurrentUserQueryHandler } from './auth/application/queries/get-info-about-current-user.query';
 import { GetAllUsersQueryHandler } from './users/application/queries/get-all-users.query';
 import { GetUserByIdQueryHandler } from './users/application/queries/get-user-by-id.query';
+import { GetDevicesQueryHandler } from './security-devices/application/queries/get-devices.query';
 
 const useCases = [
   CreateUserUseCase,
@@ -55,6 +56,7 @@ const queries = [
   GetInfoAboutCurrentUserQueryHandler,
   GetAllUsersQueryHandler,
   GetUserByIdQueryHandler,
+  GetDevicesQueryHandler,
 ];
 
 @Module({
