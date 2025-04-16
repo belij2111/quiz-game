@@ -29,7 +29,6 @@ import { CurrentUserId } from '../../../../core/decorators/param/current-user-id
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { BlogIdParamModel } from '../../posts/api/models/input/blogId-param.model';
-import { PostsSqlQueryRepository } from '../../posts/infrastructure/posts.sql.query-repository';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateBlogCommand } from '../application/use-cases/create-blog.use-case';
 import { UpdateBlogCommand } from '../application/use-cases/update-blog.use-case';
@@ -38,13 +37,13 @@ import { CreatePostCommand } from '../../posts/application/use-cases/create-post
 import { GetBlogByIdQuery } from '../application/queries/get-blog-by-id.query';
 import { GetBlogsQuery } from '../application/queries/get-blogs.query';
 import { GetPostByIdQuery } from '../../posts/application/queries/get-post-by-id.query';
+import { GetPostsForSpecifiedBlogQuery } from '../../posts/application/queries/get-posts-for-specified-blog.query';
 
 @Controller()
 export class BlogsController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-    private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
   ) {}
 
   @Post('sa/blogs')
@@ -127,10 +126,8 @@ export class BlogsController {
     @Query() query: GetPostQueryParams,
   ): Promise<PaginatedViewModel<PostViewModel[]>> {
     const blogId = param.blogId;
-    return await this.postsSqlQueryRepository.getPostsByBlogId(
-      identifyUser,
-      blogId,
-      query,
+    return await this.queryBus.execute(
+      new GetPostsForSpecifiedBlogQuery(identifyUser, blogId, query),
     );
   }
 }

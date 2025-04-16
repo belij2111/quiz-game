@@ -28,6 +28,7 @@ import { UpdateLikeStatusForCommentUseCase } from './comments/application/use-ca
 import { GetBlogByIdQueryHandler } from './blogs/application/queries/get-blog-by-id.query';
 import { GetBlogsQueryHandler } from './blogs/application/queries/get-blogs.query';
 import { GetPostByIdHandler } from './posts/application/queries/get-post-by-id.query';
+import { GetPostsForSpecifiedBlogQueryHandler } from './posts/application/queries/get-posts-for-specified-blog.query';
 
 const useCases = [
   CreateBlogUseCase,
@@ -46,6 +47,7 @@ const queries = [
   GetBlogByIdQueryHandler,
   GetBlogsQueryHandler,
   GetPostByIdHandler,
+  GetPostsForSpecifiedBlogQueryHandler,
 ];
 const repositories = [
   BlogsSqlRepository,
