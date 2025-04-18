@@ -5,16 +5,19 @@ import { initAppModule } from '../../src/init-app-module';
 import { deleteAllData } from './delete-all-data';
 
 export const initSettings = async (
-  service?: any,
-  serviceMock?: any,
+  services?: { service: any; serviceMock: any }[],
   addSettingsToModuleBuilder?: (moduleBuilder: TestingModuleBuilder) => void,
 ) => {
   const dynamicAppModule = await initAppModule();
   const testingModuleBuilder: TestingModuleBuilder = Test.createTestingModule({
     imports: [dynamicAppModule],
-  })
-    .overrideProvider(service)
-    .useClass(serviceMock);
+  });
+
+  if (services) {
+    for (const { service, serviceMock } of services) {
+      testingModuleBuilder.overrideProvider(service).useClass(serviceMock);
+    }
+  }
 
   if (addSettingsToModuleBuilder) {
     addSettingsToModuleBuilder(testingModuleBuilder);
