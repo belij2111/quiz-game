@@ -3,6 +3,10 @@ import { CoreConfig } from '../../core/core.config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailService } from './mail.service';
 import { EmailTemplateService } from './email-template.service';
+import { SendEmailConfirmationWhenRegisteringUserEventHandler } from './event-handlers/send-email-confirmation-when-registering-user.event-handler';
+
+const services = [MailService, EmailTemplateService];
+const eventHandlers = [SendEmailConfirmationWhenRegisteringUserEventHandler];
 
 @Module({
   imports: [
@@ -24,7 +28,7 @@ import { EmailTemplateService } from './email-template.service';
       inject: [CoreConfig],
     }),
   ],
-  providers: [MailService, EmailTemplateService],
+  providers: [...services, ...eventHandlers],
   exports: [MailService],
 })
 export class NotificationsModule {}

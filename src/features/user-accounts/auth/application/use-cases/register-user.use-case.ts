@@ -1,12 +1,12 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { UserAccountConfig } from '../../../config/user-account.config';
 import { UserCreateModel } from '../../../users/api/models/input/create-user.input.model';
 import { BadRequestException } from '@nestjs/common';
 import { User } from '../../../users/domain/user.sql.entity';
 import { UsersSqlRepository } from '../../../users/infrastructure/users.sql.repository';
 import { CryptoService } from '../../../crypto/crypto.service';
-import { MailService } from '../../../../notifications/mail.service';
 import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
+import { UserRegistrationEvent } from '../events/user-registration.event';
 
 export class RegisterUserCommand {
   constructor(public userCreateModel: UserCreateModel) {}
@@ -20,8 +20,8 @@ export class RegisterUserUseCase
     private readonly userAccountConfig: UserAccountConfig,
     private readonly usersSqlRepository: UsersSqlRepository,
     private readonly bcryptService: CryptoService,
-    private readonly mailService: MailService,
     private readonly uuidProvider: UuidProvider,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: RegisterUserCommand): Promise<void> {
@@ -58,10 +58,8 @@ export class RegisterUserUseCase
       isConfirmed: false,
     };
     await this.usersSqlRepository.create(newUser);
-    this.mailService.sendEmail(
-      newUser.email,
-      newUser.confirmationCode,
-      'registration',
+    this.eventBus.publish(
+      new UserRegistrationEvent(newUser.email, newUser.confirmationCode),
     );
   }
 }
