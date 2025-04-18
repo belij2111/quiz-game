@@ -211,7 +211,10 @@ describe('e2e-Auth', () => {
   describe('POST/auth/registration-email-resending', () => {
     it(`should resend confirmation registration by email : STATUS 204`, async () => {
       const validUserModel: UserCreateModel = createValidUserModel();
-      const sendEmailSpy = jest.spyOn(mailServiceMock, 'sendEmail');
+      const sendEmailSpy = jest.spyOn(
+        sendEmailConfirmationWhenRegisteringUserEventHandlerMock,
+        'handle',
+      );
       await authTestManager.registration(validUserModel);
       const emailResendingModel =
         createEmailResendingInputModel(validUserModel);
@@ -219,12 +222,7 @@ describe('e2e-Auth', () => {
         emailResendingModel,
         HttpStatus.NO_CONTENT,
       );
-      authTestManager.expectCorrectSendEmail(
-        sendEmailSpy,
-        validUserModel,
-        // 'registration',
-        // 2,
-      );
+      authTestManager.expectCorrectSendEmail(sendEmailSpy, validUserModel, 2);
     });
     it(`shouldn't resend confirmation registration with incorrect input data : STATUS 400 `, async () => {
       const validUserModel: UserCreateModel = createValidUserModel();
