@@ -1,9 +1,9 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { UserAccountConfig } from '../../../config/user-account.config';
 import { UsersSqlRepository } from '../../../users/infrastructure/users.sql.repository';
-import { MailService } from '../../../../notifications/mail.service';
 import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
 import { PasswordRecoveryInputModel } from '../../api/models/input/password-recovery-input.model';
+import { UserPasswordRecoveryEvent } from '../events/user-password-recovery.event';
 
 export class PasswordRecoveryCommand {
   constructor(public inputEmail: PasswordRecoveryInputModel) {}
@@ -16,8 +16,8 @@ export class PasswordRecoveryUseCase
   constructor(
     private readonly userAccountConfig: UserAccountConfig,
     private readonly usersSqlRepository: UsersSqlRepository,
-    private readonly mailService: MailService,
     private readonly uuidProvider: UuidProvider,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: PasswordRecoveryCommand): Promise<void> {
@@ -34,10 +34,8 @@ export class PasswordRecoveryUseCase
       recoveryCode,
       newExpirationDate,
     );
-    this.mailService.sendEmail(
-      command.inputEmail.email,
-      recoveryCode,
-      'passwordRecovery',
+    this.eventBus.publish(
+      new UserPasswordRecoveryEvent(command.inputEmail.email, recoveryCode),
     );
   }
 }

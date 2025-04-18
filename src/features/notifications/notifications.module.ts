@@ -4,9 +4,13 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { MailService } from './mail.service';
 import { EmailTemplateService } from './email-template.service';
 import { SendEmailConfirmationWhenRegisteringUserEventHandler } from './event-handlers/send-email-confirmation-when-registering-user.event-handler';
+import { SendEmailWithRecoveryCodeEventHandler } from './event-handlers/send-email-with-recovery-code.event-handler';
 
 const services = [MailService, EmailTemplateService];
-const eventHandlers = [SendEmailConfirmationWhenRegisteringUserEventHandler];
+const eventHandlers = [
+  SendEmailConfirmationWhenRegisteringUserEventHandler,
+  SendEmailWithRecoveryCodeEventHandler,
+];
 
 @Module({
   imports: [
