@@ -14,7 +14,7 @@ export class SendEmailWithRecoveryCodeEventHandler
 
   async handle(event: UserPasswordRecoveryEvent) {
     const htmlContent = this.emailTemplateService.passwordRecoveryEmail(
-      event.recoveryCode,
+      event.code,
     );
     this.mailerService.sendMail({
       to: event.email,
