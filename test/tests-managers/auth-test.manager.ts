@@ -111,15 +111,15 @@ export class AuthTestManager {
   expectCorrectSendEmail(
     sendEmailSpy: jest.SpyInstance,
     validUserModel: UserCreateModel,
-    actionType: 'registration' | 'passwordRecovery',
     callCount: number = 1,
   ) {
     expect(sendEmailSpy).toHaveBeenCalled();
     expect(sendEmailSpy).toHaveBeenCalledTimes(callCount);
     expect(sendEmailSpy).toHaveBeenCalledWith(
-      validUserModel.email,
-      expect.any(String),
-      actionType,
+      expect.objectContaining({
+        email: validUserModel.email,
+        code: expect.any(String),
+      }),
     );
   }
 
