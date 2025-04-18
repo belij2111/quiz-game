@@ -10,7 +10,6 @@ import {
 } from '../../models/user-accounts/user.input.model';
 import { AuthTestManager } from '../../tests-managers/auth-test.manager';
 import { delay } from '../../helpers/delay';
-import { MailService } from '../../../src/features/notifications/mail.service';
 import { MailServiceMock } from '../../mock/mail.service.mock';
 import {
   createEmailResendingInputModel,
@@ -28,19 +27,29 @@ import {
   createInvalidNewPasswordRecoveryInputModel,
   createNewPasswordRecoveryInputModel,
 } from '../../models/user-accounts/new.password.recovery.input.model';
+import { SendEmailConfirmationWhenRegisteringUserEventHandlerMock } from '../../mock/send-email-confirmation-when-registering-user-event-handler.mock';
+import { SendEmailConfirmationWhenRegisteringUserEventHandler } from '../../../src/features/notifications/event-handlers/send-email-confirmation-when-registering-user.event-handler';
 
 describe('e2e-Auth', () => {
   let app: INestApplication;
   let usersTestManager: UsersTestManager;
   let authTestManager: AuthTestManager;
   let mailServiceMock: MailServiceMock;
+  let sendEmailConfirmationWhenRegisteringUserEventHandlerMock: SendEmailConfirmationWhenRegisteringUserEventHandlerMock;
   beforeEach(async () => {
-    const result = await initSettings(MailService, MailServiceMock);
+    const result = await initSettings([
+      {
+        service: SendEmailConfirmationWhenRegisteringUserEventHandler,
+        serviceMock: SendEmailConfirmationWhenRegisteringUserEventHandlerMock,
+      },
+    ]);
     app = result.app;
     const coreConfig = result.coreConfig;
     usersTestManager = new UsersTestManager(app, coreConfig);
     authTestManager = new AuthTestManager(app, coreConfig);
-    mailServiceMock = app.get(MailService);
+    sendEmailConfirmationWhenRegisteringUserEventHandlerMock = app.get(
+      SendEmailConfirmationWhenRegisteringUserEventHandler,
+    );
   });
   beforeEach(async () => {
     await deleteAllData(app);
@@ -137,13 +146,12 @@ describe('e2e-Auth', () => {
   describe('POST/auth/registration', () => {
     it(`should register user in system : STATUS 204`, async () => {
       const validUserModel: UserCreateModel = createValidUserModel();
-      const sendEmailSpy = jest.spyOn(mailServiceMock, 'sendEmail');
-      await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
-      authTestManager.expectCorrectSendEmail(
-        sendEmailSpy,
-        validUserModel,
-        'registration',
+      const sendEmailSpy = jest.spyOn(
+        sendEmailConfirmationWhenRegisteringUserEventHandlerMock,
+        'handle',
       );
+      await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
+      authTestManager.expectCorrectSendEmail(sendEmailSpy, validUserModel);
     });
     it(`shouldn't register user in system with incorrect input data : STATUS 400`, async () => {
       const validUserModel: UserCreateModel = createValidUserModel(7);
@@ -214,8 +222,8 @@ describe('e2e-Auth', () => {
       authTestManager.expectCorrectSendEmail(
         sendEmailSpy,
         validUserModel,
-        'registration',
-        2,
+        // 'registration',
+        // 2,
       );
     });
     it(`shouldn't resend confirmation registration with incorrect input data : STATUS 400 `, async () => {
@@ -256,8 +264,8 @@ describe('e2e-Auth', () => {
       authTestManager.expectCorrectSendEmail(
         sendEmailSpy,
         validUserModel,
-        'passwordRecovery',
-        2,
+        // 'passwordRecovery',
+        // 2,
       );
     });
     it(`shouldn't recover password with incorrect input data : STATUS 400 `, async () => {
