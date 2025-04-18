@@ -17,7 +17,7 @@ export class SendEmailWithRecoveryCodeEventHandler
       event.recoveryCode,
     );
     this.mailerService.sendMail({
-      to: event.recoveryCode,
+      to: event.email,
       subject: 'Your code is here',
       html: htmlContent,
     });
