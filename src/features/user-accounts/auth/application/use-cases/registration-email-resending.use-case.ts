@@ -1,10 +1,10 @@
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { UserAccountConfig } from '../../../config/user-account.config';
 import { BadRequestException } from '@nestjs/common';
 import { UsersSqlRepository } from '../../../users/infrastructure/users.sql.repository';
-import { MailService } from '../../../../notifications/mail.service';
 import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
 import { RegistrationEmailResendingModel } from '../../api/models/input/registration-email-resending.model';
+import { UserRegistrationEvent } from '../events/user-registration.event';
 
 export class RegistrationEmailResendingCommand {
   constructor(public inputEmail: RegistrationEmailResendingModel) {}
@@ -17,8 +17,8 @@ export class RegistrationEmailResendingUseCase
   constructor(
     private readonly userAccountConfig: UserAccountConfig,
     private readonly usersSqlRepository: UsersSqlRepository,
-    private readonly mailService: MailService,
     private readonly uuidProvider: UuidProvider,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: RegistrationEmailResendingCommand): Promise<void> {
@@ -48,10 +48,8 @@ export class RegistrationEmailResendingUseCase
       newConfirmationCode,
       newExpirationDate,
     );
-    this.mailService.sendEmail(
-      command.inputEmail.email,
-      newConfirmationCode,
-      'registration',
+    this.eventBus.publish(
+      new UserRegistrationEvent(command.inputEmail.email, newConfirmationCode),
     );
   }
 }
