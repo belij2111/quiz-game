@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { CoreConfig } from '../../core/core.config';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { MailService } from './mail.service';
 import { EmailTemplateService } from './email-template.service';
 import { SendEmailConfirmationWhenRegisteringUserEventHandler } from './event-handlers/send-email-confirmation-when-registering-user.event-handler';
 import { SendEmailWithRecoveryCodeEventHandler } from './event-handlers/send-email-with-recovery-code.event-handler';
 
-const services = [MailService, EmailTemplateService];
+const services = [EmailTemplateService];
 const eventHandlers = [
   SendEmailConfirmationWhenRegisteringUserEventHandler,
   SendEmailWithRecoveryCodeEventHandler,
@@ -33,6 +32,6 @@ const eventHandlers = [
     }),
   ],
   providers: [...services, ...eventHandlers],
-  exports: [MailService],
+  exports: [],
 })
 export class NotificationsModule {}
