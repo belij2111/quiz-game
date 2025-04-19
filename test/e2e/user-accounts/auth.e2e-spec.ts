@@ -29,6 +29,8 @@ import {
 } from '../../models/user-accounts/new.password.recovery.input.model';
 import { SendEmailConfirmationWhenRegisteringUserEventHandlerMock } from '../../mock/send-email-confirmation-when-registering-user-event-handler.mock';
 import { SendEmailConfirmationWhenRegisteringUserEventHandler } from '../../../src/features/notifications/event-handlers/send-email-confirmation-when-registering-user.event-handler';
+import { SendEmailWithRecoveryCodeEventHandlerMock } from '../../mock/send-email-with-recovery-code-event-handler.mock';
+import { SendEmailWithRecoveryCodeEventHandler } from '../../../src/features/notifications/event-handlers/send-email-with-recovery-code.event-handler';
 
 describe('e2e-Auth', () => {
   let app: INestApplication;
@@ -36,11 +38,16 @@ describe('e2e-Auth', () => {
   let authTestManager: AuthTestManager;
   let mailServiceMock: MailServiceMock;
   let sendEmailConfirmationWhenRegisteringUserEventHandlerMock: SendEmailConfirmationWhenRegisteringUserEventHandlerMock;
+  let sendEmailWithRecoveryCodeEventHandlerMock: SendEmailWithRecoveryCodeEventHandlerMock;
   beforeEach(async () => {
     const result = await initSettings([
       {
         service: SendEmailConfirmationWhenRegisteringUserEventHandler,
         serviceMock: SendEmailConfirmationWhenRegisteringUserEventHandlerMock,
+      },
+      {
+        service: SendEmailWithRecoveryCodeEventHandler,
+        serviceMock: SendEmailWithRecoveryCodeEventHandlerMock,
       },
     ]);
     app = result.app;
@@ -49,6 +56,9 @@ describe('e2e-Auth', () => {
     authTestManager = new AuthTestManager(app, coreConfig);
     sendEmailConfirmationWhenRegisteringUserEventHandlerMock = app.get(
       SendEmailConfirmationWhenRegisteringUserEventHandler,
+    );
+    sendEmailWithRecoveryCodeEventHandlerMock = app.get(
+      SendEmailWithRecoveryCodeEventHandler,
     );
   });
   beforeEach(async () => {
@@ -251,7 +261,10 @@ describe('e2e-Auth', () => {
   describe('POST/auth/password-recovery', () => {
     it(`should recover password via email confirmation : STATUS 204`, async () => {
       const validUserModel: UserCreateModel = createValidUserModel();
-      const sendEmailSpy = jest.spyOn(mailServiceMock, 'sendEmail');
+      const sendEmailSpy = jest.spyOn(
+        sendEmailWithRecoveryCodeEventHandlerMock,
+        'handle',
+      );
       await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
       const passwordRecoveryModel =
         createPasswordRecoveryInputModel(validUserModel);
@@ -259,12 +272,7 @@ describe('e2e-Auth', () => {
         passwordRecoveryModel,
         HttpStatus.NO_CONTENT,
       );
-      authTestManager.expectCorrectSendEmail(
-        sendEmailSpy,
-        validUserModel,
-        // 'passwordRecovery',
-        // 2,
-      );
+      authTestManager.expectCorrectSendEmail(sendEmailSpy, validUserModel, 1);
     });
     it(`shouldn't recover password with incorrect input data : STATUS 400 `, async () => {
       const validUserModel: UserCreateModel = createValidUserModel();
