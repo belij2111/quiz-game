@@ -184,7 +184,9 @@ describe('e2e-Auth', () => {
     it(`should confirm the user's registration in system : STATUS 204`, async () => {
       const validUserModel: UserCreateModel = createValidUserModel();
       await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
-      const confirmationCode = mailServiceMock.sentEmails[0]?.code;
+      const confirmationCode =
+        sendEmailConfirmationWhenRegisteringUserEventHandlerMock.sentEmails[0]
+          .code;
       const confirmationCodeModel =
         createRegistrationConfirmationCodeInputModel(confirmationCode);
       // console.log('mailServiceMock.sentEmails :', mailServiceMock.sentEmails);
@@ -206,7 +208,9 @@ describe('e2e-Auth', () => {
     it(`shouldn't confirm the user's registration if the limit is exceeded : STATUS 429`, async () => {
       const validUserModel: UserCreateModel = createValidUserModel();
       await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
-      const confirmationCode = mailServiceMock.sentEmails[0]?.code;
+      const confirmationCode =
+        sendEmailConfirmationWhenRegisteringUserEventHandlerMock.sentEmails[0]
+          .code;
       const confirmationCodeModel =
         createRegistrationConfirmationCodeInputModel(confirmationCode);
       const createdResponse =
