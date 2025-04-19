@@ -10,7 +10,6 @@ import {
 } from '../../models/user-accounts/user.input.model';
 import { AuthTestManager } from '../../tests-managers/auth-test.manager';
 import { delay } from '../../helpers/delay';
-import { MailServiceMock } from '../../mock/mail.service.mock';
 import {
   createEmailResendingInputModel,
   createInvalidEmailResendingInputModel,
@@ -36,7 +35,6 @@ describe('e2e-Auth', () => {
   let app: INestApplication;
   let usersTestManager: UsersTestManager;
   let authTestManager: AuthTestManager;
-  let mailServiceMock: MailServiceMock;
   let sendEmailConfirmationWhenRegisteringUserEventHandlerMock: SendEmailConfirmationWhenRegisteringUserEventHandlerMock;
   let sendEmailWithRecoveryCodeEventHandlerMock: SendEmailWithRecoveryCodeEventHandlerMock;
   beforeEach(async () => {
@@ -306,7 +304,9 @@ describe('e2e-Auth', () => {
     it(`should confirm password recovery : STATUS 204`, async () => {
       const validUserModel: UserCreateModel = createValidUserModel();
       await authTestManager.registration(validUserModel);
-      const recoveryCode = mailServiceMock.sentEmails[0]?.code;
+      const recoveryCode =
+        sendEmailConfirmationWhenRegisteringUserEventHandlerMock.sentEmails[0]
+          .code;
       const newPasswordRecoveryModel =
         createNewPasswordRecoveryInputModel(recoveryCode);
       await authTestManager.newPassword(
@@ -327,7 +327,9 @@ describe('e2e-Auth', () => {
     it(`shouldn't confirm password recovery if the limit is exceeded : STATUS 429`, async () => {
       const validUserModel: UserCreateModel = createValidUserModel();
       await authTestManager.registration(validUserModel);
-      const recoveryCode = mailServiceMock.sentEmails[0]?.code;
+      const recoveryCode =
+        sendEmailConfirmationWhenRegisteringUserEventHandlerMock.sentEmails[0]
+          .code;
       const newPasswordRecoveryModel =
         createNewPasswordRecoveryInputModel(recoveryCode);
       const createdResponse = await authTestManager.newPasswordWithRateLimit(
