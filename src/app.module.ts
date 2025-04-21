@@ -6,20 +6,21 @@ import { UserAccountsModule } from './features/user-accounts/user-accounts.modul
 import { CoreConfig } from './core/core.config';
 import { CoreModule } from './core/core.module';
 import { NotificationsModule } from './features/notifications/notifications.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 @Module({
   imports: [
     configModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'sa',
-      database: 'sprint-05',
-      autoLoadEntities: false,
-      synchronize: false,
+    TypeOrmModule.forRootAsync({
+      useFactory: (coreConfig: CoreConfig): TypeOrmModuleOptions => {
+        return {
+          type: 'postgres',
+          url: coreConfig.DATABASE_URL,
+          synchronize: true,
+          autoLoadEntities: true,
+        };
+      },
+      inject: [CoreConfig],
     }),
     CoreModule,
     UserAccountsModule,

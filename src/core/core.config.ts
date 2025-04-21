@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { IsBoolean, IsEnum, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 import { configValidationUtility } from '../setup/config-validation.utility';
 
 export enum Environments {
@@ -12,6 +18,12 @@ export enum Environments {
 
 @Injectable()
 export class CoreConfig {
+  @IsNotEmpty({
+    message:
+      'Set Env variable DATABASE_URL, postgres://postgres:sa@localhost:5432/my-app-local-db',
+  })
+  DATABASE_URL: string = this.configService.get('DATABASE_URL');
+
   @IsNumber({}, { message: 'Set Env variable PORT, example: 3000' })
   port: number = Number(this.configService.get('PORT'));
   @IsString({
