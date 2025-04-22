@@ -2,7 +2,7 @@ import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { UserAccountConfig } from '../../../config/user-account.config';
 import { UserCreateModel } from '../../../users/api/models/input/create-user.input.model';
 import { BadRequestException } from '@nestjs/common';
-import { User } from '../../../users/domain/user.sql.entity';
+import { User } from '../../../users/domain/user.entity';
 import { UsersSqlRepository } from '../../../users/infrastructure/users.sql.repository';
 import { CryptoService } from '../../../crypto/crypto.service';
 import { UuidProvider } from '../../../../../core/helpers/uuid.provider';

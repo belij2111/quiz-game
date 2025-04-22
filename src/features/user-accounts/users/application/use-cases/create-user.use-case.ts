@@ -5,7 +5,7 @@ import { CryptoService } from '../../../crypto/crypto.service';
 import { UserAccountConfig } from '../../../config/user-account.config';
 import { UsersSqlRepository } from '../../infrastructure/users.sql.repository';
 import { BadRequestException } from '@nestjs/common';
-import { User } from '../../domain/user.sql.entity';
+import { User } from '../../domain/user.entity';
 
 export class CreateUserCommand {
   constructor(public userCreateModel: UserCreateModel) {}

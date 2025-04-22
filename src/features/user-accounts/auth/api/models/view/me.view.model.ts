@@ -1,4 +1,4 @@
-import { User } from '../../../../users/domain/user.sql.entity';
+import { User } from '../../../../users/domain/user.entity';
 
 export class MeViewModel {
   email: string;

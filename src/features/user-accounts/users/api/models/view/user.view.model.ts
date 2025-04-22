@@ -1,4 +1,4 @@
-import { User } from '../../../domain/user.sql.entity';
+import { User } from '../../../domain/user.entity';
 
 export class UserViewModel {
   id: string;
