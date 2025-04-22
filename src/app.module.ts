@@ -20,6 +20,7 @@ import { PluralNamingStrategy } from './core/strategies/naming.strategy';
           namingStrategy: new PluralNamingStrategy(),
           synchronize: true,
           autoLoadEntities: true,
+          logging: false,
         };
       },
       inject: [CoreConfig],
