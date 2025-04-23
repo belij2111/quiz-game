@@ -5,9 +5,12 @@ import {
 } from 'typeorm';
 
 export abstract class BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   public id: string;
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: 'timestamp with time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   public createdAt: Date;
   @DeleteDateColumn()
   public deletedAt: Date;
