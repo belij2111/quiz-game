@@ -36,6 +36,9 @@ import { GetInfoAboutCurrentUserQueryHandler } from './auth/application/queries/
 import { GetAllUsersQueryHandler } from './users/application/queries/get-all-users.query';
 import { GetUserByIdQueryHandler } from './users/application/queries/get-user-by-id.query';
 import { GetDevicesQueryHandler } from './security-devices/application/queries/get-devices.query';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './users/domain/user.entity';
+import { EmailConfirmation } from './users/domain/email-confirmation.entity';
 
 const strategies = [BasicStrategy, LocalStrategy, JwtStrategy];
 const services = [AuthService, JwtService, CryptoService];
@@ -68,6 +71,7 @@ const repositories = [
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([User, EmailConfirmation]),
     CqrsModule,
     PassportModule,
     NotificationsModule,
