@@ -17,11 +17,13 @@ export class User extends BaseEntity {
   public isConfirmed: boolean = false;
 
   @Column({ type: 'uuid', unique: true, nullable: true })
-  public recoveryCode: string | null;
+  public recoveryCode?: string;
 
   @Column({ type: Date, nullable: true })
-  public expirationRecoveryCode: Date | null;
+  public expirationRecoveryCode?: Date;
 
-  @OneToOne(() => EmailConfirmation, (e) => e.user)
+  @OneToOne(() => EmailConfirmation, (e) => e.user, {
+    onDelete: 'CASCADE',
+  })
   public emailConfirmation: EmailConfirmation;
 }
