@@ -1,6 +1,6 @@
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { BaseEntity } from '../../../../core/entities/base.entity';
-import { JoinColumn } from 'typeorm/browser';
+
 import { User } from './user.entity';
 
 @Entity('email-confirmations')
