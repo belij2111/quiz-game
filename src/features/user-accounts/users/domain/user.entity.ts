@@ -1,6 +1,8 @@
 import { Column, Entity, OneToOne } from 'typeorm';
 import { BaseEntity } from '../../../../core/entities/base.entity';
 import { EmailConfirmation } from './email-confirmation.entity';
+import { UserCreateModel } from '../api/models/input/create-user.input.model';
+import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 
 @Entity()
 export class User extends BaseEntity {
@@ -24,6 +26,32 @@ export class User extends BaseEntity {
 
   @OneToOne(() => EmailConfirmation, (e) => e.user, {
     onDelete: 'CASCADE',
+    cascade: true,
   })
   public emailConfirmation: EmailConfirmation;
+
+  static create(dto: UserCreateModel): User {
+    const user = new this();
+    user.login = dto.login;
+    user.password = dto.password;
+    user.email = dto.email;
+    user.isConfirmed = true;
+    return user;
+  }
+  static createWithConfirmation(
+    dto: UserCreateModel,
+    uuidProvider: UuidProvider,
+    expirationTime: number,
+  ) {
+    const user = new this();
+    user.login = dto.login;
+    user.password = dto.password;
+    user.email = dto.email;
+    user.isConfirmed = false;
+    user.emailConfirmation = EmailConfirmation.create(
+      uuidProvider,
+      expirationTime,
+    );
+    return user;
+  }
 }
