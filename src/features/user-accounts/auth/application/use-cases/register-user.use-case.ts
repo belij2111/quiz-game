@@ -7,6 +7,7 @@ import { UsersSqlRepository } from '../../../users/infrastructure/users.sql.repo
 import { CryptoService } from '../../../crypto/crypto.service';
 import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
 import { UserRegistrationEvent } from '../events/user-registration.event';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 
 export class RegisterUserCommand {
   constructor(public userCreateModel: UserCreateModel) {}
@@ -19,6 +20,7 @@ export class RegisterUserUseCase
   constructor(
     private readonly userAccountConfig: UserAccountConfig,
     private readonly usersSqlRepository: UsersSqlRepository,
+    private readonly usersRepository: UsersRepository,
     private readonly bcryptService: CryptoService,
     private readonly uuidProvider: UuidProvider,
     private readonly eventBus: EventBus,
@@ -46,20 +48,20 @@ export class RegisterUserUseCase
     const passHash = await this.bcryptService.generateHash(
       command.userCreateModel.password,
     );
-    const expirationTime = this.userAccountConfig.CONFIRMATION_CODE_EXPIRATION;
-    const newUser: User = {
-      id: this.uuidProvider.generate(),
-      login: command.userCreateModel.login,
-      password: passHash,
-      email: command.userCreateModel.email,
-      createdAt: new Date(),
-      confirmationCode: this.uuidProvider.generate(),
-      expirationDate: new Date(new Date().getTime() + expirationTime),
-      isConfirmed: false,
-    };
-    await this.usersSqlRepository.create(newUser);
+
+    const user = User.createWithConfirmation(
+      command.userCreateModel,
+      this.uuidProvider,
+      this.userAccountConfig.CONFIRMATION_CODE_EXPIRATION,
+    );
+    user.password = passHash;
+
+    await this.usersRepository.create(user);
     this.eventBus.publish(
-      new UserRegistrationEvent(newUser.email, newUser.confirmationCode),
+      new UserRegistrationEvent(
+        user.email,
+        user.emailConfirmation.confirmationCode,
+      ),
     );
   }
 }
