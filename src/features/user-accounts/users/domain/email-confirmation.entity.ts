@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { BaseEntity } from '../../../../core/entities/base.entity';
 
 import { User } from './user.entity';
+import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 
 @Entity('email-confirmations')
 export class EmailConfirmation extends BaseEntity {
@@ -14,4 +15,14 @@ export class EmailConfirmation extends BaseEntity {
   @OneToOne(() => User, (u) => u.emailConfirmation)
   @JoinColumn()
   public user: User;
+
+  static create(
+    uuidProvider: UuidProvider,
+    expirationTime: number,
+  ): EmailConfirmation {
+    const emailConfirmation = new this();
+    emailConfirmation.confirmationCode = uuidProvider.generate();
+    emailConfirmation.expirationDate = new Date(Date.now() + expirationTime);
+    return emailConfirmation;
+  }
 }
