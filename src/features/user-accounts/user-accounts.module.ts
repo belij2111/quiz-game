@@ -39,6 +39,8 @@ import { GetDevicesQueryHandler } from './security-devices/application/queries/g
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/domain/user.entity';
 import { EmailConfirmation } from './users/domain/email-confirmation.entity';
+import { UsersRepository } from './users/infrastructure/users.repository';
+import { UsersQueryRepository } from './users/infrastructure/users.query-repository';
 
 const strategies = [BasicStrategy, LocalStrategy, JwtStrategy];
 const services = [AuthService, JwtService, CryptoService];
@@ -67,6 +69,8 @@ const repositories = [
   SecurityDevicesSqlQueryRepository,
   UsersSqlRepository,
   UsersSqlQueryRepository,
+  UsersRepository,
+  UsersQueryRepository,
 ];
 
 @Module({
