@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../domain/user.entity';
 import { Repository } from 'typeorm';
@@ -14,6 +14,17 @@ export class UsersRepository {
     return result.id;
   }
 
+  async delete(id: string): Promise<boolean> {
+    const user = await this.usersRepository.findOne({
+      where: { id: id },
+      relations: { emailConfirmation: true },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found or already deleted');
+    }
+    await this.usersRepository.softRemove(user);
+    return true;
+  }
   async findByLoginOrEmail(loginOrEmail: string) {
     return await this.usersRepository.findOne({
       where: [{ login: loginOrEmail }, { email: loginOrEmail }],
