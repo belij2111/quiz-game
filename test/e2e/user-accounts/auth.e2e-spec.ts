@@ -176,6 +176,18 @@ describe('e2e-Auth', () => {
       // console.log('createdResponse : ', createdResponse);
       authTestManager.expectTooManyRequests(createdResponse);
     });
+    it(`should delete the registered user by ID : STATUS 204`, async () => {
+      const validUserModel: UserCreateModel = createValidUserModel();
+      await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
+      const fondUsers = await usersTestManager.getUsersWithPaging(
+        HttpStatus.OK,
+      );
+      // console.log(fondUsers.body.items[0].id);
+      await usersTestManager.deleteById(
+        fondUsers.body.items[0].id,
+        HttpStatus.NO_CONTENT,
+      );
+    });
   });
 
   describe('POST/auth/registration-confirmation', () => {
