@@ -15,7 +15,6 @@ import { SecurityDevicesController } from './security-devices/api/security-devic
 import { CryptoService } from './crypto/crypto.service';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { UsersSqlRepository } from './users/infrastructure/users.sql.repository';
-import { UsersSqlQueryRepository } from './users/infrastructure/users.sql.query-repository';
 import { SecurityDevicesSqlRepository } from './security-devices/infrastructure/security-devices.sql.repository';
 import { SecurityDevicesSqlQueryRepository } from './security-devices/infrastructure/security-devices.sql.query-repository';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
@@ -68,7 +67,6 @@ const repositories = [
   SecurityDevicesSqlRepository,
   SecurityDevicesSqlQueryRepository,
   UsersSqlRepository,
-  UsersSqlQueryRepository,
   UsersRepository,
   UsersQueryRepository,
 ];
