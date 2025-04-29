@@ -5,6 +5,7 @@ import { ILike, Repository } from 'typeorm';
 import { UserViewModel } from '../api/models/view/user.view.model';
 import { GetUsersQueryParams } from '../api/models/input/create-user.input.model';
 import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
+import { MeViewModel } from '../../auth/api/models/view/me.view.model';
 
 @Injectable()
 export class UsersQueryRepository {
@@ -42,5 +43,11 @@ export class UsersQueryRepository {
       totalCount,
       items,
     });
+  }
+
+  async getAuthUserById(id: string): Promise<MeViewModel | null> {
+    const foundUser = await this.usersQueryRepository.findOneBy({ id: id });
+    if (!foundUser) return null;
+    return MeViewModel.mapToView(foundUser);
   }
 }
