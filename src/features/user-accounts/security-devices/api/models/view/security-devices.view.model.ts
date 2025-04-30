@@ -1,4 +1,4 @@
-import { SecurityDevices } from '../../../domain/security-devices.sql.entity';
+import { SecurityDevices } from '../../../domain/security-devices.entity';
 
 export class SecurityDevicesViewModel {
   ip: string;

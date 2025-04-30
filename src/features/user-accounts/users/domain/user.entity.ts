@@ -1,8 +1,9 @@
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { BaseEntity } from '../../../../core/entities/base.entity';
 import { EmailConfirmation } from './email-confirmation.entity';
 import { UserCreateModel } from '../api/models/input/create-user.input.model';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
+import { SecurityDevices } from '../../security-devices/domain/security-devices.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -29,6 +30,9 @@ export class User extends BaseEntity {
     cascade: true,
   })
   public emailConfirmation: EmailConfirmation;
+
+  @OneToMany(() => SecurityDevices, (sd) => sd.user, { onDelete: 'CASCADE' })
+  public securityDevices: SecurityDevices;
 
   static create(dto: UserCreateModel): User {
     const user = new this();
