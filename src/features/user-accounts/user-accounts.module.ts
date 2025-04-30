@@ -40,6 +40,8 @@ import { User } from './users/domain/user.entity';
 import { EmailConfirmation } from './users/domain/email-confirmation.entity';
 import { UsersRepository } from './users/infrastructure/users.repository';
 import { UsersQueryRepository } from './users/infrastructure/users.query-repository';
+import { SecurityDevices } from './security-devices/domain/security-devices.entity';
+import { SecurityDevicesRepository } from './security-devices/infrastructure/security-devices.repository';
 
 const strategies = [BasicStrategy, LocalStrategy, JwtStrategy];
 const services = [AuthService, JwtService, CryptoService];
@@ -69,11 +71,12 @@ const repositories = [
   UsersSqlRepository,
   UsersRepository,
   UsersQueryRepository,
+  SecurityDevicesRepository,
 ];
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, EmailConfirmation]),
+    TypeOrmModule.forFeature([User, EmailConfirmation, SecurityDevices]),
     CqrsModule,
     PassportModule,
     NotificationsModule,

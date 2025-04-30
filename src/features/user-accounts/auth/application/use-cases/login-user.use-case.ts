@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserAccountConfig } from '../../../config/user-account.config';
 import { LoginSuccessViewModel } from '../../api/models/view/login-success.view.model';
-import { randomUUID } from 'node:crypto';
-import { SecurityDevices } from '../../../security-devices/domain/security-devices.sql.entity';
 import { JwtService } from '@nestjs/jwt';
-import { SecurityDevicesSqlRepository } from '../../../security-devices/infrastructure/security-devices.sql.repository';
+import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
+import { SecurityDevices } from '../../../security-devices/domain/security-devices.entity';
+import { SecurityDevicesRepository } from '../../../security-devices/infrastructure/security-devices.repository';
 
 export class LoginUserCommand {
   constructor(
@@ -21,7 +21,8 @@ export class LoginUserUseCase
   constructor(
     private readonly userAccountConfig: UserAccountConfig,
     private readonly jwtService: JwtService,
-    private readonly securityDevicesSqlRepository: SecurityDevicesSqlRepository,
+    private readonly uuidProvider: UuidProvider,
+    private readonly securityDevicesRepository: SecurityDevicesRepository,
   ) {}
 
   async execute(command: LoginUserCommand): Promise<LoginSuccessViewModel> {
@@ -30,7 +31,7 @@ export class LoginUserUseCase
     };
     const payloadForRefreshToken = {
       userId: command.userId,
-      deviceId: randomUUID(),
+      deviceId: this.uuidProvider.generate(),
     };
     const accessToken = await this.jwtService.signAsync(payloadForAccessToken, {
       secret: this.userAccountConfig.ACCESS_TOKEN_SECRET,
@@ -45,15 +46,15 @@ export class LoginUserUseCase
       },
     );
     const decodePayload = this.jwtService.decode(refreshToken);
-    const deviceSession: SecurityDevices = {
-      userId: decodePayload.userId,
-      deviceId: decodePayload.deviceId,
-      ip: command.ip,
-      deviceName: command.deviceName,
-      iatDate: new Date(decodePayload.iat! * 1000),
-      expDate: new Date(decodePayload.exp! * 1000),
-    };
-    await this.securityDevicesSqlRepository.create(deviceSession);
+    const deviceSession = SecurityDevices.create(
+      decodePayload.userId,
+      decodePayload.deviceId,
+      command.ip,
+      command.deviceName,
+      decodePayload.iat,
+      decodePayload.exp,
+    );
+    await this.securityDevicesRepository.create(deviceSession);
     return {
       accessToken,
       refreshToken,
