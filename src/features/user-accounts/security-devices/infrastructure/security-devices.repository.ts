@@ -13,4 +13,17 @@ export class SecurityDevicesRepository {
   async create(deviceSession: SecurityDevices) {
     await this.securityDevicesRepository.save(deviceSession);
   }
+
+  async update(deviceId: string, iatDate: Date) {
+    await this.securityDevicesRepository.update(
+      { deviceId: deviceId },
+      { iatDate: iatDate },
+    );
+  }
+
+  async findById(deviceId: string) {
+    return await this.securityDevicesRepository.findOneBy({
+      deviceId: deviceId,
+    });
+  }
 }

@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserAccountConfig } from '../../../config/user-account.config';
 import { LoginSuccessViewModel } from '../../api/models/view/login-success.view.model';
 import { JwtService } from '@nestjs/jwt';
-import { SecurityDevicesSqlRepository } from '../../../security-devices/infrastructure/security-devices.sql.repository';
+import { SecurityDevicesRepository } from '../../../security-devices/infrastructure/security-devices.repository';
 
 export class RefreshTokenCommand {
   constructor(
@@ -18,7 +18,7 @@ export class RefreshTokenUseCase
   constructor(
     private readonly userAccountConfig: UserAccountConfig,
     private readonly jwtService: JwtService,
-    private readonly securityDevicesSqlRepository: SecurityDevicesSqlRepository,
+    private readonly securityDevicesRepository: SecurityDevicesRepository,
   ) {}
 
   async execute(command: RefreshTokenCommand): Promise<LoginSuccessViewModel> {
@@ -41,8 +41,8 @@ export class RefreshTokenUseCase
       },
     );
     const decodePayload = this.jwtService.decode(refreshToken);
-    const iatDate = new Date(decodePayload.iat! * 1000).toISOString();
-    await this.securityDevicesSqlRepository.update(command.deviceId, iatDate);
+    const iatDate = new Date(decodePayload.iat * 1000);
+    await this.securityDevicesRepository.update(command.deviceId, iatDate);
     return {
       accessToken,
       refreshToken,
