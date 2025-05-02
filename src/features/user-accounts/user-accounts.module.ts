@@ -15,8 +15,6 @@ import { SecurityDevicesController } from './security-devices/api/security-devic
 import { CryptoService } from './crypto/crypto.service';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { UsersSqlRepository } from './users/infrastructure/users.sql.repository';
-import { SecurityDevicesSqlRepository } from './security-devices/infrastructure/security-devices.sql.repository';
-import { SecurityDevicesSqlQueryRepository } from './security-devices/infrastructure/security-devices.sql.query-repository';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { DeleteAllSecurityDevicesExcludingCurrentUseCase } from './security-devices/application/use-cases/delete-all-security-devices-excluding-current.use-case';
 import { CqrsModule } from '@nestjs/cqrs';
@@ -67,8 +65,6 @@ const queries = [
   GetDevicesQueryHandler,
 ];
 const repositories = [
-  SecurityDevicesSqlRepository,
-  SecurityDevicesSqlQueryRepository,
   UsersSqlRepository,
   UsersRepository,
   UsersQueryRepository,
