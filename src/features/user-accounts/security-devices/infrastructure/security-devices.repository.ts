@@ -22,8 +22,16 @@ export class SecurityDevicesRepository {
   }
 
   async findById(deviceId: string) {
-    return await this.securityDevicesRepository.findOneBy({
-      deviceId: deviceId,
+    return await this.securityDevicesRepository.findOne({
+      where: { deviceId: deviceId },
+      relations: { user: true },
     });
+  }
+
+  async deleteById(deviceSession: SecurityDevices) {
+    const result =
+      await this.securityDevicesRepository.softRemove(deviceSession);
+    if (!result) return null;
+    return true;
   }
 }

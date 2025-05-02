@@ -31,7 +31,10 @@ export class User extends BaseEntity {
   })
   public emailConfirmation: EmailConfirmation;
 
-  @OneToMany(() => SecurityDevices, (sd) => sd.user, { onDelete: 'CASCADE' })
+  @OneToMany(() => SecurityDevices, (sd) => sd.user, {
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   public securityDevices: SecurityDevices;
 
   static create(dto: UserCreateModel): User {
