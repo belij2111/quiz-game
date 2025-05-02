@@ -42,6 +42,7 @@ import { UsersRepository } from './users/infrastructure/users.repository';
 import { UsersQueryRepository } from './users/infrastructure/users.query-repository';
 import { SecurityDevices } from './security-devices/domain/security-devices.entity';
 import { SecurityDevicesRepository } from './security-devices/infrastructure/security-devices.repository';
+import { SecurityDevicesQueryRepository } from './security-devices/infrastructure/security-devices.query-repository';
 
 const strategies = [BasicStrategy, LocalStrategy, JwtStrategy];
 const services = [AuthService, JwtService, CryptoService];
@@ -72,6 +73,7 @@ const repositories = [
   UsersRepository,
   UsersQueryRepository,
   SecurityDevicesRepository,
+  SecurityDevicesQueryRepository,
 ];
 
 @Module({
