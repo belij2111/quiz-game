@@ -3,7 +3,6 @@ import { UserAccountConfig } from '../../../config/user-account.config';
 import { UserCreateModel } from '../../../users/api/models/input/create-user.input.model';
 import { BadRequestException } from '@nestjs/common';
 import { User } from '../../../users/domain/user.entity';
-import { UsersSqlRepository } from '../../../users/infrastructure/users.sql.repository';
 import { CryptoService } from '../../../crypto/crypto.service';
 import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
 import { UserRegistrationEvent } from '../events/user-registration.event';
@@ -19,7 +18,6 @@ export class RegisterUserUseCase
 {
   constructor(
     private readonly userAccountConfig: UserAccountConfig,
-    private readonly usersSqlRepository: UsersSqlRepository,
     private readonly usersRepository: UsersRepository,
     private readonly bcryptService: CryptoService,
     private readonly uuidProvider: UuidProvider,
@@ -27,19 +25,17 @@ export class RegisterUserUseCase
   ) {}
 
   async execute(command: RegisterUserCommand): Promise<void> {
-    const existingUserByLogin =
-      await this.usersSqlRepository.findByLoginOrEmail(
-        command.userCreateModel.login,
-      );
+    const existingUserByLogin = await this.usersRepository.findByLoginOrEmail(
+      command.userCreateModel.login,
+    );
     if (existingUserByLogin) {
       throw new BadRequestException([
         { field: 'login', message: 'Login is not unique' },
       ]);
     }
-    const existingUserByEmail =
-      await this.usersSqlRepository.findByLoginOrEmail(
-        command.userCreateModel.email,
-      );
+    const existingUserByEmail = await this.usersRepository.findByLoginOrEmail(
+      command.userCreateModel.email,
+    );
     if (existingUserByEmail) {
       throw new BadRequestException([
         { field: 'email', message: 'Email is not unique' },
