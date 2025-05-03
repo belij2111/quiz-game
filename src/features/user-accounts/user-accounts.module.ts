@@ -38,7 +38,7 @@ import { User } from './users/domain/user.entity';
 import { EmailConfirmation } from './users/domain/email-confirmation.entity';
 import { UsersRepository } from './users/infrastructure/users.repository';
 import { UsersQueryRepository } from './users/infrastructure/users.query-repository';
-import { SecurityDevices } from './security-devices/domain/security-devices.entity';
+import { SecurityDevice } from './security-devices/domain/security-device.entity';
 import { SecurityDevicesRepository } from './security-devices/infrastructure/security-devices.repository';
 import { SecurityDevicesQueryRepository } from './security-devices/infrastructure/security-devices.query-repository';
 
@@ -74,7 +74,7 @@ const repositories = [
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, EmailConfirmation, SecurityDevices]),
+    TypeOrmModule.forFeature([User, EmailConfirmation, SecurityDevice]),
     CqrsModule,
     PassportModule,
     NotificationsModule,

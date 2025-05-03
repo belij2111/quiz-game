@@ -3,7 +3,7 @@ import { BaseEntity } from '../../../../core/entities/base.entity';
 import { EmailConfirmation } from './email-confirmation.entity';
 import { UserCreateModel } from '../api/models/input/create-user.input.model';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
-import { SecurityDevices } from '../../security-devices/domain/security-devices.entity';
+import { SecurityDevice } from '../../security-devices/domain/security-device.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -31,11 +31,11 @@ export class User extends BaseEntity {
   })
   public emailConfirmation: EmailConfirmation;
 
-  @OneToMany(() => SecurityDevices, (sd) => sd.user, {
+  @OneToMany(() => SecurityDevice, (sd) => sd.user, {
     onDelete: 'CASCADE',
     cascade: true,
   })
-  public securityDevices: SecurityDevices;
+  public securityDevice: SecurityDevice;
 
   static create(dto: UserCreateModel): User {
     const user = new this();

@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { SecurityDevices } from '../domain/security-devices.entity';
+import { SecurityDevice } from '../domain/security-device.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Not, Repository } from 'typeorm';
 
 @Injectable()
 export class SecurityDevicesRepository {
   constructor(
-    @InjectRepository(SecurityDevices)
-    private readonly securityDevicesRepository: Repository<SecurityDevices>,
+    @InjectRepository(SecurityDevice)
+    private readonly securityDevicesRepository: Repository<SecurityDevice>,
   ) {}
 
-  async create(deviceSession: SecurityDevices) {
+  async create(deviceSession: SecurityDevice) {
     await this.securityDevicesRepository.save(deviceSession);
   }
 
@@ -28,7 +28,7 @@ export class SecurityDevicesRepository {
     });
   }
 
-  async deleteById(deviceSession: SecurityDevices) {
+  async deleteById(deviceSession: SecurityDevice) {
     const result =
       await this.securityDevicesRepository.softRemove(deviceSession);
     if (!result) return null;

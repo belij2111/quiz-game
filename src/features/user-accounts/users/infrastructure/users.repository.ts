@@ -17,7 +17,7 @@ export class UsersRepository {
   async delete(id: string): Promise<boolean> {
     const user = await this.usersRepository.findOne({
       where: { id: id },
-      relations: { emailConfirmation: true, securityDevices: true },
+      relations: { emailConfirmation: true, securityDevice: true },
     });
     if (!user) {
       throw new NotFoundException('User not found or already deleted');

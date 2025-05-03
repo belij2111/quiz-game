@@ -7,7 +7,7 @@ import { CoreConfig } from './core/core.config';
 import { CoreModule } from './core/core.module';
 import { NotificationsModule } from './features/notifications/notifications.module';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { PluralNamingStrategy } from './core/strategies/naming.strategy';
+import { CustomNamingStrategy } from './core/strategies/custom-naming.strategy';
 
 @Module({
   imports: [
@@ -17,7 +17,7 @@ import { PluralNamingStrategy } from './core/strategies/naming.strategy';
         return {
           type: 'postgres',
           url: coreConfig.DATABASE_URL,
-          namingStrategy: new PluralNamingStrategy(),
+          namingStrategy: new CustomNamingStrategy(),
           synchronize: true,
           autoLoadEntities: true,
           logging: false,

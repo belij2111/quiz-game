@@ -2,8 +2,8 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../../../core/entities/base.entity';
 import { User } from '../../users/domain/user.entity';
 
-@Entity('security-devices')
-export class SecurityDevices extends BaseEntity {
+@Entity()
+export class SecurityDevice extends BaseEntity {
   @Column({ type: 'uuid', unique: true })
   public deviceId: string;
 
@@ -19,7 +19,7 @@ export class SecurityDevices extends BaseEntity {
   @Column({ type: 'timestamp with time zone' })
   public expDate: Date;
 
-  @ManyToOne(() => User, (u) => u.securityDevices)
+  @ManyToOne(() => User, (u) => u.securityDevice)
   @JoinColumn({ name: 'userId' })
   public user: User;
 
@@ -30,7 +30,7 @@ export class SecurityDevices extends BaseEntity {
     deviceName: string,
     iatDate: number,
     expDate: number,
-  ): SecurityDevices {
+  ): SecurityDevice {
     const deviceSession = new this();
     deviceSession.user = { id: userId } as User;
     deviceSession.deviceId = deviceId;

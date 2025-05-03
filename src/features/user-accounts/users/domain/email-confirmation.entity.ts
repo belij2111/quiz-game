@@ -4,7 +4,7 @@ import { BaseEntity } from '../../../../core/entities/base.entity';
 import { User } from './user.entity';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 
-@Entity('email-confirmations')
+@Entity()
 export class EmailConfirmation extends BaseEntity {
   @Column({ type: 'uuid', nullable: true })
   public confirmationCode: string | null;

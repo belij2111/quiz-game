@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { SecurityDevicesViewModel } from '../api/models/view/security-devices.view.model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SecurityDevices } from '../domain/security-devices.entity';
+import { SecurityDevice } from '../domain/security-device.entity';
 
 @Injectable()
 export class SecurityDevicesQueryRepository {
   constructor(
-    @InjectRepository(SecurityDevices)
-    private securityDevicesQueryRepository: Repository<SecurityDevices>,
+    @InjectRepository(SecurityDevice)
+    private securityDevicesQueryRepository: Repository<SecurityDevice>,
   ) {}
 
   async getAll(currentUser: string): Promise<SecurityDevicesViewModel[]> {

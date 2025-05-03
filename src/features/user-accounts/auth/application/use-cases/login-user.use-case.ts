@@ -3,7 +3,7 @@ import { UserAccountConfig } from '../../../config/user-account.config';
 import { LoginSuccessViewModel } from '../../api/models/view/login-success.view.model';
 import { JwtService } from '@nestjs/jwt';
 import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
-import { SecurityDevices } from '../../../security-devices/domain/security-devices.entity';
+import { SecurityDevice } from '../../../security-devices/domain/security-device.entity';
 import { SecurityDevicesRepository } from '../../../security-devices/infrastructure/security-devices.repository';
 
 export class LoginUserCommand {
@@ -46,7 +46,7 @@ export class LoginUserUseCase
       },
     );
     const decodePayload = this.jwtService.decode(refreshToken);
-    const deviceSession = SecurityDevices.create(
+    const deviceSession = SecurityDevice.create(
       decodePayload.userId,
       decodePayload.deviceId,
       command.ip,
