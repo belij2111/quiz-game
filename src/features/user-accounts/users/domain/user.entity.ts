@@ -61,4 +61,8 @@ export class User extends BaseEntity {
     );
     return user;
   }
+
+  update(data: Partial<User>) {
+    Object.assign(this, data);
+  }
 }
