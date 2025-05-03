@@ -30,4 +30,8 @@ export class UsersRepository {
       where: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });
   }
+
+  async updateRecoveryCode(user: User): Promise<void> {
+    await this.usersRepository.save(user);
+  }
 }
