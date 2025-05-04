@@ -25,4 +25,8 @@ export class EmailConfirmation extends BaseEntity {
     emailConfirmation.expirationDate = new Date(Date.now() + expirationTime);
     return emailConfirmation;
   }
+
+  update(data: Partial<EmailConfirmation>) {
+    Object.assign(this, data);
+  }
 }
