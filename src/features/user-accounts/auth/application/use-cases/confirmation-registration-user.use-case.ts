@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BadRequestException } from '@nestjs/common';
-import { UsersSqlRepository } from '../../../users/infrastructure/users.sql.repository';
 import { RegistrationConfirmationCodeModel } from '../../api/models/input/registration-confirmation-code.model';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 
 export class ConfirmationRegistrationUserCommand {
   constructor(public inputCode: RegistrationConfirmationCodeModel) {}
@@ -11,10 +11,10 @@ export class ConfirmationRegistrationUserCommand {
 export class ConfirmationRegistrationUserUseCase
   implements ICommandHandler<ConfirmationRegistrationUserCommand, void>
 {
-  constructor(private readonly usersSqlRepository: UsersSqlRepository) {}
+  constructor(private readonly usersRepository: UsersRepository) {}
 
   async execute(command: ConfirmationRegistrationUserCommand): Promise<void> {
-    const confirmedUser = await this.usersSqlRepository.findByConfirmationCode(
+    const confirmedUser = await this.usersRepository.findByConfirmationCode(
       command.inputCode.code,
     );
     if (!confirmedUser) {
@@ -23,9 +23,7 @@ export class ConfirmationRegistrationUserUseCase
       ]);
     }
     const isConfirmed = true;
-    await this.usersSqlRepository.updateEmailConfirmation(
-      confirmedUser.id,
-      isConfirmed,
-    );
+    confirmedUser.update({ isConfirmed: isConfirmed });
+    await this.usersRepository.updateEmailConfirmation(confirmedUser);
   }
 }

@@ -44,4 +44,15 @@ export class UsersRepository {
   async updatePassword(user: User) {
     await this.usersRepository.save(user);
   }
+
+  async findByConfirmationCode(code: string) {
+    return await this.usersRepository.findOne({
+      where: { emailConfirmation: { confirmationCode: code } },
+      relations: { emailConfirmation: true },
+    });
+  }
+
+  async updateEmailConfirmation(user: User) {
+    await this.usersRepository.save(user);
+  }
 }
