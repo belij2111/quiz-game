@@ -11,6 +11,6 @@ export const createRegistrationConfirmationCodeInputModel = (
 export const createInvalidRegistrationConfirmationCodeInputModel =
   (): RegistrationConfirmationCodeModel => {
     const confirmationCodeModel = new RegistrationConfirmationCodeModel();
-    confirmationCodeModel.code = 'invalid confirmation code';
+    confirmationCodeModel.code = '12121212-1212-1212-1212-121212121212';
     return confirmationCodeModel;
   };
