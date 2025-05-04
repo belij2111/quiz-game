@@ -1,10 +1,10 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { UserAccountConfig } from '../../../config/user-account.config';
 import { BadRequestException } from '@nestjs/common';
-import { UsersSqlRepository } from '../../../users/infrastructure/users.sql.repository';
 import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
 import { RegistrationEmailResendingModel } from '../../api/models/input/registration-email-resending.model';
 import { UserRegistrationEvent } from '../events/user-registration.event';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 
 export class RegistrationEmailResendingCommand {
   constructor(public inputEmail: RegistrationEmailResendingModel) {}
@@ -16,16 +16,15 @@ export class RegistrationEmailResendingUseCase
 {
   constructor(
     private readonly userAccountConfig: UserAccountConfig,
-    private readonly usersSqlRepository: UsersSqlRepository,
+    private readonly usersRepository: UsersRepository,
     private readonly uuidProvider: UuidProvider,
     private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: RegistrationEmailResendingCommand): Promise<void> {
-    const existingUserByEmail =
-      await this.usersSqlRepository.findByLoginOrEmail(
-        command.inputEmail.email,
-      );
+    const existingUserByEmail = await this.usersRepository.findByEmail(
+      command.inputEmail.email,
+    );
     if (!existingUserByEmail) {
       throw new BadRequestException([
         { field: 'email', message: 'User with this email does not exist' },
@@ -42,11 +41,12 @@ export class RegistrationEmailResendingUseCase
     const expirationTime = this.userAccountConfig.CONFIRMATION_CODE_EXPIRATION;
     const newConfirmationCode = this.uuidProvider.generate();
     const newExpirationDate = new Date(new Date().getTime() + expirationTime);
-
-    await this.usersSqlRepository.updateRegistrationConfirmation(
-      existingUserByEmail.id,
-      newConfirmationCode,
-      newExpirationDate,
+    existingUserByEmail.emailConfirmation.update({
+      confirmationCode: newConfirmationCode,
+      expirationDate: newExpirationDate,
+    });
+    await this.usersRepository.updateRegistrationConfirmationCode(
+      existingUserByEmail,
     );
     this.eventBus.publish(
       new UserRegistrationEvent(command.inputEmail.email, newConfirmationCode),

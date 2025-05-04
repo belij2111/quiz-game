@@ -31,6 +31,13 @@ export class UsersRepository {
     });
   }
 
+  async findByEmail(email: string) {
+    return await this.usersRepository.findOne({
+      where: { email: email },
+      relations: { emailConfirmation: true },
+    });
+  }
+
   async updateRecoveryCode(user: User): Promise<void> {
     await this.usersRepository.save(user);
   }
@@ -53,6 +60,10 @@ export class UsersRepository {
   }
 
   async updateRegistrationConfirmation(user: User) {
+    await this.usersRepository.save(user);
+  }
+
+  async updateRegistrationConfirmationCode(user: User) {
     await this.usersRepository.save(user);
   }
 }
