@@ -24,6 +24,6 @@ export class ConfirmationRegistrationUserUseCase
     }
     const isConfirmed = true;
     confirmedUser.update({ isConfirmed: isConfirmed });
-    await this.usersRepository.updateEmailConfirmation(confirmedUser);
+    await this.usersRepository.updateRegistrationConfirmation(confirmedUser);
   }
 }

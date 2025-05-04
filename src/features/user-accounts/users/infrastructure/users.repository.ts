@@ -52,7 +52,7 @@ export class UsersRepository {
     });
   }
 
-  async updateEmailConfirmation(user: User) {
+  async updateRegistrationConfirmation(user: User) {
     await this.usersRepository.save(user);
   }
 }
