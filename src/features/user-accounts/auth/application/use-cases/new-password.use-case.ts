@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BadRequestException } from '@nestjs/common';
-import { UsersSqlRepository } from '../../../users/infrastructure/users.sql.repository';
 import { NewPasswordRecoveryInputModel } from '../../api/models/input/new-password-recovery-input.model';
 import { CryptoService } from '../../../crypto/crypto.service';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 
 export class NewPasswordCommand {
   constructor(public inputData: NewPasswordRecoveryInputModel) {}
@@ -13,23 +13,21 @@ export class NewPasswordUseCase
   implements ICommandHandler<NewPasswordCommand, void>
 {
   constructor(
-    private readonly usersSqlRepository: UsersSqlRepository,
+    private readonly usersRepository: UsersRepository,
     private readonly bcryptService: CryptoService,
   ) {}
 
   async execute(command: NewPasswordCommand): Promise<void> {
     const { newPassword, recoveryCode } = command.inputData;
     const existingUserByRecoveryCode =
-      await this.usersSqlRepository.findByConfirmationCode(recoveryCode);
+      await this.usersRepository.findByRecoveryCode(recoveryCode);
     if (!existingUserByRecoveryCode) {
       throw new BadRequestException([
         { field: 'code', message: 'Confirmation code is incorrect' },
       ]);
     }
     const newPasswordHash = await this.bcryptService.generateHash(newPassword);
-    await this.usersSqlRepository.updatePassword(
-      existingUserByRecoveryCode.id,
-      newPasswordHash,
-    );
+    existingUserByRecoveryCode.update({ password: newPasswordHash });
+    await this.usersRepository.updatePassword(existingUserByRecoveryCode);
   }
 }

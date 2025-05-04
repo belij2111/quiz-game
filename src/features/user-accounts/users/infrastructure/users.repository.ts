@@ -34,4 +34,14 @@ export class UsersRepository {
   async updateRecoveryCode(user: User): Promise<void> {
     await this.usersRepository.save(user);
   }
+
+  async findByRecoveryCode(recoveryCode: string) {
+    return await this.usersRepository.findOneBy({
+      recoveryCode: recoveryCode,
+    });
+  }
+
+  async updatePassword(user: User) {
+    await this.usersRepository.save(user);
+  }
 }
