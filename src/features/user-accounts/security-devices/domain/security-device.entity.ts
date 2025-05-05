@@ -10,7 +10,7 @@ export class SecurityDevice extends BaseEntity {
   @Column({ type: 'varchar' })
   public ip: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar' })
   public deviceName: string;
 
   @Column({ type: 'timestamp with time zone' })
@@ -20,7 +20,7 @@ export class SecurityDevice extends BaseEntity {
   public expDate: Date;
 
   @ManyToOne(() => User, (u) => u.securityDevice)
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn()
   public user: User;
 
   static create(
@@ -35,6 +35,7 @@ export class SecurityDevice extends BaseEntity {
     deviceSession.user = { id: userId } as User;
     deviceSession.deviceId = deviceId;
     deviceSession.ip = ip;
+    deviceSession.deviceName = deviceName;
     deviceSession.iatDate = new Date(iatDate * 1000);
     deviceSession.expDate = new Date(expDate * 1000);
     return deviceSession;
