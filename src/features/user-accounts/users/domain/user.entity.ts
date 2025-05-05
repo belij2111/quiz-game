@@ -19,7 +19,7 @@ export class User extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   public isConfirmed: boolean = false;
 
-  @Column({ type: 'uuid', unique: true, nullable: true })
+  @Column({ type: 'varchar', unique: true, nullable: true })
   public recoveryCode?: string;
 
   @Column({ type: Date, nullable: true })
