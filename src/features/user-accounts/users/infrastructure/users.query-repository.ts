@@ -26,10 +26,10 @@ export class UsersQueryRepository {
     const { searchLoginTerm = '', searchEmailTerm = '' } = inputQuery;
     const [fondUsers, totalCount] =
       await this.usersQueryRepository.findAndCount({
-        where: {
-          ...(searchLoginTerm && { login: ILike(`%${searchLoginTerm}%`) }),
-          ...(searchEmailTerm && { email: ILike(`%${searchEmailTerm}%`) }),
-        },
+        where: [
+          { ...(searchLoginTerm && { login: ILike(`%${searchLoginTerm}%`) }) },
+          { ...(searchEmailTerm && { email: ILike(`%${searchEmailTerm}%`) }) },
+        ],
         order: {
           [inputQuery.sortBy]: inputQuery.sortDirection,
         },
