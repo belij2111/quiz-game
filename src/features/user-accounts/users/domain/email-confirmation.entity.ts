@@ -6,7 +6,7 @@ import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 
 @Entity()
 export class EmailConfirmation extends BaseEntity {
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   public confirmationCode: string | null;
 
   @Column({ type: 'timestamp with time zone', nullable: true })
