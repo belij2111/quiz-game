@@ -22,6 +22,14 @@ export class ConfirmationRegistrationUserUseCase
         { field: 'code', message: 'Confirmation code is incorrect' },
       ]);
     }
+    if (confirmedUser.isConfirmed) {
+      throw new BadRequestException([
+        {
+          field: 'code',
+          message: 'Code already confirmed',
+        },
+      ]);
+    }
     const isConfirmed = true;
     confirmedUser.update({ isConfirmed: isConfirmed });
     await this.usersRepository.updateRegistrationConfirmation(confirmedUser);
