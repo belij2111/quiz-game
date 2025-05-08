@@ -2,7 +2,7 @@ import { GetBlogsQueryParams } from '../../api/models/input/create-blog.input.mo
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PaginatedViewModel } from '../../../../../core/models/base.paginated.view.model';
 import { BlogViewModel } from '../../api/models/view/blog.view.model';
-import { BlogsSqlQueryRepository } from '../../infrastructure/blogs.sql.query-repository';
+import { BlogsQueryRepository } from '../../infrastructure/blogs.query-repository';
 
 export class GetBlogsQuery {
   constructor(public inputQuery: GetBlogsQueryParams) {}
@@ -12,12 +12,10 @@ export class GetBlogsQuery {
 export class GetBlogsQueryHandler
   implements IQueryHandler<GetBlogsQuery, PaginatedViewModel<BlogViewModel[]>>
 {
-  constructor(
-    private readonly blogsSqlQueryRepository: BlogsSqlQueryRepository,
-  ) {}
+  constructor(private readonly blogsQueryRepository: BlogsQueryRepository) {}
   async execute(
     query: GetBlogsQuery,
   ): Promise<PaginatedViewModel<BlogViewModel[]>> {
-    return this.blogsSqlQueryRepository.getAll(query.inputQuery);
+    return this.blogsQueryRepository.getAll(query.inputQuery);
   }
 }
