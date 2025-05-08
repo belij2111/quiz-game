@@ -1,9 +1,9 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { BaseEntity } from '../../../../core/entities/base.entity';
 import { User } from '../../users/domain/user.entity';
+import { BaseWithUuidIdEntity } from '../../../../core/entities/base-with-uuid-id.entity';
 
 @Entity()
-export class SecurityDevice extends BaseEntity {
+export class SecurityDevice extends BaseWithUuidIdEntity {
   @Column({ type: 'uuid', unique: true })
   public deviceId: string;
 

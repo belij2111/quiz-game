@@ -1,11 +1,11 @@
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
-import { BaseEntity } from '../../../../core/entities/base.entity';
 
 import { User } from './user.entity';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
+import { BaseWithUuidIdEntity } from '../../../../core/entities/base-with-uuid-id.entity';
 
 @Entity()
-export class EmailConfirmation extends BaseEntity {
+export class EmailConfirmation extends BaseWithUuidIdEntity {
   @Column({ type: 'varchar', nullable: true })
   public confirmationCode: string | null;
 
