@@ -32,6 +32,10 @@ import { GetPostsForSpecifiedBlogQueryHandler } from './posts/application/querie
 import { GetPostsQueryHandler } from './posts/application/queries/get-posts.query';
 import { GetCommentByIdQueryHandler } from './comments/application/queries/get-comment-by-id.query';
 import { GetCommentsForSpecificPostQueryHandler } from './comments/application/queries/get-comments-for-specified-post.query';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Blog } from './blogs/domain/blog.entity';
+import { BlogsRepository } from './blogs/infrastructure/blogs.repository';
+import { BlogsQueryRepository } from './blogs/infrastructure/blogs.query-repository';
 
 const useCases = [
   CreateBlogUseCase,
@@ -64,10 +68,12 @@ const repositories = [
   CommentsSqlRepository,
   LikesForCommentSqlRepository,
   LikesForPostSqlRepository,
+  BlogsRepository,
+  BlogsQueryRepository,
 ];
 
 @Module({
-  imports: [CqrsModule, UserAccountsModule],
+  imports: [TypeOrmModule.forFeature([Blog]), CqrsModule, UserAccountsModule],
   controllers: [BlogsController, PostsController, CommentsController],
   providers: [
     BlogIdIsExistConstraint,
