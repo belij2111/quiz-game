@@ -27,7 +27,7 @@ export class PostsTestManager {
   }
 
   async createPosts(
-    blogId: string,
+    blogId: number,
     count: number,
     statusCode: number = HttpStatus.CREATED,
   ) {
@@ -89,7 +89,7 @@ export class PostsTestManager {
     expect(responseModels.pageSize).toBe(10);
   }
 
-  async getPostById(id: string, statusCode: number = HttpStatus.OK) {
+  async getPostById(id: number, statusCode: number = HttpStatus.OK) {
     const response = await request(this.app.getHttpServer())
       .get('/posts/' + id)
       .expect(statusCode);
@@ -97,7 +97,7 @@ export class PostsTestManager {
   }
 
   async updatePost(
-    id: string,
+    id: number,
     blogId: string,
     createdModel: PostCreateModel,
     statusCode: number = HttpStatus.NO_CONTENT,
@@ -110,8 +110,8 @@ export class PostsTestManager {
   }
 
   async updatePostIsNotAuthorized(
-    id: string,
-    blogId: string,
+    id: number,
+    blogId: number,
     createdModel: PostCreateModel,
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
@@ -123,8 +123,8 @@ export class PostsTestManager {
   }
 
   async deleteById(
-    id: string,
-    blogId: string,
+    id: number,
+    blogId: number,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     return request(this.app.getHttpServer())
@@ -134,8 +134,8 @@ export class PostsTestManager {
   }
 
   async deleteByIdIsNotAuthorized(
-    id: string,
-    blogId: string,
+    id: number,
+    blogId: number,
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())
@@ -146,7 +146,7 @@ export class PostsTestManager {
 
   async updateLikeStatus(
     accessToken: string,
-    postId: string,
+    postId: number,
     createdModel: LikeInputModel | string,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {

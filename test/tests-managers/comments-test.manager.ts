@@ -12,7 +12,7 @@ export class CommentsTestManager {
 
   async createComment(
     accessToken: string,
-    postId: string,
+    postId: number,
     createdModel: CommentCreateModel,
     statusCode: number = HttpStatus.CREATED,
   ) {
@@ -33,7 +33,7 @@ export class CommentsTestManager {
 
   async createComments(
     accessToken: string,
-    postId: string,
+    postId: number,
     count: number,
     statusCode: number = HttpStatus.CREATED,
   ) {
@@ -50,7 +50,7 @@ export class CommentsTestManager {
   }
 
   async getCommentsWithPaging(
-    postId: string,
+    postId: number,
     statusCode: number = HttpStatus.OK,
   ) {
     const { pageNumber, pageSize, sortBy, sortDirection } = paginationParams;
@@ -77,7 +77,7 @@ export class CommentsTestManager {
     expect(responseModels.pageSize).toBe(10);
   }
 
-  async getCommentById(id: string, statusCode: number = HttpStatus.OK) {
+  async getCommentById(id: number, statusCode: number = HttpStatus.OK) {
     const response = await request(this.app.getHttpServer())
       .get('/comments/' + id)
       .expect(statusCode);
@@ -86,7 +86,7 @@ export class CommentsTestManager {
 
   async update(
     accessToken: string,
-    commentId: string,
+    commentId: number,
     createdModel: CommentCreateModel,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
@@ -99,7 +99,7 @@ export class CommentsTestManager {
 
   async delete(
     accessToken: string,
-    commentId: string,
+    commentId: number,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     await request(this.app.getHttpServer())
@@ -110,7 +110,7 @@ export class CommentsTestManager {
 
   async updateLikeStatus(
     accessToken: string,
-    commentId: string,
+    commentId: number,
     createdModel: LikeInputModel | string,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {

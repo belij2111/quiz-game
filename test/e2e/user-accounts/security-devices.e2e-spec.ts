@@ -6,6 +6,7 @@ import { AuthTestManager } from '../../tests-managers/auth-test.manager';
 import { CoreTestManager } from '../../tests-managers/core-test.manager';
 import { SecurityDevicesTestManager } from '../../tests-managers/security-devices-test.manager';
 import { delay } from '../../helpers/delay';
+import { getMockUuidId } from '../../helpers/get-mock-uuid-id';
 
 describe('e2e-Security-Devices', () => {
   let app: INestApplication;
@@ -107,7 +108,7 @@ describe('e2e-Security-Devices', () => {
     });
     it(`shouldn't delete a device session by deviceID if it does not exist : STATUS 404`, async () => {
       const refreshTokens = await coreTestManager.loginSeveralUsers(3);
-      const nonExistentId = '12121212-1212-1212-1212-121212121212';
+      const nonExistentId = getMockUuidId();
       await securityDevicesTestManager.deleteById(
         nonExistentId,
         refreshTokens[0],

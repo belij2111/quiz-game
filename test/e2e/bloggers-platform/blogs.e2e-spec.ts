@@ -12,7 +12,7 @@ import {
   createValidPostModel,
 } from '../../models/bloggers-platform/post.input.model';
 import { PostsTestManager } from '../../tests-managers/posts-test.manager';
-import { getMockId } from '../../helpers/get-mock-id';
+import { getMockNumberId } from '../../helpers/get-mock-uuid-id';
 
 describe('e2e-Blogs', () => {
   let app: INestApplication;
@@ -55,7 +55,7 @@ describe('e2e-Blogs', () => {
       const validBlogModel: BlogCreateModel = createValidBlogModel();
       // console.log('validBlogModel :', validBlogModel);
       const createdResponse = await blogsTestManager.createBlog(validBlogModel);
-      //console.log('createdResponse :', createdResponse);
+      console.log('createdResponse :', createdResponse);
       blogsTestManager.expectCorrectModel(validBlogModel, createdResponse);
     });
     it(`shouldn't create new blog with incorrect input data : STATUS 400`, async () => {
@@ -84,7 +84,7 @@ describe('e2e-Blogs', () => {
       await blogsTestManager.getBlogById(createdBlog.id, HttpStatus.OK);
     });
     it(`shouldn't return blog by ID if it does not exist : STATUS 404`, async () => {
-      const nonExistentId = getMockId();
+      const nonExistentId = getMockNumberId();
       await blogsTestManager.getBlogById(nonExistentId, HttpStatus.NOT_FOUND);
     });
   });
@@ -124,7 +124,7 @@ describe('e2e-Blogs', () => {
     });
     it(`shouldn't update blog by ID if it does not exist : STATUS 404`, async () => {
       const updatedBlogModel: BlogCreateModel = createValidBlogModel(555);
-      const nonExistentId = getMockId();
+      const nonExistentId = getMockNumberId();
       await blogsTestManager.updateBlog(
         nonExistentId,
         updatedBlogModel,
@@ -148,7 +148,7 @@ describe('e2e-Blogs', () => {
       );
     });
     it(`shouldn't delete blog by ID if it does not exist : STATUS 404`, async () => {
-      const nonExistentId = getMockId();
+      const nonExistentId = getMockNumberId();
       await blogsTestManager.deleteById(nonExistentId, HttpStatus.NOT_FOUND);
     });
   });
@@ -190,7 +190,7 @@ describe('e2e-Blogs', () => {
       const validBlogModel: BlogCreateModel = createValidBlogModel();
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
       const validPostModel = createValidPostModel(createdBlog.id);
-      const nonExistentId = getMockId();
+      const nonExistentId = getMockNumberId();
       await blogsTestManager.createPostByBlogId(
         nonExistentId,
         validPostModel,
@@ -221,7 +221,7 @@ describe('e2e-Blogs', () => {
       const validBlogModel: BlogCreateModel = createValidBlogModel();
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
       await postsTestManager.createPosts(createdBlog.id, 5);
-      const nonExistentId = getMockId();
+      const nonExistentId = getMockNumberId();
       await blogsTestManager.getPostsByBlogId(
         nonExistentId,
         HttpStatus.NOT_FOUND,

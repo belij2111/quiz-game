@@ -21,7 +21,7 @@ import { CommentViewModel } from '../../../src/features/bloggers-platform/commen
 import { LoginSuccessViewModel } from '../../../src/features/user-accounts/auth/api/models/view/login-success.view.model';
 import { delay } from '../../helpers/delay';
 import { createLikeStatusModel } from '../../models/bloggers-platform/create-like-status.model';
-import { getMockId } from '../../helpers/get-mock-id';
+import { getMockNumberId } from '../../helpers/get-mock-uuid-id';
 import { LikeStatus } from '../../../src/features/bloggers-platform/likes/api/models/enums/like-status-enum';
 
 describe('e2e-Comments', () => {
@@ -78,7 +78,7 @@ describe('e2e-Comments', () => {
       );
     });
     it(`shouldn't return comment by ID if it does not exist : STATUS 404`, async () => {
-      const nonExistentId = getMockId();
+      const nonExistentId = getMockNumberId();
       await commentsTestManager.getCommentById(
         nonExistentId,
         HttpStatus.NOT_FOUND,
@@ -127,7 +127,7 @@ describe('e2e-Comments', () => {
     });
     it(`shouldn't update comment by commentId if it does not exist : STATUS 404`, async () => {
       const updatedCommentModel = createValidCommentModel(555);
-      const nonExistentId = getMockId();
+      const nonExistentId = getMockNumberId();
       await commentsTestManager.update(
         loginResult!.accessToken,
         nonExistentId,
@@ -162,7 +162,7 @@ describe('e2e-Comments', () => {
       );
     });
     it(`shouldn't delete comment by commentId if it does not exist : STATUS 404`, async () => {
-      const nonExistentId = getMockId();
+      const nonExistentId = getMockNumberId();
       await commentsTestManager.delete(
         loginResult!.accessToken,
         nonExistentId,
@@ -202,7 +202,7 @@ describe('e2e-Comments', () => {
     });
     it(`shouldn't update the like status if the commentId does not exist : STATUS 404`, async () => {
       const updateLikeStatusModel = createLikeStatusModel(LikeStatus.None);
-      const nonExistentId = getMockId();
+      const nonExistentId = getMockNumberId();
       await commentsTestManager.updateLikeStatus(
         loginResult!.accessToken,
         nonExistentId,

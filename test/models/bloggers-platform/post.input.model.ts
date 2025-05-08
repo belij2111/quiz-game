@@ -1,7 +1,7 @@
 import { PostCreateModel } from '../../../src/features/bloggers-platform/posts/api/models/input/create-post.input.model';
 
 export const createValidPostModel = (
-  blogId: string,
+  blogId: number,
   count: number = 1,
 ): PostCreateModel => {
   const postModel = new PostCreateModel();
@@ -13,7 +13,7 @@ export const createValidPostModel = (
 };
 
 export const createInValidPostModel = (
-  blogId: string,
+  blogId: number,
   count: number = 1,
 ): PostCreateModel => {
   const invalidPostModel = new PostCreateModel();

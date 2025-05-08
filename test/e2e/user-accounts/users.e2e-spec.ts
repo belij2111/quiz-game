@@ -7,6 +7,7 @@ import {
   createInValidUserModel,
   createValidUserModel,
 } from '../../models/user-accounts/user.input.model';
+import { getMockUuidId } from '../../helpers/get-mock-uuid-id';
 
 describe('e2e-Users', () => {
   let app: INestApplication;
@@ -85,7 +86,7 @@ describe('e2e-Users', () => {
       );
     });
     it(`shouldn't delete user by ID if it does not exist : STATUS 404`, async () => {
-      const nonExistentId = '12121212-1212-1212-1212-121212121212';
+      const nonExistentId = getMockUuidId();
       await usersTestManager.deleteById(nonExistentId, HttpStatus.NOT_FOUND);
     });
   });

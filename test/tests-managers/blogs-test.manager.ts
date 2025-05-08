@@ -89,7 +89,7 @@ export class BlogsTestManager {
       .expect(statusCode);
   }
 
-  async getBlogById(id: string, statusCode: number = HttpStatus.NOT_FOUND) {
+  async getBlogById(id: number, statusCode: number = HttpStatus.NOT_FOUND) {
     const response = await request(this.app.getHttpServer())
       .get('/blogs/' + id)
       .expect(statusCode);
@@ -97,7 +97,7 @@ export class BlogsTestManager {
   }
 
   async updateBlog(
-    id: string,
+    id: number,
     createdModel: BlogCreateModel,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
@@ -109,7 +109,7 @@ export class BlogsTestManager {
   }
 
   async updateBlogIsNotAuthorized(
-    id: string,
+    id: number,
     createdModel: BlogCreateModel,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
@@ -120,7 +120,7 @@ export class BlogsTestManager {
       .expect(statusCode);
   }
 
-  async deleteById(id: string, statusCode: number = HttpStatus.NO_CONTENT) {
+  async deleteById(id: number, statusCode: number = HttpStatus.NO_CONTENT) {
     return request(this.app.getHttpServer())
       .delete('/sa/blogs/' + id)
       .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
@@ -128,7 +128,7 @@ export class BlogsTestManager {
   }
 
   async deleteByIdIsNotAuthorized(
-    id: string,
+    id: number,
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())
@@ -138,7 +138,7 @@ export class BlogsTestManager {
   }
 
   async createPostByBlogId(
-    blogId: string,
+    blogId: number,
     createdModel: PostCreateModel,
     statusCode: number = HttpStatus.CREATED,
   ) {
@@ -151,7 +151,7 @@ export class BlogsTestManager {
   }
 
   async createPostByBlogIdIsNotAuthorized(
-    blogId: string,
+    blogId: number,
     createdModel: PostCreateModel,
     statusCode: number = HttpStatus.CREATED,
   ) {
@@ -163,7 +163,7 @@ export class BlogsTestManager {
     return response.body;
   }
 
-  async getPostsByBlogId(blogId: string, statusCode: number = HttpStatus.OK) {
+  async getPostsByBlogId(blogId: number, statusCode: number = HttpStatus.OK) {
     const { pageNumber, pageSize, sortBy, sortDirection } = paginationParams;
     return request(this.app.getHttpServer())
       .get(`/blogs/${blogId}/posts`)
