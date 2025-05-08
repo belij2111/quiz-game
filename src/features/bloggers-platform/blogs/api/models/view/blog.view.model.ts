@@ -1,7 +1,7 @@
-import { Blog } from '../../../domain/blog.sql.entity';
+import { Blog } from '../../../domain/blog.entity';
 
 export class BlogViewModel {
-  id: string;
+  id: number;
   name: string;
   description: string;
   websiteUrl: string;
@@ -10,7 +10,7 @@ export class BlogViewModel {
 
   static mapToView(blog: Blog): BlogViewModel {
     const model = new BlogViewModel();
-    model.id = blog.id.toString();
+    model.id = blog.id;
     model.name = blog.name;
     model.description = blog.description;
     model.websiteUrl = blog.websiteUrl;
