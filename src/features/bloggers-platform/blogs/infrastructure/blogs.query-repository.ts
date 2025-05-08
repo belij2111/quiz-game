@@ -11,7 +11,7 @@ import { SortDirection } from '../../../../core/models/base.query-params.input.m
 export class BlogsQueryRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-  async getById(id: string): Promise<BlogViewModel | null> {
+  async getById(id: number): Promise<BlogViewModel | null> {
     const foundBlog = await this.dataSource
       .createQueryBuilder()
       .select([

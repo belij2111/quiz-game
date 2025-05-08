@@ -3,7 +3,7 @@ import { BlogViewModel } from '../../api/models/view/blog.view.model';
 import { BlogsQueryRepository } from '../../infrastructure/blogs.query-repository';
 
 export class GetBlogByIdQuery {
-  constructor(public blogId: string) {}
+  constructor(public blogId: number) {}
 }
 
 @QueryHandler(GetBlogByIdQuery)

@@ -73,7 +73,7 @@ export class BlogsController {
   }
 
   @Get('blogs/:id')
-  async getById(@Param('id') id: string): Promise<BlogViewModel> {
+  async getById(@Param('id') id: number): Promise<BlogViewModel> {
     const foundBlog = await this.queryBus.execute(new GetBlogByIdQuery(id));
     if (!foundBlog) {
       throw new NotFoundException(`Blog with id ${id} not found`);
