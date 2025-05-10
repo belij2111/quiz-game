@@ -54,4 +54,13 @@ export class BlogsRepository {
       .execute();
     return (result.affected ?? 0) > 0 ? true : null;
   }
+
+  async blogIdIsExist(id: number) {
+    const result = await this.dataSource
+      .createQueryBuilder()
+      .from(Blog, 'b')
+      .where('b.id = :id', { id: id })
+      .getCount();
+    return result > 0;
+  }
 }

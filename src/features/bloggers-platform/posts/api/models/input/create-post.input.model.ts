@@ -1,5 +1,5 @@
 import { TrimIsString } from '../../../../../../core/decorators/validation/trim-is-string';
-import { IsEnum, IsOptional, IsUUID, Length } from 'class-validator';
+import { IsEnum, IsNumber, Length } from 'class-validator';
 import { BaseSortablePaginationParams } from '../../../../../../core/models/base.query-params.input.model';
 import { BlogIdIsExist } from '../../../../blogs/api/validation/blogId-is-exist.decorator';
 
@@ -22,13 +22,9 @@ export class PostCreateModel {
   })
   content: string;
 
-  @TrimIsString()
-  @IsUUID('4', {
-    message: 'Invalid BlogId',
-  })
+  @IsNumber({}, { message: 'Invalid BlogId' })
   @BlogIdIsExist()
-  @IsOptional()
-  blogId: string;
+  blogId: number;
 }
 
 export enum PostSortBy {

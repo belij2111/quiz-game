@@ -1,10 +1,8 @@
-import { TrimIsString } from '../../../../../../core/decorators/validation/trim-is-string';
-import { IsUUID } from 'class-validator';
+import { IsNumber } from 'class-validator';
+import { BlogIdIsExist } from '../../../../blogs/api/validation/blogId-is-exist.decorator';
 
 export class BlogIdParamModel {
-  @TrimIsString()
-  @IsUUID('4', {
-    message: 'Invalid BlogId',
-  })
+  @IsNumber({}, { message: 'Invalid BlogId' })
+  @BlogIdIsExist()
   blogId: string;
 }
