@@ -26,5 +26,6 @@ export class Blog extends BaseWithNumberIdEntity {
 
   update(data: Partial<Blog>) {
     Object.assign(this, data);
+    this.updatedAt = new Date();
   }
 }

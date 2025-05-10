@@ -28,5 +28,6 @@ export class EmailConfirmation extends BaseWithUuidIdEntity {
 
   update(data: Partial<EmailConfirmation>) {
     Object.assign(this, data);
+    this.updatedAt = new Date();
   }
 }

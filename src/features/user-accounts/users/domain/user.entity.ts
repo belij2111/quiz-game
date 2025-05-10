@@ -64,5 +64,6 @@ export class User extends BaseWithUuidIdEntity {
 
   update(data: Partial<User>) {
     Object.assign(this, data);
+    this.updatedAt = new Date();
   }
 }
