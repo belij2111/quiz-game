@@ -44,4 +44,14 @@ export class BlogsRepository {
       .where('b.id = :id', { id: id })
       .getOne();
   }
+
+  async delete(id: number) {
+    const result = await this.dataSource
+      .createQueryBuilder()
+      .softDelete()
+      .from(Blog)
+      .where('id = :id', { id: id })
+      .execute();
+    return (result.affected ?? 0) > 0 ? true : null;
+  }
 }
