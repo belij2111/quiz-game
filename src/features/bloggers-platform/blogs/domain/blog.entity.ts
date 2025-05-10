@@ -23,4 +23,8 @@ export class Blog extends BaseWithNumberIdEntity {
     blog.websiteUrl = dto.websiteUrl;
     return blog;
   }
+
+  update(data: Partial<Blog>) {
+    Object.assign(this, data);
+  }
 }

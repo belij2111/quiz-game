@@ -86,7 +86,7 @@ export class BlogsController {
   @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() blogUpdateModel: BlogCreateModel,
   ) {
     await this.commandBus.execute(new UpdateBlogCommand(id, blogUpdateModel));

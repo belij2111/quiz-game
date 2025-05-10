@@ -1,10 +1,10 @@
 import { BlogCreateModel } from '../../api/models/input/create-blog.input.model';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { BlogsSqlRepository } from '../../infrastructure/blogs.sql.repository';
+import { BlogsRepository } from '../../infrastructure/blogs.repository';
 
 export class UpdateBlogCommand {
   constructor(
-    public id: string,
+    public id: number,
     public blogUpdateModel: BlogCreateModel,
   ) {}
 }
@@ -13,17 +13,17 @@ export class UpdateBlogCommand {
 export class UpdateBlogUseCase
   implements ICommandHandler<UpdateBlogCommand, boolean | null>
 {
-  constructor(private readonly blogsSqlRepository: BlogsSqlRepository) {}
+  constructor(private readonly blogsRepository: BlogsRepository) {}
 
   async execute(command: UpdateBlogCommand): Promise<boolean | null> {
-    const foundBlog = await this.blogsSqlRepository.findByIdOrNotFoundFail(
+    const foundBlog = await this.blogsRepository.findByIdOrNotFoundFail(
       command.id,
     );
-    const updatedBlogDto: BlogCreateModel = {
+    foundBlog.update({
       name: command.blogUpdateModel.name,
       description: command.blogUpdateModel.description,
       websiteUrl: command.blogUpdateModel.websiteUrl,
-    };
-    return await this.blogsSqlRepository.update(foundBlog, updatedBlogDto);
+    });
+    return await this.blogsRepository.update(foundBlog);
   }
 }
