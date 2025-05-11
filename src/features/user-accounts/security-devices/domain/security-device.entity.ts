@@ -22,6 +22,8 @@ export class SecurityDevice extends BaseWithUuidIdEntity {
   @ManyToOne(() => User, (u) => u.securityDevice)
   @JoinColumn()
   public user: User;
+  @Column({ type: 'uuid' })
+  public userId: string;
 
   static create(
     userId: string,
@@ -32,7 +34,7 @@ export class SecurityDevice extends BaseWithUuidIdEntity {
     expDate: number,
   ): SecurityDevice {
     const deviceSession = new this();
-    deviceSession.user = { id: userId } as User;
+    deviceSession.userId = userId;
     deviceSession.deviceId = deviceId;
     deviceSession.ip = ip;
     deviceSession.deviceName = deviceName;
