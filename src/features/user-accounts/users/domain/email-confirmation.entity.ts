@@ -15,6 +15,8 @@ export class EmailConfirmation extends BaseWithUuidIdEntity {
   @OneToOne(() => User, (u) => u.emailConfirmation)
   @JoinColumn()
   public user: User;
+  @Column({ type: 'uuid' })
+  public userId: string;
 
   static create(
     uuidProvider: UuidProvider,
