@@ -6,7 +6,7 @@ export class PostViewModel {
   title: string;
   shortDescription: string;
   content: string;
-  blogId: string;
+  blogId: number;
   blogName: string;
   createdAt: Date;
   extendedLikesInfo: {

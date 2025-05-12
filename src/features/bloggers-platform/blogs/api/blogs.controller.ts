@@ -19,8 +19,8 @@ import {
 } from './models/input/create-blog.input.model';
 import {
   GetPostQueryParams,
-  PostCreateModel,
-} from '../../posts/api/models/input/create-post.input.model';
+  CreatePostInputModel,
+} from '../../posts/api/models/input/create-post.input-model';
 import { PostViewModel } from '../../posts/api/models/view/post.view.model';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { ApiBasicAuth } from '@nestjs/swagger';
@@ -28,7 +28,7 @@ import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param.decorator';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
-import { BlogIdParamModel } from '../../posts/api/models/input/blogId-param.model';
+import { BlogIdInputModel } from '../../posts/api/models/input/blog-id-input.model';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateBlogCommand } from '../application/use-cases/create-blog.use-case';
 import { UpdateBlogCommand } from '../application/use-cases/update-blog.use-case';
@@ -106,12 +106,11 @@ export class BlogsController {
   @HttpCode(HttpStatus.CREATED)
   async createPostByBlogId(
     @CurrentUserId() currentUserId: string,
-    @Param() param: BlogIdParamModel,
-    @Body() postCreateModel: PostCreateModel,
+    @Param() param: BlogIdInputModel,
+    @Body() body: CreatePostInputModel,
   ): Promise<PostViewModel | null> {
-    const blogId = param.blogId;
     const createdPostId = await this.commandBus.execute(
-      new CreatePostCommand(postCreateModel, blogId),
+      new CreatePostCommand(body, param.blogId),
     );
     return await this.queryBus.execute(
       new GetPostByIdQuery(currentUserId, createdPostId),
@@ -122,7 +121,7 @@ export class BlogsController {
   @UseGuards(JwtOptionalAuthGuard)
   async getPostsByBlogId(
     @IdentifyUser() identifyUser: string,
-    @Param() param: BlogIdParamModel,
+    @Param() param: BlogIdInputModel,
     @Query() query: GetPostQueryParams,
   ): Promise<PaginatedViewModel<PostViewModel[]>> {
     const blogId = param.blogId;

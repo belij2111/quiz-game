@@ -1,39 +1,28 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
-import { Post } from '../../domain/post.sql.entity';
-import { PostCreateModel } from '../../api/models/input/create-post.input.model';
-import { PostsSqlRepository } from '../../infrastructure/posts.sql.repository';
-import { BlogsSqlRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
+import { Post } from '../../domain/post.entity';
+import { CreatePostDto } from '../../dto/create-post.dto';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
+import { PostsRepository } from '../../infrastructure/posts.repository';
 
 export class CreatePostCommand {
   constructor(
-    public postCreateModel: PostCreateModel,
-    public blogId?: string,
+    public postCreateModel: CreatePostDto,
+    public blogId: number,
   ) {}
 }
 
 @CommandHandler(CreatePostCommand)
 export class CreatePostUseCase
-  implements ICommandHandler<CreatePostCommand, string>
+  implements ICommandHandler<CreatePostCommand, number>
 {
   constructor(
-    private readonly blogsSqlRepository: BlogsSqlRepository,
-    private readonly uuidProvider: UuidProvider,
-    private readonly postsSqlRepository: PostsSqlRepository,
+    private readonly blogsRepository: BlogsRepository,
+    private readonly postsRepository: PostsRepository,
   ) {}
 
-  async execute(command: CreatePostCommand): Promise<string> {
-    const blogId = command.blogId || command.postCreateModel.blogId;
-    const foundBlog =
-      await this.blogsSqlRepository.findByIdOrNotFoundFail(blogId);
-    const newPostDto: Post = {
-      id: this.uuidProvider.generate(),
-      title: command.postCreateModel.title,
-      shortDescription: command.postCreateModel.shortDescription,
-      content: command.postCreateModel.content,
-      blogId: foundBlog.id,
-      createdAt: new Date(),
-    };
-    return await this.postsSqlRepository.create(newPostDto);
+  async execute(command: CreatePostCommand): Promise<number> {
+    await this.blogsRepository.findByIdOrNotFoundFail(command.blogId);
+    const post = Post.create(command.postCreateModel, command.blogId);
+    return await this.postsRepository.create(post);
   }
 }

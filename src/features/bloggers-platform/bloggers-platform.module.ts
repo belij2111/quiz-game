@@ -36,6 +36,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Blog } from './blogs/domain/blog.entity';
 import { BlogsRepository } from './blogs/infrastructure/blogs.repository';
 import { BlogsQueryRepository } from './blogs/infrastructure/blogs.query-repository';
+import { Post } from './posts/domain/post.entity';
+import { PostsRepository } from './posts/infrastructure/posts.repository';
+import { PostsQueryRepository } from './posts/infrastructure/posts.query-repository';
 
 const useCases = [
   CreateBlogUseCase,
@@ -70,10 +73,16 @@ const repositories = [
   LikesForPostSqlRepository,
   BlogsRepository,
   BlogsQueryRepository,
+  PostsRepository,
+  PostsQueryRepository,
 ];
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Blog]), CqrsModule, UserAccountsModule],
+  imports: [
+    TypeOrmModule.forFeature([Blog, Post]),
+    CqrsModule,
+    UserAccountsModule,
+  ],
   controllers: [BlogsController, PostsController, CommentsController],
   providers: [
     BlogIdIsExistConstraint,

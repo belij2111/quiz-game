@@ -15,8 +15,8 @@ import {
 import { PostViewModel } from './models/view/post.view.model';
 import {
   GetPostQueryParams,
-  PostCreateModel,
-} from './models/input/create-post.input.model';
+  CreatePostInputModel,
+} from './models/input/create-post.input-model';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { ApiBasicAuth, ApiBearerAuth } from '@nestjs/swagger';
 import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
@@ -41,6 +41,7 @@ import { GetPostByIdQuery } from '../application/queries/get-post-by-id.query';
 import { GetPostsQuery } from '../application/queries/get-posts.query';
 import { GetCommentByIdQuery } from '../../comments/application/queries/get-comment-by-id.query';
 import { GetCommentsForSpecificPostQuery } from '../../comments/application/queries/get-comments-for-specified-post.query';
+import { BlogIdInputModel } from './models/input/blog-id-input.model';
 
 @Controller()
 export class PostsController {
@@ -54,10 +55,11 @@ export class PostsController {
   @ApiBasicAuth()
   async create(
     @CurrentUserId() currentUserId: string,
-    @Body() postCreateModel: PostCreateModel,
+    @Body() body: CreatePostInputModel & BlogIdInputModel,
   ) {
+    const { blogId, ...postCreateModel } = body;
     const createdPostId = await this.commandBus.execute(
-      new CreatePostCommand(postCreateModel),
+      new CreatePostCommand(postCreateModel, blogId),
     );
     return await this.queryBus.execute(
       new GetPostByIdQuery(currentUserId, createdPostId),
@@ -94,7 +96,7 @@ export class PostsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
     @Param() params: PostParamsModel,
-    @Body() postCreateModel: PostCreateModel,
+    @Body() postCreateModel: CreatePostInputModel,
   ) {
     await this.commandBus.execute(
       new UpdatePostCommand(params, postCreateModel),
