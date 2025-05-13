@@ -18,7 +18,7 @@ export class BlogIdIsExistConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage(validationArguments?: ValidationArguments): string {
-    return `Blog ID ${validationArguments?.value} already exist`;
+    return `Blog ID ${validationArguments?.value} does not exist`;
   }
 }
 
