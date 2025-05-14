@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { BlogViewModel } from '../api/models/view/blog.view.model';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
@@ -11,7 +11,7 @@ import { SortDirection } from '../../../../core/models/base.query-params.input.m
 export class BlogsQueryRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-  async getById(id: number): Promise<BlogViewModel | null> {
+  async getById(id: number): Promise<BlogViewModel> {
     const foundBlog = await this.dataSource
       .createQueryBuilder()
       .select([
@@ -25,7 +25,9 @@ export class BlogsQueryRepository {
       .from(Blog, 'b')
       .where('b.id = :id', { id: id })
       .getRawOne();
-    if (!foundBlog) return null;
+    if (!foundBlog) {
+      throw new NotFoundException(`Blog with id ${id} not found`);
+    }
     return BlogViewModel.mapToView(foundBlog);
   }
 

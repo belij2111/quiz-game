@@ -8,10 +8,10 @@ export class GetBlogByIdQuery {
 
 @QueryHandler(GetBlogByIdQuery)
 export class GetBlogByIdQueryHandler
-  implements IQueryHandler<GetBlogByIdQuery, BlogViewModel | null>
+  implements IQueryHandler<GetBlogByIdQuery, BlogViewModel>
 {
   constructor(private readonly blogsQueryRepository: BlogsQueryRepository) {}
-  async execute(query: GetBlogByIdQuery): Promise<BlogViewModel | null> {
+  async execute(query: GetBlogByIdQuery): Promise<BlogViewModel> {
     return this.blogsQueryRepository.getById(query.blogId);
   }
 }
