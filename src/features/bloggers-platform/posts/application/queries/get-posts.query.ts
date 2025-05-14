@@ -1,4 +1,4 @@
-import { GetPostQueryParams } from '../../api/models/input/create-post.input.model';
+import { GetPostQueryParams } from '../../api/models/input/create-post.input-model';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PaginatedViewModel } from '../../../../../core/models/base.paginated.view.model';
 import { PostViewModel } from '../../api/models/view/post.view.model';
