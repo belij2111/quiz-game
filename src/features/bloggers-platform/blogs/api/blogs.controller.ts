@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Param,
   Post,
   Put,
@@ -18,8 +17,8 @@ import {
   GetBlogsQueryParams,
 } from './models/input/create-blog.input.model';
 import {
-  GetPostQueryParams,
   CreatePostInputModel,
+  GetPostQueryParams,
 } from '../../posts/api/models/input/create-post.input-model';
 import { PostViewModel } from '../../posts/api/models/view/post.view.model';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
@@ -74,11 +73,7 @@ export class BlogsController {
 
   @Get('blogs/:id')
   async getById(@Param('id') id: number): Promise<BlogViewModel> {
-    const foundBlog = await this.queryBus.execute(new GetBlogByIdQuery(id));
-    if (!foundBlog) {
-      throw new NotFoundException(`Blog with id ${id} not found`);
-    }
-    return foundBlog;
+    return await this.queryBus.execute(new GetBlogByIdQuery(id));
   }
 
   @Put('sa/blogs/:id')
@@ -124,9 +119,8 @@ export class BlogsController {
     @Param() param: BlogIdInputModel,
     @Query() query: GetPostQueryParams,
   ): Promise<PaginatedViewModel<PostViewModel[]>> {
-    const blogId = param.blogId;
     return await this.queryBus.execute(
-      new GetPostsForSpecifiedBlogQuery(identifyUser, blogId, query),
+      new GetPostsForSpecifiedBlogQuery(identifyUser, param.blogId, query),
     );
   }
 }

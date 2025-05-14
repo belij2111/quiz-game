@@ -1,13 +1,14 @@
-import { GetPostQueryParams } from '../../api/models/input/create-post.input.model';
+import { GetPostQueryParams } from '../../api/models/input/create-post.input-model';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PaginatedViewModel } from '../../../../../core/models/base.paginated.view.model';
 import { PostViewModel } from '../../api/models/view/post.view.model';
-import { PostsSqlQueryRepository } from '../../infrastructure/posts.sql.query-repository';
+import { PostsQueryRepository } from '../../infrastructure/posts.query-repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
 
 export class GetPostsForSpecifiedBlogQuery {
   constructor(
     public currentUserId: string,
-    public blogId: string,
+    public blogId: number,
     public inputQuery: GetPostQueryParams,
   ) {}
 }
@@ -21,12 +22,14 @@ export class GetPostsForSpecifiedBlogQueryHandler
     >
 {
   constructor(
-    private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
+    private readonly postsQueryRepository: PostsQueryRepository,
+    private readonly blogsRepository: BlogsRepository,
   ) {}
   async execute(
     query: GetPostsForSpecifiedBlogQuery,
   ): Promise<PaginatedViewModel<PostViewModel[]>> {
-    return this.postsSqlQueryRepository.getPostsByBlogId(
+    await this.blogsRepository.findByIdOrNotFoundFail(query.blogId);
+    return this.postsQueryRepository.getAllByBlogId(
       query.currentUserId,
       query.blogId,
       query.inputQuery,
