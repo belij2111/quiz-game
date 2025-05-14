@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PostViewModel } from '../api/models/view/post.view.model';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
@@ -12,10 +12,7 @@ export class PostsQueryRepository {
     private readonly dataSource: DataSource,
   ) {}
 
-  async getById(
-    currentUserId: string,
-    id: string,
-  ): Promise<PostViewModel | null> {
+  async getById(currentUserId: string, id: number): Promise<PostViewModel> {
     const foundPost = await this.dataSource
       .getRepository(Post)
       .createQueryBuilder('p')
@@ -32,7 +29,9 @@ export class PostsQueryRepository {
       .where('p.id = :id', { id: id })
       .getRawOne();
     const currentStatus = LikeStatus.None;
-    if (!foundPost) return null;
+    if (!foundPost) {
+      throw new NotFoundException(`Post with id ${id} not found`);
+    }
     return PostViewModel.mapToView(foundPost, currentStatus);
   }
 }
