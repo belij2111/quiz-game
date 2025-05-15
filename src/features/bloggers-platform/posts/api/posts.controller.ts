@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Param,
   Post,
   Put,
@@ -14,8 +13,8 @@ import {
 } from '@nestjs/common';
 import { PostViewModel } from './models/view/post.view.model';
 import {
-  GetPostQueryParams,
   CreatePostInputModel,
+  GetPostQueryParams,
 } from './models/input/create-post.input-model';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { ApiBasicAuth, ApiBearerAuth } from '@nestjs/swagger';
@@ -79,15 +78,9 @@ export class PostsController {
   @UseGuards(JwtOptionalAuthGuard)
   async getById(
     @IdentifyUser() identifyUser: string,
-    @Param('id') id: string,
+    @Param('id') id: number,
   ): Promise<PostViewModel> {
-    const foundPost = await this.queryBus.execute(
-      new GetPostByIdQuery(identifyUser, id),
-    );
-    if (!foundPost) {
-      throw new NotFoundException(`Post with id ${id} not found`);
-    }
-    return foundPost;
+    return await this.queryBus.execute(new GetPostByIdQuery(identifyUser, id));
   }
 
   @Put('sa/blogs/:blogId/posts/:postId')
