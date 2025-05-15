@@ -28,6 +28,16 @@ export class PostsRepository {
     return (result.affected ?? 0) > 0 ? true : null;
   }
 
+  async delete(id: number): Promise<boolean | null> {
+    const result = await this.dataSource
+      .createQueryBuilder()
+      .softDelete()
+      .from(Post)
+      .where('id = :id', { id: id })
+      .execute();
+    return (result.affected ?? 0) > 0 ? true : null;
+  }
+
   async findByIdOrNotFoundFail(id: number): Promise<Post> {
     const foundPost = await this.findById(id);
     if (!foundPost) {

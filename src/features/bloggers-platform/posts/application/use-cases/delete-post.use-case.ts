@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostParamsModel } from '../../api/models/input/post-params.model';
-import { PostsSqlRepository } from '../../infrastructure/posts.sql.repository';
-import { BlogsSqlRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
+import { PostsRepository } from '../../infrastructure/posts.repository';
 
 export class DeletePostCommand {
   constructor(public params: PostParamsModel) {}
@@ -9,18 +9,18 @@ export class DeletePostCommand {
 
 @CommandHandler(DeletePostCommand)
 export class DeletePostUseCase
-  implements ICommandHandler<DeletePostCommand, boolean>
+  implements ICommandHandler<DeletePostCommand, boolean | null>
 {
   constructor(
-    private readonly blogsSqlRepository: BlogsSqlRepository,
-    private readonly postsSqlRepository: PostsSqlRepository,
+    private readonly blogsRepository: BlogsRepository,
+    private readonly postsRepository: PostsRepository,
   ) {}
 
-  async execute(command: DeletePostCommand): Promise<boolean> {
-    await this.blogsSqlRepository.findByIdOrNotFoundFail(command.params.blogId);
-    const foundPost = await this.postsSqlRepository.findByIdOrNotFoundFail(
+  async execute(command: DeletePostCommand): Promise<boolean | null> {
+    await this.blogsRepository.findByIdOrNotFoundFail(command.params.blogId);
+    const foundPost: any = await this.postsRepository.findByIdOrNotFoundFail(
       command.params.postId,
     );
-    return this.postsSqlRepository.delete(foundPost.id);
+    return this.postsRepository.delete(foundPost.id);
   }
 }
