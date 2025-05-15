@@ -6,9 +6,9 @@ export class PostViewModel {
   title: string;
   shortDescription: string;
   content: string;
-  blogId: number;
+  blogId: string;
   blogName: string;
-  createdAt: Date;
+  createdAt: string;
   extendedLikesInfo: {
     likesCount: number;
     dislikesCount: number;
@@ -26,16 +26,16 @@ export class PostViewModel {
       Array.isArray(post.newestLikes) && post.newestLikes.length > 0
         ? post.newestLikes.slice(0, 3)
         : [];
-    model.id = post.id;
+    model.id = post.id.toString();
     model.title = post.title;
     model.shortDescription = post.shortDescription;
     model.content = post.content;
-    model.blogId = post.blogId;
+    model.blogId = post.blogId.toString();
     model.blogName = post.blogName;
-    model.createdAt = post.createdAt;
+    model.createdAt = post.createdAt.toISOString();
     model.extendedLikesInfo = {
-      likesCount: Number(post.likesCount),
-      dislikesCount: Number(post.dislikesCount),
+      likesCount: 0,
+      dislikesCount: 0,
       myStatus: currentStatus,
       newestLikes: newestLikes,
     };
