@@ -55,6 +55,31 @@ export class PostsQueryRepository {
     });
   }
 
+  async getAll(
+    currentUserId: string,
+    inputQuery: GetPostQueryParams,
+  ): Promise<PaginatedViewModel<PostViewModel[]>> {
+    const { sortBy, sortDirection } = inputQuery;
+    const query = this.getBaseQuery();
+    const direction = sortDirection === SortDirection.Asc ? 'ASC' : 'DESC';
+    if (sortBy && SortDirection) {
+      query.orderBy(`p.${sortBy}`, direction);
+    }
+    query.skip(inputQuery.calculateSkip()).take(inputQuery.pageSize);
+    const foundPosts = await query.getRawMany();
+    const totalCount = await query.getCount();
+    const currentStatus = LikeStatus.None;
+    const items = foundPosts.map((post) =>
+      PostViewModel.mapToView(post, currentStatus),
+    );
+    return PaginatedViewModel.mapToView({
+      pageNumber: inputQuery.pageNumber,
+      pageSize: inputQuery.pageSize,
+      totalCount,
+      items,
+    });
+  }
+
   private getBaseQuery() {
     return this.dataSource
       .getRepository(Post)

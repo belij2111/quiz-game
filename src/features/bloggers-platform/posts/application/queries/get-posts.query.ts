@@ -2,7 +2,7 @@ import { GetPostQueryParams } from '../../api/models/input/create-post.input-mod
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PaginatedViewModel } from '../../../../../core/models/base.paginated.view.model';
 import { PostViewModel } from '../../api/models/view/post.view.model';
-import { PostsSqlQueryRepository } from '../../infrastructure/posts.sql.query-repository';
+import { PostsQueryRepository } from '../../infrastructure/posts.query-repository';
 
 export class GetPostsQuery {
   constructor(
@@ -15,13 +15,11 @@ export class GetPostsQuery {
 export class GetPostsQueryHandler
   implements IQueryHandler<GetPostsQuery, PaginatedViewModel<PostViewModel[]>>
 {
-  constructor(
-    private readonly postsSqlQueryRepository: PostsSqlQueryRepository,
-  ) {}
+  constructor(private readonly postsQueryRepository: PostsQueryRepository) {}
   async execute(
     query: GetPostsQuery,
   ): Promise<PaginatedViewModel<PostViewModel[]>> {
-    return this.postsSqlQueryRepository.getAll(
+    return this.postsQueryRepository.getAll(
       query.currentUserId,
       query.inputQuery,
     );
