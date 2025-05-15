@@ -40,7 +40,8 @@ import { GetPostByIdQuery } from '../application/queries/get-post-by-id.query';
 import { GetPostsQuery } from '../application/queries/get-posts.query';
 import { GetCommentByIdQuery } from '../../comments/application/queries/get-comment-by-id.query';
 import { GetCommentsForSpecificPostQuery } from '../../comments/application/queries/get-comments-for-specified-post.query';
-import { BlogIdInputModel } from './models/input/blog-id-input.model';
+import { BlogIdInputModel } from './models/input/blog-id.input-model';
+import { UpdatePostInputModel } from './models/input/update-post.input-model';
 
 @Controller()
 export class PostsController {
@@ -89,10 +90,10 @@ export class PostsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
     @Param() params: PostParamsModel,
-    @Body() postCreateModel: CreatePostInputModel,
+    @Body() updatePostModel: UpdatePostInputModel,
   ) {
     await this.commandBus.execute(
-      new UpdatePostCommand(params, postCreateModel),
+      new UpdatePostCommand(params, updatePostModel),
     );
   }
 

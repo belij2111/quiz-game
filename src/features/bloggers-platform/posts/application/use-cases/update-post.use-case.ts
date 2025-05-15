@@ -1,13 +1,13 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostParamsModel } from '../../api/models/input/post-params.model';
-import { PostCreateModel } from '../../api/models/input/create-post.input.model';
-import { PostsSqlRepository } from '../../infrastructure/posts.sql.repository';
-import { BlogsSqlRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
+import { UpdatePostInputModel } from '../../api/models/input/update-post.input-model';
+import { PostsRepository } from '../../infrastructure/posts.repository';
+import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
 
 export class UpdatePostCommand {
   constructor(
     public params: PostParamsModel,
-    public postUpdateModel: PostCreateModel,
+    public postUpdateModel: UpdatePostInputModel,
   ) {}
 }
 
@@ -16,21 +16,20 @@ export class UpdatePostUseCase
   implements ICommandHandler<UpdatePostCommand, boolean | null>
 {
   constructor(
-    private readonly blogsSqlRepository: BlogsSqlRepository,
-    private readonly postsSqlRepository: PostsSqlRepository,
+    private readonly blogsRepository: BlogsRepository,
+    private readonly postsRepository: PostsRepository,
   ) {}
 
   async execute(command: UpdatePostCommand): Promise<boolean | null> {
-    await this.blogsSqlRepository.findByIdOrNotFoundFail(command.params.blogId);
-    const foundPost = await this.postsSqlRepository.findByIdOrNotFoundFail(
+    await this.blogsRepository.findByIdOrNotFoundFail(command.params.blogId);
+    const foundPost = await this.postsRepository.findByIdOrNotFoundFail(
       command.params.postId,
     );
-    const updatedPostDto: PostCreateModel = {
+    foundPost.update({
       title: command.postUpdateModel.title,
       shortDescription: command.postUpdateModel.shortDescription,
       content: command.postUpdateModel.content,
-      blogId: command.params.blogId,
-    };
-    return await this.postsSqlRepository.update(foundPost.id, updatedPostDto);
+    });
+    return await this.postsRepository.update(foundPost);
   }
 }
