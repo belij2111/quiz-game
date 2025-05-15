@@ -16,25 +16,13 @@ export class PostsQueryRepository {
   ) {}
 
   async getById(currentUserId: string, id: number): Promise<PostViewModel> {
-    const foundPost = await this.dataSource
-      .getRepository(Post)
-      .createQueryBuilder('p')
-      .leftJoin('p.blog', 'b')
-      .select([
-        'p.id as "id"',
-        'p.title as "title"',
-        'p.shortDescription as "shortDescription"',
-        'p.content as "content"',
-        'b.id as "blogId"',
-        'b.name as "blogName"',
-        'p.createdAt as "createdAt"',
-      ])
-      .where('p.id = :id', { id: id })
-      .getRawOne();
-    const currentStatus = LikeStatus.None;
+    const query = this.getBaseQuery();
+    query.where('p.id = :id', { id: id });
+    const foundPost = await query.getRawOne();
     if (!foundPost) {
       throw new NotFoundException(`Post with id ${id} not found`);
     }
+    const currentStatus = LikeStatus.None;
     return PostViewModel.mapToView(foundPost, currentStatus);
   }
 
