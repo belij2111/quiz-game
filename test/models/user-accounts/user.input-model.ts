@@ -1,4 +1,4 @@
-import { UserCreateModel } from '../../../src/features/user-accounts/users/api/models/input/create-user.input.model';
+import { UserCreateModel } from '../../../src/features/user-accounts/users/api/models/input/create-user.input-model';
 
 export const createValidUserModel = (count: number = 1): UserCreateModel => {
   const userModel = new UserCreateModel();

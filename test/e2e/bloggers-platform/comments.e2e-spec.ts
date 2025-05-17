@@ -1,24 +1,24 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { initSettings } from '../../helpers/init-settings';
-import { BlogsTestManager } from '../../tests-managers/blogs-test.manager';
+import { BlogsTestManager } from '../../tests-managers/blogs.test-manager';
 import { deleteAllData } from '../../helpers/delete-all-data';
-import { PostsTestManager } from '../../tests-managers/posts-test.manager';
-import { BlogCreateModel } from '../../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input.model';
-import { createValidBlogModel } from '../../models/bloggers-platform/blog.input.model';
-import { createValidPostModel } from '../../models/bloggers-platform/post.input.model';
-import { CommentsTestManager } from '../../tests-managers/comments-test.manager';
+import { PostsTestManager } from '../../tests-managers/posts.test-manager';
+import { BlogCreateModel } from '../../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input-model';
+import { createValidBlogModel } from '../../models/bloggers-platform/blog.input-model';
+import { createValidPostModel } from '../../models/bloggers-platform/post.input-model';
+import { CommentsTestManager } from '../../tests-managers/comments.test-manager';
 import {
   createInValidCommentModel,
   createValidCommentModel,
-} from '../../models/bloggers-platform/comment.input.model';
+} from '../../models/bloggers-platform/comment.input-model';
 import { CommentCreateModel } from '../../../src/features/bloggers-platform/comments/api/models/input/create-comment.input.model';
-import { UsersTestManager } from '../../tests-managers/users-test.manager';
-import { AuthTestManager } from '../../tests-managers/auth-test.manager';
-import { CoreTestManager } from '../../tests-managers/core-test.manager';
-import { BlogViewModel } from '../../../src/features/bloggers-platform/blogs/api/models/view/blog.view.model';
-import { PostViewModel } from '../../../src/features/bloggers-platform/posts/api/models/view/post.view.model';
+import { UsersTestManager } from '../../tests-managers/users.test-manager';
+import { AuthTestManager } from '../../tests-managers/auth.test-manager';
+import { CoreTestManager } from '../../tests-managers/core.test-manager';
+import { BlogViewModel } from '../../../src/features/bloggers-platform/blogs/api/models/view/blog.view-model';
+import { PostViewModel } from '../../../src/features/bloggers-platform/posts/api/models/view/post.view-model';
 import { CommentViewModel } from '../../../src/features/bloggers-platform/comments/api/models/view/comment.view.model';
-import { LoginSuccessViewModel } from '../../../src/features/user-accounts/auth/api/models/view/login-success.view.model';
+import { LoginSuccessViewModel } from '../../../src/features/user-accounts/auth/api/models/view/login-success.view-model';
 import { delay } from '../../helpers/delay';
 import { createLikeStatusModel } from '../../models/bloggers-platform/create-like-status.model';
 import { getMockNumberId } from '../../helpers/get-mock-uuid-id';

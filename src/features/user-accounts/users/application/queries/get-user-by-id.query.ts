@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { UserViewModel } from '../../api/models/view/user.view.model';
+import { UserViewModel } from '../../api/models/view/user.view-model';
 import { UsersQueryRepository } from '../../infrastructure/users.query-repository';
 
 export class GetUserByIdQuery {

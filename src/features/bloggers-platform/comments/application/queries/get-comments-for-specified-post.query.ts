@@ -1,6 +1,6 @@
 import { GetCommentQueryParams } from '../../api/models/input/create-comment.input.model';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { PaginatedViewModel } from '../../../../../core/models/base.paginated.view.model';
+import { PaginatedViewModel } from '../../../../../core/models/base-paginated.view-model';
 import { CommentViewModel } from '../../api/models/view/comment.view.model';
 import { CommentsSqlQueryRepository } from '../../infrastructure/comments.sql.query-repository';
 

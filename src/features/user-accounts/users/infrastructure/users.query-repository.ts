@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../domain/user.entity';
 import { ILike, Repository } from 'typeorm';
-import { UserViewModel } from '../api/models/view/user.view.model';
-import { GetUsersQueryParams } from '../api/models/input/create-user.input.model';
-import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
-import { MeViewModel } from '../../auth/api/models/view/me.view.model';
+import { UserViewModel } from '../api/models/view/user.view-model';
+import { GetUsersQueryParams } from '../api/models/input/create-user.input-model';
+import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
+import { MeViewModel } from '../../auth/api/models/view/me.view-model';
 
 @Injectable()
 export class UsersQueryRepository {

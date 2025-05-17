@@ -1,31 +1,31 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { UsersTestManager } from '../../tests-managers/users-test.manager';
+import { UsersTestManager } from '../../tests-managers/users.test-manager';
 import { initSettings } from '../../helpers/init-settings';
 import { deleteAllData } from '../../helpers/delete-all-data';
-import { UserCreateModel } from '../../../src/features/user-accounts/users/api/models/input/create-user.input.model';
+import { UserCreateModel } from '../../../src/features/user-accounts/users/api/models/input/create-user.input-model';
 import {
   createInValidUserModel,
   createSeveralUsersModels,
   createValidUserModel,
-} from '../../models/user-accounts/user.input.model';
-import { AuthTestManager } from '../../tests-managers/auth-test.manager';
+} from '../../models/user-accounts/user.input-model';
+import { AuthTestManager } from '../../tests-managers/auth.test-manager';
 import { delay } from '../../helpers/delay';
 import {
   createEmailResendingInputModel,
   createInvalidEmailResendingInputModel,
-} from '../../models/user-accounts/email.resending.input.model';
+} from '../../models/user-accounts/email-resending.input-model';
 import {
   createInvalidRegistrationConfirmationCodeInputModel,
   createRegistrationConfirmationCodeInputModel,
-} from '../../models/user-accounts/registration.confirmation.code.input.model';
+} from '../../models/user-accounts/registration-confirmation-code.input-model';
 import {
   createInvalidPasswordRecoveryInputModel,
   createPasswordRecoveryInputModel,
-} from '../../models/user-accounts/password.recovery.input.model';
+} from '../../models/user-accounts/password-recovery.input-model';
 import {
   createInvalidNewPasswordRecoveryInputModel,
   createNewPasswordRecoveryInputModel,
-} from '../../models/user-accounts/new.password.recovery.input.model';
+} from '../../models/user-accounts/new-password-recovery.input-model';
 import { SendEmailConfirmationWhenRegisteringUserEventHandlerMock } from '../../mock/send-email-confirmation-when-registering-user-event-handler.mock';
 import { SendEmailConfirmationWhenRegisteringUserEventHandler } from '../../../src/features/notifications/event-handlers/send-email-confirmation-when-registering-user.event-handler';
 import { SendEmailWithRecoveryCodeEventHandlerMock } from '../../mock/send-email-with-recovery-code-event-handler.mock';

@@ -1,10 +1,7 @@
-import { PostCreateModel } from '../../../src/features/bloggers-platform/posts/api/models/input/create-post.input.model';
+import { Post } from '../../../src/features/bloggers-platform/posts/domain/post.entity';
 
-export const createValidPostModel = (
-  blogId: number,
-  count: number = 1,
-): PostCreateModel => {
-  const postModel = new PostCreateModel();
+export const createValidPostModel = (blogId: any, count: number = 1): any => {
+  const postModel = new Post();
   postModel.title = `Post${count}`;
   postModel.shortDescription = `new post${count}`;
   postModel.content = `new content of post${count}`;
@@ -12,11 +9,8 @@ export const createValidPostModel = (
   return postModel;
 };
 
-export const createInValidPostModel = (
-  blogId: number,
-  count: number = 1,
-): PostCreateModel => {
-  const invalidPostModel = new PostCreateModel();
+export const createInValidPostModel = (blogId: any, count: number = 1): any => {
+  const invalidPostModel = new Post();
   invalidPostModel.title = `33333333333333333333333333333333333333333333333333Post${count}`;
   invalidPostModel.shortDescription = `new post${count}`;
   invalidPostModel.content = `new content of post${count}`;

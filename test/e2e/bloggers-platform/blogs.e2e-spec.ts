@@ -3,15 +3,15 @@ import { initSettings } from '../../helpers/init-settings';
 import {
   createInValidBlogModel,
   createValidBlogModel,
-} from '../../models/bloggers-platform/blog.input.model';
-import { BlogCreateModel } from '../../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input.model';
-import { BlogsTestManager } from '../../tests-managers/blogs-test.manager';
+} from '../../models/bloggers-platform/blog.input-model';
+import { BlogCreateModel } from '../../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input-model';
+import { BlogsTestManager } from '../../tests-managers/blogs.test-manager';
 import { deleteAllData } from '../../helpers/delete-all-data';
 import {
   createInValidPostModel,
   createValidPostModel,
-} from '../../models/bloggers-platform/post.input.model';
-import { PostsTestManager } from '../../tests-managers/posts-test.manager';
+} from '../../models/bloggers-platform/post.input-model';
+import { PostsTestManager } from '../../tests-managers/posts.test-manager';
 import { getMockNumberId } from '../../helpers/get-mock-uuid-id';
 
 describe('e2e-Blogs', () => {

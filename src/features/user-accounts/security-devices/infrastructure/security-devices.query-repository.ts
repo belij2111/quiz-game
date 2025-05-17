@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SecurityDevicesViewModel } from '../api/models/view/security-devices.view.model';
+import { SecurityDevicesViewModel } from '../api/models/view/security-devices.view-model';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SecurityDevice } from '../domain/security-device.entity';

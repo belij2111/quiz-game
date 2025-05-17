@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { EmailConfirmation } from './email-confirmation.entity';
-import { UserCreateModel } from '../api/models/input/create-user.input.model';
+import { UserCreateModel } from '../api/models/input/create-user.input-model';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 import { SecurityDevice } from '../../security-devices/domain/security-device.entity';
 import { BaseWithUuidIdEntity } from '../../../../core/entities/base-with-uuid-id.entity';

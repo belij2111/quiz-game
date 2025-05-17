@@ -11,21 +11,21 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { BlogViewModel } from './models/view/blog.view.model';
+import { BlogViewModel } from './models/view/blog.view-model';
 import {
   BlogCreateModel,
   GetBlogsQueryParams,
-} from './models/input/create-blog.input.model';
+} from './models/input/create-blog.input-model';
 import {
   CreatePostInputModel,
   GetPostQueryParams,
 } from '../../posts/api/models/input/create-post.input-model';
-import { PostViewModel } from '../../posts/api/models/view/post.view.model';
+import { PostViewModel } from '../../posts/api/models/view/post.view-model';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { ApiBasicAuth } from '@nestjs/swagger';
-import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
-import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param.decorator';
-import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
+import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
+import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param-decorator';
+import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param-decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateBlogCommand } from '../application/use-cases/create-blog.use-case';

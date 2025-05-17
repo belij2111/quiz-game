@@ -1,7 +1,7 @@
 import { TrimIsString } from '../../../../../../core/decorators/validation/trim-is-string';
 import { IsEmail, Matches } from 'class-validator';
 
-export class RegistrationEmailResendingModel {
+export class RegistrationEmailResendingInputModel {
   @TrimIsString()
   @IsEmail()
   @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, {

@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserAccountConfig } from '../../../config/user-account.config';
-import { LoginSuccessViewModel } from '../../api/models/view/login-success.view.model';
+import { LoginSuccessViewModel } from '../../api/models/view/login-success.view-model';
 import { JwtService } from '@nestjs/jwt';
 import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
 import { SecurityDevice } from '../../../security-devices/domain/security-device.entity';

@@ -1,6 +1,6 @@
 import { TrimIsString } from '../../../../../../core/decorators/validation/trim-is-string';
 
-export class RegistrationConfirmationCodeModel {
+export class RegistrationConfirmationCodeInputModel {
   @TrimIsString()
   code: string;
 }

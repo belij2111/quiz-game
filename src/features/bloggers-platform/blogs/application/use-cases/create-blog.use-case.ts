@@ -1,4 +1,4 @@
-import { BlogCreateModel } from '../../api/models/input/create-blog.input.model';
+import { BlogCreateModel } from '../../api/models/input/create-blog.input-model';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Blog } from '../../domain/blog.entity';
 import { BlogsRepository } from '../../infrastructure/blogs.repository';

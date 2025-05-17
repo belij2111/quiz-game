@@ -1,11 +1,11 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { CoreConfig } from '../../src/core/core.config';
-import { PostCreateModel } from '../../src/features/bloggers-platform/posts/api/models/input/create-post.input.model';
-import { PostViewModel } from '../../src/features/bloggers-platform/posts/api/models/view/post.view.model';
-import { createValidPostModel } from '../models/bloggers-platform/post.input.model';
+import { CreatePostInputModel } from '../../src/features/bloggers-platform/posts/api/models/input/create-post.input-model';
+import { PostViewModel } from '../../src/features/bloggers-platform/posts/api/models/view/post.view-model';
+import { createValidPostModel } from '../models/bloggers-platform/post.input-model';
 import { paginationParams } from '../models/base/pagination.model';
-import { Paginator } from '../../src/core/models/pagination.base.model';
+import { Paginator } from '../../src/core/models/pagination-base.model';
 import { LikeInputModel } from '../../src/features/bloggers-platform/likes/api/models/input/like.input.model';
 
 export class PostsTestManager {
@@ -15,7 +15,7 @@ export class PostsTestManager {
   ) {}
 
   async createPost(
-    createdModel: PostCreateModel,
+    createdModel: CreatePostInputModel,
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())
@@ -43,10 +43,7 @@ export class PostsTestManager {
     return posts;
   }
 
-  expectCorrectModel(
-    createdModel: PostCreateModel,
-    responseModel: PostViewModel,
-  ) {
+  expectCorrectModel(createdModel: any, responseModel: PostViewModel) {
     expect(createdModel.title).toBe(responseModel.title);
     expect(createdModel.shortDescription).toBe(responseModel.shortDescription);
     expect(createdModel.content).toBe(responseModel.content);
@@ -54,7 +51,7 @@ export class PostsTestManager {
   }
 
   async createPostIsNotAuthorized(
-    createdModel: PostCreateModel,
+    createdModel: CreatePostInputModel,
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())
@@ -98,8 +95,8 @@ export class PostsTestManager {
 
   async updatePost(
     id: number,
-    blogId: string,
-    createdModel: PostCreateModel,
+    blogId: number,
+    createdModel: CreatePostInputModel,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     return request(this.app.getHttpServer())
@@ -112,7 +109,7 @@ export class PostsTestManager {
   async updatePostIsNotAuthorized(
     id: number,
     blogId: number,
-    createdModel: PostCreateModel,
+    createdModel: CreatePostInputModel,
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())

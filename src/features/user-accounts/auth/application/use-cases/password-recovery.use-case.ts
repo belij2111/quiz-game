@@ -1,7 +1,7 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { UserAccountConfig } from '../../../config/user-account.config';
 import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
-import { PasswordRecoveryInputModel } from '../../api/models/input/password-recovery-input.model';
+import { PasswordRecoveryInputModel } from '../../api/models/input/password-recovery.input-model';
 import { UserPasswordRecoveryEvent } from '../events/user-password-recovery.event';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
 

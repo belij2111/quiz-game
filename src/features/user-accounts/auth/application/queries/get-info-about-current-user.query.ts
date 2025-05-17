@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { MeViewModel } from '../../api/models/view/me.view.model';
+import { MeViewModel } from '../../api/models/view/me.view-model';
 import { UsersQueryRepository } from '../../../users/infrastructure/users.query-repository';
 
 export class GetInfoAboutCurrentUserQuery {

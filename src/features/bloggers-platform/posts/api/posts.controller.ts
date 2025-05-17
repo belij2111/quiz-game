@@ -11,23 +11,23 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { PostViewModel } from './models/view/post.view.model';
+import { PostViewModel } from './models/view/post.view-model';
 import {
   CreatePostInputModel,
   GetPostQueryParams,
 } from './models/input/create-post.input-model';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { ApiBasicAuth, ApiBearerAuth } from '@nestjs/swagger';
-import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
+import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
 import {
   CommentCreateModel,
   GetCommentQueryParams,
 } from '../../comments/api/models/input/create-comment.input.model';
-import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param.decorator';
+import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param-decorator';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
 import { CommentViewModel } from '../../comments/api/models/view/comment.view.model';
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
-import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
+import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param-decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreatePostCommand } from '../application/use-cases/create-post.use-case';

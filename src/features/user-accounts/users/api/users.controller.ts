@@ -11,14 +11,14 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { UserViewModel } from './models/view/user.view.model';
+import { UserViewModel } from './models/view/user.view-model';
 import {
   GetUsersQueryParams,
   UserCreateModel,
-} from './models/input/create-user.input.model';
+} from './models/input/create-user.input-model';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { ApiBasicAuth } from '@nestjs/swagger';
-import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
+import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/use-cases/create-user.use-case';
 import { DeleteUserCommand } from '../application/use-cases/delete-user.use-case';

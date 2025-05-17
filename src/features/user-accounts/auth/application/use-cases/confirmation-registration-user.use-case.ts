@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BadRequestException } from '@nestjs/common';
-import { RegistrationConfirmationCodeModel } from '../../api/models/input/registration-confirmation-code.model';
+import { RegistrationConfirmationCodeInputModel } from '../../api/models/input/registration-confirmation-code.input-model';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
 
 export class ConfirmationRegistrationUserCommand {
-  constructor(public inputCode: RegistrationConfirmationCodeModel) {}
+  constructor(public inputCode: RegistrationConfirmationCodeInputModel) {}
 }
 
 @CommandHandler(ConfirmationRegistrationUserCommand)

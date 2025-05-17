@@ -1,12 +1,12 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { UsersTestManager } from '../../tests-managers/users-test.manager';
+import { UsersTestManager } from '../../tests-managers/users.test-manager';
 import { initSettings } from '../../helpers/init-settings';
 import { deleteAllData } from '../../helpers/delete-all-data';
-import { UserCreateModel } from '../../../src/features/user-accounts/users/api/models/input/create-user.input.model';
+import { UserCreateModel } from '../../../src/features/user-accounts/users/api/models/input/create-user.input-model';
 import {
   createInValidUserModel,
   createValidUserModel,
-} from '../../models/user-accounts/user.input.model';
+} from '../../models/user-accounts/user.input-model';
 import { getMockUuidId } from '../../helpers/get-mock-uuid-id';
 
 describe('e2e-Users', () => {

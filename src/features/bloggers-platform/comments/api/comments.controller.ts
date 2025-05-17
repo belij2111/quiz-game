@@ -13,10 +13,10 @@ import {
 import { CommentViewModel } from './models/view/comment.view.model';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param.decorator';
+import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param-decorator';
 import { CommentCreateModel } from './models/input/create-comment.input.model';
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
-import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
+import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param-decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { UpdateCommentCommand } from '../application/use-cases/update-comment.use-case';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';

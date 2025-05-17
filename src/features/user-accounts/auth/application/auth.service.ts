@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CryptoService } from '../../crypto/crypto.service';
-import { LoginInputModel } from '../api/models/input/login.input.model';
+import { LoginInputModel } from '../api/models/input/login.input-model';
 import { UsersRepository } from '../../users/infrastructure/users.repository';
 
 @Injectable()

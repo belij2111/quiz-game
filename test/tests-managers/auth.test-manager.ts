@@ -1,14 +1,14 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { UserCreateModel } from '../../src/features/user-accounts/users/api/models/input/create-user.input.model';
+import { UserCreateModel } from '../../src/features/user-accounts/users/api/models/input/create-user.input-model';
 import request from 'supertest';
-import { LoginInputModel } from '../../src/features/user-accounts/auth/api/models/input/login.input.model';
+import { LoginInputModel } from '../../src/features/user-accounts/auth/api/models/input/login.input-model';
 import { CoreConfig } from '../../src/core/core.config';
-import { MeViewModel } from '../../src/features/user-accounts/auth/api/models/view/me.view.model';
-import { UserViewModel } from '../../src/features/user-accounts/users/api/models/view/user.view.model';
-import { RegistrationEmailResendingModel } from '../../src/features/user-accounts/auth/api/models/input/registration-email-resending.model';
-import { RegistrationConfirmationCodeModel } from '../../src/features/user-accounts/auth/api/models/input/registration-confirmation-code.model';
-import { PasswordRecoveryInputModel } from '../../src/features/user-accounts/auth/api/models/input/password-recovery-input.model';
-import { NewPasswordRecoveryInputModel } from '../../src/features/user-accounts/auth/api/models/input/new-password-recovery-input.model';
+import { MeViewModel } from '../../src/features/user-accounts/auth/api/models/view/me.view-model';
+import { UserViewModel } from '../../src/features/user-accounts/users/api/models/view/user.view-model';
+import { RegistrationEmailResendingInputModel } from '../../src/features/user-accounts/auth/api/models/input/registration-email-resending.input-model';
+import { RegistrationConfirmationCodeInputModel } from '../../src/features/user-accounts/auth/api/models/input/registration-confirmation-code.input-model';
+import { PasswordRecoveryInputModel } from '../../src/features/user-accounts/auth/api/models/input/password-recovery.input-model';
+import { NewPasswordRecoveryInputModel } from '../../src/features/user-accounts/auth/api/models/input/new-password-recovery.input-model';
 
 export class AuthTestManager {
   constructor(
@@ -137,7 +137,7 @@ export class AuthTestManager {
   }
 
   async registrationConfirmation(
-    createdModel: RegistrationConfirmationCodeModel,
+    createdModel: RegistrationConfirmationCodeInputModel,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     await request(this.app.getHttpServer())
@@ -147,7 +147,7 @@ export class AuthTestManager {
   }
 
   async registrationConfirmationWithRateLimit(
-    createdModel: RegistrationConfirmationCodeModel,
+    createdModel: RegistrationConfirmationCodeInputModel,
     countAttempts: number,
   ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
     const promises: Array<
@@ -162,7 +162,7 @@ export class AuthTestManager {
   }
 
   async registrationEmailResending(
-    createdModel: RegistrationEmailResendingModel,
+    createdModel: RegistrationEmailResendingInputModel,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     await request(this.app.getHttpServer())
@@ -172,7 +172,7 @@ export class AuthTestManager {
   }
 
   async registrationEmailResendingWithRateLimit(
-    createdModel: RegistrationEmailResendingModel,
+    createdModel: RegistrationEmailResendingInputModel,
     countAttempts: number,
   ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
     const promises: Array<
@@ -197,7 +197,7 @@ export class AuthTestManager {
   }
 
   async passwordRecoveryWithRateLimit(
-    createdModel: RegistrationEmailResendingModel,
+    createdModel: RegistrationEmailResendingInputModel,
     countAttempts: number,
   ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
     const promises: Array<

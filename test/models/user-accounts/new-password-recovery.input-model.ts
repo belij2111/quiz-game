@@ -1,4 +1,4 @@
-import { NewPasswordRecoveryInputModel } from '../../../src/features/user-accounts/auth/api/models/input/new-password-recovery-input.model';
+import { NewPasswordRecoveryInputModel } from '../../../src/features/user-accounts/auth/api/models/input/new-password-recovery.input-model';
 
 export const createNewPasswordRecoveryInputModel = (
   recoveryCode: string,

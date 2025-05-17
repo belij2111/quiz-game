@@ -1,4 +1,4 @@
-import { BlogCreateModel } from '../../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input.model';
+import { BlogCreateModel } from '../../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input-model';
 
 export const createValidBlogModel = (count: number = 1): BlogCreateModel => {
   const blogModel = new BlogCreateModel();

@@ -15,17 +15,17 @@ import {
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from 'express';
-import { UserInfoInputModel } from './models/input/user-info.input.model';
-import { LoginSuccessViewModel } from './models/view/login-success.view.model';
-import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param.decorator';
+import { UserInfoInputModel } from './models/input/user-info.input-model';
+import { LoginSuccessViewModel } from './models/view/login-success.view-model';
+import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param-decorator';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
-import { UserCreateModel } from '../../users/api/models/input/create-user.input.model';
-import { RegistrationConfirmationCodeModel } from './models/input/registration-confirmation-code.model';
-import { RegistrationEmailResendingModel } from './models/input/registration-email-resending.model';
-import { PasswordRecoveryInputModel } from './models/input/password-recovery-input.model';
-import { NewPasswordRecoveryInputModel } from './models/input/new-password-recovery-input.model';
+import { UserCreateModel } from '../../users/api/models/input/create-user.input-model';
+import { RegistrationConfirmationCodeInputModel } from './models/input/registration-confirmation-code.input-model';
+import { RegistrationEmailResendingInputModel } from './models/input/registration-email-resending.input-model';
+import { PasswordRecoveryInputModel } from './models/input/password-recovery.input-model';
+import { NewPasswordRecoveryInputModel } from './models/input/new-password-recovery.input-model';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
-import { CurrentDeviceId } from '../../../../core/decorators/param/current-device-id.param.decorator';
+import { CurrentDeviceId } from '../../../../core/decorators/param/current-device-id.param-decorator';
 import { Throttle } from '@nestjs/throttler';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { LoginUserCommand } from '../application/use-cases/login-user.use-case';
@@ -116,7 +116,7 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async registrationConfirmation(
     @Body()
-    registrationConfirmationCodeModel: RegistrationConfirmationCodeModel,
+    registrationConfirmationCodeModel: RegistrationConfirmationCodeInputModel,
   ) {
     await this.commandBus.execute(
       new ConfirmationRegistrationUserCommand(
@@ -129,7 +129,8 @@ export class AuthController {
   @Throttle({ default: { limit: 5, ttl: 10000 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async registrationEmailResending(
-    @Body() registrationEmailResendingModel: RegistrationEmailResendingModel,
+    @Body()
+    registrationEmailResendingModel: RegistrationEmailResendingInputModel,
   ) {
     await this.commandBus.execute(
       new RegistrationEmailResendingCommand(registrationEmailResendingModel),

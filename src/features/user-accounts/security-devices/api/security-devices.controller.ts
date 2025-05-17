@@ -7,9 +7,9 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
-import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param.decorator';
+import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param-decorator';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
-import { CurrentDeviceId } from '../../../../core/decorators/param/current-device-id.param.decorator';
+import { CurrentDeviceId } from '../../../../core/decorators/param/current-device-id.param-decorator';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { DeleteAllSecurityDevicesExcludingCurrentCommand } from '../application/use-cases/delete-all-security-devices-excluding-current.use-case';
 import { DeleteSecurityDeviceCommand } from '../application/use-cases/delete-security-device.use-case';

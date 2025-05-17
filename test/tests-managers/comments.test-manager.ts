@@ -3,8 +3,8 @@ import request from 'supertest';
 import { CommentCreateModel } from '../../src/features/bloggers-platform/comments/api/models/input/create-comment.input.model';
 import { CommentViewModel } from '../../src/features/bloggers-platform/comments/api/models/view/comment.view.model';
 import { paginationParams } from '../models/base/pagination.model';
-import { Paginator } from '../../src/core/models/pagination.base.model';
-import { createValidCommentModel } from '../models/bloggers-platform/comment.input.model';
+import { Paginator } from '../../src/core/models/pagination-base.model';
+import { createValidCommentModel } from '../models/bloggers-platform/comment.input-model';
 import { LikeInputModel } from '../../src/features/bloggers-platform/likes/api/models/input/like.input.model';
 
 export class CommentsTestManager {

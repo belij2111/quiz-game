@@ -2,12 +2,12 @@ import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { UserAccountConfig } from '../../../config/user-account.config';
 import { BadRequestException } from '@nestjs/common';
 import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
-import { RegistrationEmailResendingModel } from '../../api/models/input/registration-email-resending.model';
+import { RegistrationEmailResendingInputModel } from '../../api/models/input/registration-email-resending.input-model';
 import { UserRegistrationEvent } from '../events/user-registration.event';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
 
 export class RegistrationEmailResendingCommand {
-  constructor(public inputEmail: RegistrationEmailResendingModel) {}
+  constructor(public inputEmail: RegistrationEmailResendingInputModel) {}
 }
 
 @CommandHandler(RegistrationEmailResendingCommand)

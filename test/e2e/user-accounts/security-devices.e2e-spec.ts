@@ -1,10 +1,10 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { UsersTestManager } from '../../tests-managers/users-test.manager';
+import { UsersTestManager } from '../../tests-managers/users.test-manager';
 import { initSettings } from '../../helpers/init-settings';
 import { deleteAllData } from '../../helpers/delete-all-data';
-import { AuthTestManager } from '../../tests-managers/auth-test.manager';
-import { CoreTestManager } from '../../tests-managers/core-test.manager';
-import { SecurityDevicesTestManager } from '../../tests-managers/security-devices-test.manager';
+import { AuthTestManager } from '../../tests-managers/auth.test-manager';
+import { CoreTestManager } from '../../tests-managers/core.test-manager';
+import { SecurityDevicesTestManager } from '../../tests-managers/security-devices.test-manager';
 import { delay } from '../../helpers/delay';
 import { getMockUuidId } from '../../helpers/get-mock-uuid-id';
 

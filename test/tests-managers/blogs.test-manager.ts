@@ -1,12 +1,12 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { BlogCreateModel } from '../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input.model';
-import { BlogViewModel } from '../../src/features/bloggers-platform/blogs/api/models/view/blog.view.model';
+import { BlogCreateModel } from '../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input-model';
+import { BlogViewModel } from '../../src/features/bloggers-platform/blogs/api/models/view/blog.view-model';
 import request from 'supertest';
 import { paginationParams } from '../models/base/pagination.model';
-import { createValidBlogModel } from '../models/bloggers-platform/blog.input.model';
-import { Paginator } from '../../src/core/models/pagination.base.model';
+import { createValidBlogModel } from '../models/bloggers-platform/blog.input-model';
+import { Paginator } from '../../src/core/models/pagination-base.model';
 import { CoreConfig } from '../../src/core/core.config';
-import { PostCreateModel } from '../../src/features/bloggers-platform/posts/api/models/input/create-post.input.model';
+import { CreatePostInputModel } from '../../src/features/bloggers-platform/posts/api/models/input/create-post.input-model';
 
 export class BlogsTestManager {
   constructor(
@@ -139,7 +139,7 @@ export class BlogsTestManager {
 
   async createPostByBlogId(
     blogId: number,
-    createdModel: PostCreateModel,
+    createdModel: CreatePostInputModel,
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())
@@ -152,7 +152,7 @@ export class BlogsTestManager {
 
   async createPostByBlogIdIsNotAuthorized(
     blogId: number,
-    createdModel: PostCreateModel,
+    createdModel: CreatePostInputModel,
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())

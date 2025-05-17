@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { BlogViewModel } from '../../api/models/view/blog.view.model';
+import { BlogViewModel } from '../../api/models/view/blog.view-model';
 import { BlogsQueryRepository } from '../../infrastructure/blogs.query-repository';
 
 export class GetBlogByIdQuery {

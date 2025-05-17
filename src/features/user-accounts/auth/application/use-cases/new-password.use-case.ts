@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BadRequestException } from '@nestjs/common';
-import { NewPasswordRecoveryInputModel } from '../../api/models/input/new-password-recovery-input.model';
+import { NewPasswordRecoveryInputModel } from '../../api/models/input/new-password-recovery.input-model';
 import { CryptoService } from '../../../crypto/crypto.service';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
 

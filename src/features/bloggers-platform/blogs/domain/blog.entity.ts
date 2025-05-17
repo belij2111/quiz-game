@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { BlogCreateModel } from '../api/models/input/create-blog.input.model';
+import { BlogCreateModel } from '../api/models/input/create-blog.input-model';
 import { BaseWithNumberIdEntity } from '../../../../core/entities/base-with-number-id.entity';
 import { Post } from '../../posts/domain/post.entity';
 

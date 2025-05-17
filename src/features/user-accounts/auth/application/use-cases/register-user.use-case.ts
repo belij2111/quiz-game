@@ -1,6 +1,6 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { UserAccountConfig } from '../../../config/user-account.config';
-import { UserCreateModel } from '../../../users/api/models/input/create-user.input.model';
+import { UserCreateModel } from '../../../users/api/models/input/create-user.input-model';
 import { BadRequestException } from '@nestjs/common';
 import { User } from '../../../users/domain/user.entity';
 import { CryptoService } from '../../../crypto/crypto.service';

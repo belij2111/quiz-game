@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { PostViewModel } from '../../api/models/view/post.view.model';
+import { PostViewModel } from '../../api/models/view/post.view-model';
 import { PostsQueryRepository } from '../../infrastructure/posts.query-repository';
 
 export class GetPostByIdQuery {
