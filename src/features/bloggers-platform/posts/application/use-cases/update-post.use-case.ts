@@ -1,13 +1,13 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostParamsModel } from '../../api/models/input/post-params.model';
-import { UpdatePostInputModel } from '../../api/models/input/update-post.input-model';
 import { PostsRepository } from '../../infrastructure/posts.repository';
 import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
+import { CreatePostInputModel } from '../../api/models/input/create-post.input-model';
 
 export class UpdatePostCommand {
   constructor(
-    public params: PostParamsModel,
-    public postUpdateModel: UpdatePostInputModel,
+    public blogId: number,
+    public postId: number,
+    public postUpdateModel: CreatePostInputModel,
   ) {}
 }
 
@@ -21,9 +21,9 @@ export class UpdatePostUseCase
   ) {}
 
   async execute(command: UpdatePostCommand): Promise<boolean | null> {
-    await this.blogsRepository.findByIdOrNotFoundFail(command.params.blogId);
+    await this.blogsRepository.findByIdOrNotFoundFail(command.blogId);
     const foundPost = await this.postsRepository.findByIdOrNotFoundFail(
-      command.params.postId,
+      command.postId,
     );
     foundPost.update({
       title: command.postUpdateModel.title,
