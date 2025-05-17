@@ -5,6 +5,7 @@ import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 import { SecurityDevice } from '../../security-devices/domain/security-device.entity';
 import { BaseWithUuidIdEntity } from '../../../../core/entities/base-with-uuid-id.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { Comment } from '../../../bloggers-platform/comments/domain/comment.entity';
 
 @Entity()
 export class User extends BaseWithUuidIdEntity {
@@ -37,6 +38,9 @@ export class User extends BaseWithUuidIdEntity {
     cascade: true,
   })
   public securityDevice: SecurityDevice;
+
+  @OneToMany(() => Comment, (c) => c.user)
+  comment: Comment[];
 
   static create(dto: CreateUserDto): User {
     const user = new this();
