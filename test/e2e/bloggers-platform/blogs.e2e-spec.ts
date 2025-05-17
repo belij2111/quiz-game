@@ -4,7 +4,7 @@ import {
   createInValidBlogModel,
   createValidBlogModel,
 } from '../../models/bloggers-platform/blog.input-model';
-import { BlogCreateModel } from '../../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input-model';
+import { CreateBlogInputModel } from '../../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input-model';
 import { BlogsTestManager } from '../../tests-managers/blogs.test-manager';
 import { deleteAllData } from '../../helpers/delete-all-data';
 import {
@@ -52,14 +52,15 @@ describe('e2e-Blogs', () => {
 
   describe('POST/blogs', () => {
     it(`should create new blog : STATUS 201`, async () => {
-      const validBlogModel: BlogCreateModel = createValidBlogModel();
+      const validBlogModel: CreateBlogInputModel = createValidBlogModel();
       // console.log('validBlogModel :', validBlogModel);
       const createdResponse = await blogsTestManager.createBlog(validBlogModel);
       console.log('createdResponse :', createdResponse);
       blogsTestManager.expectCorrectModel(validBlogModel, createdResponse);
     });
     it(`shouldn't create new blog with incorrect input data : STATUS 400`, async () => {
-      const invalidBlogModel: BlogCreateModel = createInValidBlogModel(777);
+      const invalidBlogModel: CreateBlogInputModel =
+        createInValidBlogModel(777);
       // console.log('invalidBlogModel :', invalidBlogModel);
       await blogsTestManager.createBlog(
         invalidBlogModel,
@@ -67,7 +68,7 @@ describe('e2e-Blogs', () => {
       );
     });
     it(`shouldn't create new blog if the request is unauthorized : STATUS 401`, async () => {
-      const validBlogModel: BlogCreateModel = createValidBlogModel();
+      const validBlogModel: CreateBlogInputModel = createValidBlogModel();
       // console.log('validBlogModel :', validBlogModel);
       await blogsTestManager.createBlogIsNotAuthorized(
         validBlogModel,
@@ -78,7 +79,7 @@ describe('e2e-Blogs', () => {
 
   describe('GET/blogs/:id', () => {
     it(`should return blog by ID : STATUS 200`, async () => {
-      const validBlogModel: BlogCreateModel = createValidBlogModel();
+      const validBlogModel: CreateBlogInputModel = createValidBlogModel();
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
       //console.log('createdBlog :', createdBlog);
       await blogsTestManager.getBlogById(createdBlog.id, HttpStatus.OK);
@@ -91,9 +92,9 @@ describe('e2e-Blogs', () => {
 
   describe('PUT/blogs/:id', () => {
     it(`should update blog by ID : STATUS 204`, async () => {
-      const validBlogModel: BlogCreateModel = createValidBlogModel(1);
+      const validBlogModel: CreateBlogInputModel = createValidBlogModel(1);
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
-      const updatedBlogModel: BlogCreateModel = createValidBlogModel(555);
+      const updatedBlogModel: CreateBlogInputModel = createValidBlogModel(555);
       // console.log('updatedBlogModel :', updatedBlogModel);
       await blogsTestManager.updateBlog(
         createdBlog.id,
@@ -102,9 +103,9 @@ describe('e2e-Blogs', () => {
       );
     });
     it(`shouldn't update blog by ID with incorrect input data : STATUS 400`, async () => {
-      const validBlogModel: BlogCreateModel = createValidBlogModel(1);
+      const validBlogModel: CreateBlogInputModel = createValidBlogModel(1);
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
-      const invalidUpdatedBlogModel: BlogCreateModel =
+      const invalidUpdatedBlogModel: CreateBlogInputModel =
         createInValidBlogModel(0);
       await blogsTestManager.updateBlog(
         createdBlog.id,
@@ -113,9 +114,9 @@ describe('e2e-Blogs', () => {
       );
     });
     it(`shouldn't update blog by ID if the request is unauthorized: STATUS 401`, async () => {
-      const validBlogModel: BlogCreateModel = createValidBlogModel(1);
+      const validBlogModel: CreateBlogInputModel = createValidBlogModel(1);
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
-      const updatedBlogModel: BlogCreateModel = createValidBlogModel(555);
+      const updatedBlogModel: CreateBlogInputModel = createValidBlogModel(555);
       await blogsTestManager.updateBlogIsNotAuthorized(
         createdBlog.id,
         updatedBlogModel,
@@ -123,7 +124,7 @@ describe('e2e-Blogs', () => {
       );
     });
     it(`shouldn't update blog by ID if it does not exist : STATUS 404`, async () => {
-      const updatedBlogModel: BlogCreateModel = createValidBlogModel(555);
+      const updatedBlogModel: CreateBlogInputModel = createValidBlogModel(555);
       const nonExistentId = getMockNumberId();
       await blogsTestManager.updateBlog(
         nonExistentId,
@@ -135,12 +136,12 @@ describe('e2e-Blogs', () => {
 
   describe('DELETE/blogs/:id', () => {
     it(`should delete blog by ID : STATUS 204`, async () => {
-      const validBlogModel: BlogCreateModel = createValidBlogModel(1);
+      const validBlogModel: CreateBlogInputModel = createValidBlogModel(1);
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
       await blogsTestManager.deleteById(createdBlog.id, HttpStatus.NO_CONTENT);
     });
     it(`shouldn't delete blog by ID if the request is unauthorized : STATUS 401`, async () => {
-      const validBlogModel: BlogCreateModel = createValidBlogModel(1);
+      const validBlogModel: CreateBlogInputModel = createValidBlogModel(1);
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
       await blogsTestManager.deleteByIdIsNotAuthorized(
         createdBlog.id,
@@ -155,7 +156,7 @@ describe('e2e-Blogs', () => {
 
   describe('POST/blogs/:blogId/posts', () => {
     it(`should create a post for the specified blog : STATUS 201`, async () => {
-      const validBlogModel: BlogCreateModel = createValidBlogModel();
+      const validBlogModel: CreateBlogInputModel = createValidBlogModel();
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
       const validPostModel = createValidPostModel(createdBlog.id);
       const createdResponse = await blogsTestManager.createPostByBlogId(
@@ -167,7 +168,7 @@ describe('e2e-Blogs', () => {
       postsTestManager.expectCorrectModel(validPostModel, createdResponse);
     });
     it(`shouldn't create a post with incorrect input data : STATUS 400`, async () => {
-      const validBlogModel: BlogCreateModel = createValidBlogModel();
+      const validBlogModel: CreateBlogInputModel = createValidBlogModel();
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
       const inValidPostModel = createInValidPostModel(createdBlog.id);
       await blogsTestManager.createPostByBlogId(
@@ -177,7 +178,7 @@ describe('e2e-Blogs', () => {
       );
     });
     it(`shouldn't create a post if the request is unauthorized : STATUS 401`, async () => {
-      const validBlogModel: BlogCreateModel = createValidBlogModel();
+      const validBlogModel: CreateBlogInputModel = createValidBlogModel();
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
       const validPostModel = createValidPostModel(createdBlog.id);
       await blogsTestManager.createPostByBlogIdIsNotAuthorized(
@@ -187,7 +188,7 @@ describe('e2e-Blogs', () => {
       );
     });
     it(`shouldn't create a post if the blogId does not exist : STATUS 404`, async () => {
-      const validBlogModel: BlogCreateModel = createValidBlogModel();
+      const validBlogModel: CreateBlogInputModel = createValidBlogModel();
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
       const validPostModel = createValidPostModel(createdBlog.id);
       const nonExistentId = getMockNumberId();
@@ -201,7 +202,7 @@ describe('e2e-Blogs', () => {
 
   describe('GET/blogs/:blogId/posts', () => {
     it(`should return all posts for the specified blog : STATUS 200`, async () => {
-      const validBlogModel: BlogCreateModel = createValidBlogModel();
+      const validBlogModel: CreateBlogInputModel = createValidBlogModel();
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
       const createdPosts = await postsTestManager.createPosts(
         createdBlog.id,
@@ -218,7 +219,7 @@ describe('e2e-Blogs', () => {
       //console.log('createdResponse.body :', createdResponse.body);
     });
     it(`shouldn't return posts if the blogId does not exist : STATUS 404`, async () => {
-      const validBlogModel: BlogCreateModel = createValidBlogModel();
+      const validBlogModel: CreateBlogInputModel = createValidBlogModel();
       const createdBlog = await blogsTestManager.createBlog(validBlogModel);
       await postsTestManager.createPosts(createdBlog.id, 5);
       const nonExistentId = getMockNumberId();

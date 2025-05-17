@@ -1,5 +1,5 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { UserCreateModel } from '../../src/features/user-accounts/users/api/models/input/create-user.input-model';
+import { CreateUserInputModel } from '../../src/features/user-accounts/users/api/models/input/create-user.input-model';
 import request from 'supertest';
 import { LoginInputModel } from '../../src/features/user-accounts/auth/api/models/input/login.input-model';
 import { CoreConfig } from '../../src/core/core.config';
@@ -17,7 +17,7 @@ export class AuthTestManager {
   ) {}
 
   async loginUser(
-    createdModel: UserCreateModel,
+    createdModel: CreateUserInputModel,
     statusCode: number = HttpStatus.OK,
   ) {
     const loginModel: LoginInputModel = {
@@ -48,7 +48,7 @@ export class AuthTestManager {
   }
 
   async loginWithRateLimit(
-    createdModel: UserCreateModel,
+    createdModel: CreateUserInputModel,
     countAttempts: number,
   ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
     const promises: Array<
@@ -99,7 +99,7 @@ export class AuthTestManager {
   }
 
   async registration(
-    createdModel: UserCreateModel,
+    createdModel: CreateUserInputModel,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     await request(this.app.getHttpServer())
@@ -110,7 +110,7 @@ export class AuthTestManager {
 
   expectCorrectSendEmail(
     sendEmailSpy: jest.SpyInstance,
-    validUserModel: UserCreateModel,
+    validUserModel: CreateUserInputModel,
     callCount: number = 1,
   ) {
     expect(sendEmailSpy).toHaveBeenCalled();
@@ -124,7 +124,7 @@ export class AuthTestManager {
   }
 
   async registrationWithRateLimit(
-    createdUsers: UserCreateModel[],
+    createdUsers: CreateUserInputModel[],
   ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
     const promises: Array<
       Promise<{ accessToken: string; refreshToken: string } | Error>

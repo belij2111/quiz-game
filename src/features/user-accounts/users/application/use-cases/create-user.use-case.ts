@@ -1,12 +1,12 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UserCreateModel } from '../../api/models/input/create-user.input-model';
+import { CreateUserInputModel } from '../../api/models/input/create-user.input-model';
 import { CryptoService } from '../../../crypto/crypto.service';
 import { BadRequestException } from '@nestjs/common';
 import { User } from '../../domain/user.entity';
 import { UsersRepository } from '../../infrastructure/users.repository';
 
 export class CreateUserCommand {
-  constructor(public userCreateModel: UserCreateModel) {}
+  constructor(public userCreateModel: CreateUserInputModel) {}
 }
 
 @CommandHandler(CreateUserCommand)

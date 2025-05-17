@@ -14,7 +14,7 @@ import {
 import { UserViewModel } from './models/view/user.view-model';
 import {
   GetUsersQueryParams,
-  UserCreateModel,
+  CreateUserInputModel,
 } from './models/input/create-user.input-model';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { ApiBasicAuth } from '@nestjs/swagger';
@@ -36,7 +36,7 @@ export class UsersController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() userCreateModel: UserCreateModel) {
+  async create(@Body() userCreateModel: CreateUserInputModel) {
     const createdUserId = await this.commandBus.execute(
       new CreateUserCommand(userCreateModel),
     );

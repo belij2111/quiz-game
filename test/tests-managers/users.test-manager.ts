@@ -1,7 +1,7 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { CoreConfig } from '../../src/core/core.config';
 import request from 'supertest';
-import { UserCreateModel } from '../../src/features/user-accounts/users/api/models/input/create-user.input-model';
+import { CreateUserInputModel } from '../../src/features/user-accounts/users/api/models/input/create-user.input-model';
 import { UserViewModel } from '../../src/features/user-accounts/users/api/models/view/user.view-model';
 import { paginationParams } from '../models/base/pagination.model';
 import { Paginator } from '../../src/core/models/pagination-base.model';
@@ -14,7 +14,7 @@ export class UsersTestManager {
   ) {}
 
   async createUser(
-    createdModel: UserCreateModel,
+    createdModel: CreateUserInputModel,
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())
@@ -26,7 +26,7 @@ export class UsersTestManager {
   }
 
   expectCorrectModel(
-    createdModel: UserCreateModel,
+    createdModel: CreateUserInputModel,
     responseModel: UserViewModel,
   ) {
     expect(createdModel.login).toBe(responseModel.login);
@@ -34,7 +34,7 @@ export class UsersTestManager {
   }
 
   async createUserIsNotAuthorized(
-    createdModel: UserCreateModel,
+    createdModel: CreateUserInputModel,
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())

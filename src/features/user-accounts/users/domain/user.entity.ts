@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { EmailConfirmation } from './email-confirmation.entity';
-import { UserCreateModel } from '../api/models/input/create-user.input-model';
+import { CreateUserInputModel } from '../api/models/input/create-user.input-model';
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 import { SecurityDevice } from '../../security-devices/domain/security-device.entity';
 import { BaseWithUuidIdEntity } from '../../../../core/entities/base-with-uuid-id.entity';
@@ -37,7 +37,7 @@ export class User extends BaseWithUuidIdEntity {
   })
   public securityDevice: SecurityDevice;
 
-  static create(dto: UserCreateModel): User {
+  static create(dto: CreateUserInputModel): User {
     const user = new this();
     user.login = dto.login;
     user.password = dto.password;
@@ -46,7 +46,7 @@ export class User extends BaseWithUuidIdEntity {
     return user;
   }
   static createWithConfirmation(
-    dto: UserCreateModel,
+    dto: CreateUserInputModel,
     uuidProvider: UuidProvider,
     expirationTime: number,
   ) {

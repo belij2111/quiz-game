@@ -2,7 +2,7 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { UsersTestManager } from '../../tests-managers/users.test-manager';
 import { initSettings } from '../../helpers/init-settings';
 import { deleteAllData } from '../../helpers/delete-all-data';
-import { UserCreateModel } from '../../../src/features/user-accounts/users/api/models/input/create-user.input-model';
+import { CreateUserInputModel } from '../../../src/features/user-accounts/users/api/models/input/create-user.input-model';
 import {
   createInValidUserModel,
   createValidUserModel,
@@ -30,7 +30,7 @@ describe('e2e-Users', () => {
 
   describe('POST/users', () => {
     it(`should create new user : STATUS 201`, async () => {
-      const validUserModel: UserCreateModel = createValidUserModel();
+      const validUserModel: CreateUserInputModel = createValidUserModel();
       const createdResponse = await usersTestManager.createUser(
         validUserModel,
         HttpStatus.CREATED,
@@ -38,14 +38,14 @@ describe('e2e-Users', () => {
       usersTestManager.expectCorrectModel(validUserModel, createdResponse);
     });
     it(`shouldn't create new user with incorrect input data : STATUS 400`, async () => {
-      const invalidUserModel: UserCreateModel = createInValidUserModel();
+      const invalidUserModel: CreateUserInputModel = createInValidUserModel();
       await usersTestManager.createUser(
         invalidUserModel,
         HttpStatus.BAD_REQUEST,
       );
     });
     it(`shouldn't create new user if the request is unauthorized : STATUS 401`, async () => {
-      const validUserModel: UserCreateModel = createValidUserModel();
+      const validUserModel: CreateUserInputModel = createValidUserModel();
       await usersTestManager.createUserIsNotAuthorized(
         validUserModel,
         HttpStatus.UNAUTHORIZED,
@@ -73,12 +73,12 @@ describe('e2e-Users', () => {
 
   describe('DELETE/users/:id', () => {
     it(`should delete the user by ID : STATUS 204`, async () => {
-      const validUserModel: UserCreateModel = createValidUserModel(1);
+      const validUserModel: CreateUserInputModel = createValidUserModel(1);
       const createdUser = await usersTestManager.createUser(validUserModel);
       await usersTestManager.deleteById(createdUser.id, HttpStatus.NO_CONTENT);
     });
     it(`shouldn't delete user by ID if the request is unauthorized : STATUS 401`, async () => {
-      const validUserModel: UserCreateModel = createValidUserModel(1);
+      const validUserModel: CreateUserInputModel = createValidUserModel(1);
       const createdUser = await usersTestManager.createUser(validUserModel);
       await usersTestManager.deleteByIdIsNotAuthorized(
         createdUser.id,

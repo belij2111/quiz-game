@@ -19,7 +19,7 @@ import { UserInfoInputModel } from './models/input/user-info.input-model';
 import { LoginSuccessViewModel } from './models/view/login-success.view-model';
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param-decorator';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
-import { UserCreateModel } from '../../users/api/models/input/create-user.input-model';
+import { CreateUserInputModel } from '../../users/api/models/input/create-user.input-model';
 import { RegistrationConfirmationCodeInputModel } from './models/input/registration-confirmation-code.input-model';
 import { RegistrationEmailResendingInputModel } from './models/input/registration-email-resending.input-model';
 import { PasswordRecoveryInputModel } from './models/input/password-recovery.input-model';
@@ -107,7 +107,7 @@ export class AuthController {
   @Post('/registration')
   @Throttle({ default: { limit: 5, ttl: 10000 } })
   @HttpCode(HttpStatus.NO_CONTENT)
-  async registration(@Body() userCreateModel: UserCreateModel) {
+  async registration(@Body() userCreateModel: CreateUserInputModel) {
     await this.commandBus.execute(new RegisterUserCommand(userCreateModel));
   }
 

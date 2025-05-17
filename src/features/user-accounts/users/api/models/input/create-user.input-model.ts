@@ -2,7 +2,7 @@ import { IsEmail, IsEnum, IsOptional, Length, Matches } from 'class-validator';
 import { TrimIsString } from '../../../../../../core/decorators/validation/trim-is-string';
 import { BaseSortablePaginationParams } from '../../../../../../core/models/base-query-params.input-model';
 
-export class UserCreateModel {
+export class CreateUserInputModel {
   @TrimIsString()
   @Length(3, 10, {
     message: 'login length should be from 3 to 10 symbols',

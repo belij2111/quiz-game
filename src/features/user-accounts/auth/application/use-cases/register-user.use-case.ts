@@ -1,6 +1,6 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { UserAccountConfig } from '../../../config/user-account.config';
-import { UserCreateModel } from '../../../users/api/models/input/create-user.input-model';
+import { CreateUserInputModel } from '../../../users/api/models/input/create-user.input-model';
 import { BadRequestException } from '@nestjs/common';
 import { User } from '../../../users/domain/user.entity';
 import { CryptoService } from '../../../crypto/crypto.service';
@@ -9,7 +9,7 @@ import { UserRegistrationEvent } from '../events/user-registration.event';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
 
 export class RegisterUserCommand {
-  constructor(public userCreateModel: UserCreateModel) {}
+  constructor(public userCreateModel: CreateUserInputModel) {}
 }
 
 @CommandHandler(RegisterUserCommand)
