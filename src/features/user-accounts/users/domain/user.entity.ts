@@ -4,6 +4,7 @@ import { CreateUserInputModel } from '../api/models/input/create-user.input-mode
 import { UuidProvider } from '../../../../core/helpers/uuid.provider';
 import { SecurityDevice } from '../../security-devices/domain/security-device.entity';
 import { BaseWithUuidIdEntity } from '../../../../core/entities/base-with-uuid-id.entity';
+import { CreateUserDto } from '../dto/create-user.dto';
 
 @Entity()
 export class User extends BaseWithUuidIdEntity {
@@ -37,7 +38,7 @@ export class User extends BaseWithUuidIdEntity {
   })
   public securityDevice: SecurityDevice;
 
-  static create(dto: CreateUserInputModel): User {
+  static create(dto: CreateUserDto): User {
     const user = new this();
     user.login = dto.login;
     user.password = dto.password;
