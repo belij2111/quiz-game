@@ -1,10 +1,10 @@
-import { CreateBlogInputModel } from '../../api/models/input/create-blog.input-model';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Blog } from '../../domain/blog.entity';
 import { BlogsRepository } from '../../infrastructure/blogs.repository';
+import { CreateBlogDto } from '../../dto/create-blog.dto';
 
 export class CreateBlogCommand {
-  constructor(public blogCreateModel: CreateBlogInputModel) {}
+  constructor(public blogCreateModel: CreateBlogDto) {}
 }
 
 @CommandHandler(CreateBlogCommand)

@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { BlogCreateModel } from '../api/models/input/create-blog.input-model';
 import { BaseWithNumberIdEntity } from '../../../../core/entities/base-with-number-id.entity';
 import { Post } from '../../posts/domain/post.entity';
+import { CreateBlogDto } from '../dto/create-blog.dto';
 
 @Entity()
 export class Blog extends BaseWithNumberIdEntity {
@@ -20,7 +20,7 @@ export class Blog extends BaseWithNumberIdEntity {
   @OneToMany(() => Post, (p) => p.blog, { onDelete: 'CASCADE', cascade: true })
   post: Post[];
 
-  static create(dto: BlogCreateModel): Blog {
+  static create(dto: CreateBlogDto): Blog {
     const blog = new this();
     blog.name = dto.name;
     blog.description = dto.description;
