@@ -11,7 +11,7 @@ import {
   createInValidCommentModel,
   createValidCommentModel,
 } from '../../models/bloggers-platform/comment.input-model';
-import { CommentCreateModel } from '../../../src/features/bloggers-platform/comments/api/models/input/create-comment.input.model';
+import { CreateCommentInputModel } from '../../../src/features/bloggers-platform/comments/api/models/input/create-comment.input-model';
 import { UsersTestManager } from '../../tests-managers/users.test-manager';
 import { AuthTestManager } from '../../tests-managers/auth.test-manager';
 import { CoreTestManager } from '../../tests-managers/core.test-manager';
@@ -56,7 +56,8 @@ describe('e2e-Comments', () => {
     createdPost = await postsTestManager.createPost(validPostModel);
     await delay(3000);
     loginResult = await coreTestManager.loginUser();
-    const validCommentModel: CommentCreateModel = createValidCommentModel();
+    const validCommentModel: CreateCommentInputModel =
+      createValidCommentModel();
     createdComment = await commentsTestManager.createComment(
       loginResult!.accessToken,
       createdPost.id,

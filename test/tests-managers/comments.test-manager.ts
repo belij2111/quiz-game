@@ -1,6 +1,6 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { CommentCreateModel } from '../../src/features/bloggers-platform/comments/api/models/input/create-comment.input.model';
+import { CreateCommentInputModel } from '../../src/features/bloggers-platform/comments/api/models/input/create-comment.input-model';
 import { CommentViewModel } from '../../src/features/bloggers-platform/comments/api/models/view/comment.view.model';
 import { paginationParams } from '../models/base/pagination.model';
 import { Paginator } from '../../src/core/models/pagination-base.model';
@@ -13,7 +13,7 @@ export class CommentsTestManager {
   async createComment(
     accessToken: string,
     postId: number,
-    createdModel: CommentCreateModel,
+    createdModel: CreateCommentInputModel,
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())
@@ -25,7 +25,7 @@ export class CommentsTestManager {
   }
 
   expectCorrectModel(
-    createdModel: CommentCreateModel,
+    createdModel: CreateCommentInputModel,
     responseModel: CommentViewModel,
   ) {
     expect(createdModel.content).toBe(responseModel.content);
@@ -66,7 +66,7 @@ export class CommentsTestManager {
   }
 
   expectCorrectPagination(
-    createModels: CommentCreateModel[],
+    createModels: CreateCommentInputModel[],
     responseModels: Paginator<CommentViewModel[]>,
   ) {
     expect(responseModels.items.length).toBe(createModels.length);
@@ -87,7 +87,7 @@ export class CommentsTestManager {
   async update(
     accessToken: string,
     commentId: number,
-    createdModel: CommentCreateModel,
+    createdModel: CreateCommentInputModel,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     await request(this.app.getHttpServer())

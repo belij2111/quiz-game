@@ -20,9 +20,9 @@ import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import { ApiBasicAuth, ApiBearerAuth } from '@nestjs/swagger';
 import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
 import {
-  CommentCreateModel,
+  CreateCommentInputModel,
   GetCommentQueryParams,
-} from '../../comments/api/models/input/create-comment.input.model';
+} from '../../comments/api/models/input/create-comment.input-model';
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param-decorator';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
 import { CommentViewModel } from '../../comments/api/models/view/comment.view.model';
@@ -115,7 +115,7 @@ export class PostsController {
   async createCommentByPostId(
     @CurrentUserId() currentUserId: string,
     @Param('postId') postId: string,
-    @Body() commentCreateModel: CommentCreateModel,
+    @Body() commentCreateModel: CreateCommentInputModel,
   ) {
     const createdCommentId = await this.commandBus.execute(
       new CreateCommentCommand(currentUserId, postId, commentCreateModel),
