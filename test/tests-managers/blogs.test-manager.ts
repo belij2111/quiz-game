@@ -1,5 +1,5 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { BlogCreateModel } from '../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input-model';
+import { CreateBlogInputModel } from '../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input-model';
 import { BlogViewModel } from '../../src/features/bloggers-platform/blogs/api/models/view/blog.view-model';
 import request from 'supertest';
 import { paginationParams } from '../models/base/pagination.model';
@@ -15,7 +15,7 @@ export class BlogsTestManager {
   ) {}
 
   async createBlog(
-    createdModel: BlogCreateModel,
+    createdModel: CreateBlogInputModel,
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())
@@ -27,7 +27,7 @@ export class BlogsTestManager {
   }
 
   expectCorrectModel(
-    createdModel: BlogCreateModel,
+    createdModel: CreateBlogInputModel,
     responseModel: BlogViewModel,
   ) {
     expect(createdModel.name).toBe(responseModel.name);
@@ -79,7 +79,7 @@ export class BlogsTestManager {
   }
 
   async createBlogIsNotAuthorized(
-    createdModel: BlogCreateModel,
+    createdModel: CreateBlogInputModel,
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())
@@ -98,7 +98,7 @@ export class BlogsTestManager {
 
   async updateBlog(
     id: number,
-    createdModel: BlogCreateModel,
+    createdModel: CreateBlogInputModel,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     return request(this.app.getHttpServer())
@@ -110,7 +110,7 @@ export class BlogsTestManager {
 
   async updateBlogIsNotAuthorized(
     id: number,
-    createdModel: BlogCreateModel,
+    createdModel: CreateBlogInputModel,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     return request(this.app.getHttpServer())

@@ -3,7 +3,7 @@ import { initSettings } from '../../helpers/init-settings';
 import { BlogsTestManager } from '../../tests-managers/blogs.test-manager';
 import { deleteAllData } from '../../helpers/delete-all-data';
 import { PostsTestManager } from '../../tests-managers/posts.test-manager';
-import { BlogCreateModel } from '../../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input-model';
+import { CreateBlogInputModel } from '../../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input-model';
 import { createValidBlogModel } from '../../models/bloggers-platform/blog.input-model';
 import { createValidPostModel } from '../../models/bloggers-platform/post.input-model';
 import { CommentsTestManager } from '../../tests-managers/comments.test-manager';
@@ -50,7 +50,7 @@ describe('e2e-Comments', () => {
   });
   beforeEach(async () => {
     await deleteAllData(app);
-    const validBlogModel: BlogCreateModel = createValidBlogModel();
+    const validBlogModel: CreateBlogInputModel = createValidBlogModel();
     createdBlog = await blogsTestManager.createBlog(validBlogModel);
     const validPostModel = createValidPostModel(createdBlog.id);
     createdPost = await postsTestManager.createPost(validPostModel);

@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { BlogViewModel } from './models/view/blog.view-model';
 import {
-  BlogCreateModel,
+  CreateBlogInputModel,
   GetBlogsQueryParams,
 } from './models/input/create-blog.input-model';
 import {
@@ -37,6 +37,7 @@ import { GetBlogsQuery } from '../application/queries/get-blogs.query';
 import { GetPostByIdQuery } from '../../posts/application/queries/get-post-by-id.query';
 import { GetPostsForSpecifiedBlogQuery } from '../../posts/application/queries/get-posts-for-specified-blog.query';
 import { IdIsNumberValidationPipe } from '../../../../core/pipes/id-is-number.validation-pipe';
+import { UpdateBlogInputModel } from './models/input/update-blog.input-model';
 
 @Controller()
 export class BlogsController {
@@ -48,7 +49,7 @@ export class BlogsController {
   @Post('sa/blogs')
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
-  async create(@Body() blogCreateModel: BlogCreateModel) {
+  async create(@Body() blogCreateModel: CreateBlogInputModel) {
     const createdBlogId = await this.commandBus.execute(
       new CreateBlogCommand(blogCreateModel),
     );
@@ -82,9 +83,9 @@ export class BlogsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
     @Param('id', IdIsNumberValidationPipe) id: number,
-    @Body() blogUpdateModel: BlogCreateModel,
+    @Body() updateBlogModel: UpdateBlogInputModel,
   ) {
-    await this.commandBus.execute(new UpdateBlogCommand(id, blogUpdateModel));
+    await this.commandBus.execute(new UpdateBlogCommand(id, updateBlogModel));
   }
 
   @Delete('sa/blogs/:id')
