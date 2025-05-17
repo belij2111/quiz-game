@@ -29,7 +29,6 @@ import { CommentViewModel } from '../../comments/api/models/view/comment.view.mo
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
-import { PostParamsModel } from './models/input/post-params.model';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreatePostCommand } from '../application/use-cases/create-post.use-case';
 import { UpdatePostCommand } from '../application/use-cases/update-post.use-case';
@@ -42,6 +41,7 @@ import { GetCommentByIdQuery } from '../../comments/application/queries/get-comm
 import { GetCommentsForSpecificPostQuery } from '../../comments/application/queries/get-comments-for-specified-post.query';
 import { BlogIdInputModel } from './models/input/blog-id.input-model';
 import { UpdatePostInputModel } from './models/input/update-post.input-model';
+import { IdIsNumberValidationPipe } from '../../../../core/pipes/id-is-number.validation-pipe';
 
 @Controller()
 export class PostsController {
@@ -89,11 +89,12 @@ export class PostsController {
   @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
-    @Param() params: PostParamsModel,
+    @Param('blogId', IdIsNumberValidationPipe) blogId: number,
+    @Param('postId', IdIsNumberValidationPipe) postId: number,
     @Body() updatePostModel: UpdatePostInputModel,
   ) {
     await this.commandBus.execute(
-      new UpdatePostCommand(params, updatePostModel),
+      new UpdatePostCommand(blogId, postId, updatePostModel),
     );
   }
 
@@ -101,8 +102,11 @@ export class PostsController {
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Param() params: PostParamsModel) {
-    await this.commandBus.execute(new DeletePostCommand(params));
+  async delete(
+    @Param('blogId', IdIsNumberValidationPipe) blogId: number,
+    @Param('postId', IdIsNumberValidationPipe) postId: number,
+  ) {
+    await this.commandBus.execute(new DeletePostCommand(blogId, postId));
   }
 
   @Post('posts/:postId/comments')

@@ -27,7 +27,6 @@ import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param.decorator';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param.decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
-import { BlogIdInputModel } from '../../posts/api/models/input/blog-id-input.model';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateBlogCommand } from '../application/use-cases/create-blog.use-case';
 import { UpdateBlogCommand } from '../application/use-cases/update-blog.use-case';
@@ -37,6 +36,7 @@ import { GetBlogByIdQuery } from '../application/queries/get-blog-by-id.query';
 import { GetBlogsQuery } from '../application/queries/get-blogs.query';
 import { GetPostByIdQuery } from '../../posts/application/queries/get-post-by-id.query';
 import { GetPostsForSpecifiedBlogQuery } from '../../posts/application/queries/get-posts-for-specified-blog.query';
+import { IdIsNumberValidationPipe } from '../../../../core/pipes/id-is-number.validation-pipe';
 
 @Controller()
 export class BlogsController {
@@ -81,7 +81,7 @@ export class BlogsController {
   @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
-    @Param('id') id: number,
+    @Param('id', IdIsNumberValidationPipe) id: number,
     @Body() blogUpdateModel: BlogCreateModel,
   ) {
     await this.commandBus.execute(new UpdateBlogCommand(id, blogUpdateModel));
@@ -91,7 +91,7 @@ export class BlogsController {
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Param('id') id: number) {
+  async delete(@Param('id', IdIsNumberValidationPipe) id: number) {
     await this.commandBus.execute(new DeleteBlogCommand(id));
   }
 
@@ -101,11 +101,11 @@ export class BlogsController {
   @HttpCode(HttpStatus.CREATED)
   async createPostByBlogId(
     @CurrentUserId() currentUserId: string,
-    @Param() param: BlogIdInputModel,
+    @Param('blogId', IdIsNumberValidationPipe) blogId: number,
     @Body() body: CreatePostInputModel,
   ): Promise<PostViewModel | null> {
     const createdPostId = await this.commandBus.execute(
-      new CreatePostCommand(body, param.blogId),
+      new CreatePostCommand(body, blogId),
     );
     return await this.queryBus.execute(
       new GetPostByIdQuery(currentUserId, createdPostId),
@@ -116,11 +116,11 @@ export class BlogsController {
   @UseGuards(JwtOptionalAuthGuard)
   async getPostsByBlogId(
     @IdentifyUser() identifyUser: string,
-    @Param() param: BlogIdInputModel,
+    @Param('blogId', IdIsNumberValidationPipe) blogId: number,
     @Query() query: GetPostQueryParams,
   ): Promise<PaginatedViewModel<PostViewModel[]>> {
     return await this.queryBus.execute(
-      new GetPostsForSpecifiedBlogQuery(identifyUser, param.blogId, query),
+      new GetPostsForSpecifiedBlogQuery(identifyUser, blogId, query),
     );
   }
 }
