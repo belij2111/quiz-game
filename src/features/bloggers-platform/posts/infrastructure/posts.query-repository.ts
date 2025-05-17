@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PostViewModel } from '../api/models/view/post.view.model';
+import { PostViewModel } from '../api/models/view/post.view-model';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { LikeStatus } from '../../likes/api/models/enums/like-status-enum';
 import { Post } from '../domain/post.entity';
 import { GetPostQueryParams } from '../api/models/input/create-post.input-model';
-import { SortDirection } from '../../../../core/models/base.query-params.input.model';
-import { PaginatedViewModel } from '../../../../core/models/base.paginated.view.model';
+import { SortDirection } from '../../../../core/models/base-query-params.input-model';
+import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
 
 @Injectable()
 export class PostsQueryRepository {
@@ -32,15 +32,17 @@ export class PostsQueryRepository {
     inputQuery: GetPostQueryParams,
   ): Promise<PaginatedViewModel<PostViewModel[]>> {
     const { sortBy, sortDirection } = inputQuery;
-    const query = this.getBaseQuery().where('b.id = :id', { id: blogId });
+    const query = this.getBaseQuery().where('p.blogId = :blogId', {
+      blogId: blogId,
+    });
     const direction = sortDirection === SortDirection.Asc ? 'ASC' : 'DESC';
-    if (sortBy && SortDirection) {
-      query.orderBy(`p.${sortBy}`, direction);
+    if (sortBy && sortDirection) {
+      query.orderBy(`"${sortBy}"`, direction);
     }
-    query.skip(inputQuery.calculateSkip()).take(inputQuery.pageSize);
+    query.offset(inputQuery.calculateSkip()).limit(inputQuery.pageSize);
     const foundPosts = await query.getRawMany();
-    if (!foundPosts) {
-      throw new NotFoundException(`Posts for the blog id ${blogId} not found`);
+    if (foundPosts.length === 0) {
+      throw new NotFoundException(`Post with id ${blogId} not found`);
     }
     const totalCount = await query.getCount();
     const currentStatus = LikeStatus.None;
@@ -62,11 +64,14 @@ export class PostsQueryRepository {
     const { sortBy, sortDirection } = inputQuery;
     const query = this.getBaseQuery();
     const direction = sortDirection === SortDirection.Asc ? 'ASC' : 'DESC';
-    if (sortBy && SortDirection) {
-      query.orderBy(`p.${sortBy}`, direction);
+    if (sortBy && sortDirection) {
+      query.orderBy(`"${sortBy}"`, direction);
     }
-    query.skip(inputQuery.calculateSkip()).take(inputQuery.pageSize);
+    query.offset(inputQuery.calculateSkip()).limit(inputQuery.pageSize);
     const foundPosts = await query.getRawMany();
+    if (foundPosts.length === 0) {
+      throw new NotFoundException(`Post not found`);
+    }
     const totalCount = await query.getCount();
     const currentStatus = LikeStatus.None;
     const items = foundPosts.map((post) =>
@@ -84,7 +89,7 @@ export class PostsQueryRepository {
     return this.dataSource
       .getRepository(Post)
       .createQueryBuilder('p')
-      .leftJoin('p.blog', 'b')
+      .leftJoinAndSelect('p.blog', 'b')
       .select([
         'p.id as "id"',
         'p.title as "title"',
