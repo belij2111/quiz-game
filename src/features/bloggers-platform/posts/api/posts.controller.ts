@@ -129,7 +129,7 @@ export class PostsController {
   @UseGuards(JwtOptionalAuthGuard)
   async getCommentsByPostId(
     @IdentifyUser() identifyUser: string,
-    @Param('postId') postId: string,
+    @Param('postId', IdIsNumberValidationPipe) postId: number,
     @Query() query: GetCommentQueryParams,
   ): Promise<PaginatedViewModel<CommentViewModel[]>> {
     return await this.queryBus.execute(
