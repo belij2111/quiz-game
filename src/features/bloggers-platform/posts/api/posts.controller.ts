@@ -114,7 +114,7 @@ export class PostsController {
   @ApiBearerAuth()
   async createCommentByPostId(
     @CurrentUserId() currentUserId: string,
-    @Param('postId') postId: string,
+    @Param('postId', IdIsNumberValidationPipe) postId: number,
     @Body() commentCreateModel: CreateCommentInputModel,
   ) {
     const createdCommentId = await this.commandBus.execute(

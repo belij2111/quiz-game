@@ -40,6 +40,8 @@ import { Post } from './posts/domain/post.entity';
 import { PostsRepository } from './posts/infrastructure/posts.repository';
 import { PostsQueryRepository } from './posts/infrastructure/posts.query-repository';
 import { Comment } from './comments/domain/comment.entity';
+import { CommentsRepository } from './comments/infrastructure/comments.repository';
+import { CommentsQueryRepository } from './comments/infrastructure/comments.query-repository';
 
 const useCases = [
   CreateBlogUseCase,
@@ -76,6 +78,8 @@ const repositories = [
   BlogsQueryRepository,
   PostsRepository,
   PostsQueryRepository,
+  CommentsRepository,
+  CommentsQueryRepository,
 ];
 
 @Module({

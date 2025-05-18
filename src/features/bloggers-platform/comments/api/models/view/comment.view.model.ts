@@ -8,7 +8,7 @@ export class CommentViewModel {
     userId: string;
     userLogin: string;
   };
-  createdAt: Date;
+  createdAt: string;
   likesInfo: {
     likesCount: number;
     dislikesCount: number;
@@ -20,16 +20,16 @@ export class CommentViewModel {
     currentStatus: LikeStatus,
   ): CommentViewModel {
     const model = new CommentViewModel();
-    model.id = comment.id;
+    model.id = comment.id.toString();
     model.content = comment.content;
     model.commentatorInfo = {
       userId: comment.userId,
       userLogin: comment.userLogin,
     };
-    model.createdAt = comment.createdAt;
+    model.createdAt = comment.createdAt.toISOString();
     model.likesInfo = {
-      likesCount: Number(comment.likesCount),
-      dislikesCount: Number(comment.dislikesCount),
+      likesCount: 0,
+      dislikesCount: 0,
       myStatus: currentStatus,
     };
 

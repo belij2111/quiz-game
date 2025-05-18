@@ -1,44 +1,36 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
-import { UsersSqlRepository } from '../../../../user-accounts/users/infrastructure/users.sql.repository';
-import { CommentsSqlRepository } from '../../infrastructure/comments.sql.repository';
-import { CommentCreateModel } from '../../api/models/input/create-comment.input.model';
-import { Comment } from '../../domain/comment.sql.entity';
-import { PostsSqlRepository } from '../../../posts/infrastructure/posts.sql.repository';
+import { CreateCommentInputModel } from '../../api/models/input/create-comment.input-model';
+import { UsersRepository } from '../../../../user-accounts/users/infrastructure/users.repository';
+import { PostsRepository } from '../../../posts/infrastructure/posts.repository';
+import { Comment } from '../../domain/comment.entity';
+import { CommentsRepository } from '../../infrastructure/comments.repository';
 
 export class CreateCommentCommand {
   constructor(
     public userId: string,
-    public postId: string,
-    public commentCreateModel: CommentCreateModel,
+    public postId: number,
+    public commentCreateModel: CreateCommentInputModel,
   ) {}
 }
 
 @CommandHandler(CreateCommentCommand)
 export class CreateCommentUseCase
-  implements ICommandHandler<CreateCommentCommand, string>
+  implements ICommandHandler<CreateCommentCommand, any>
 {
   constructor(
-    private readonly usersSqlRepository: UsersSqlRepository,
-    private readonly postsSqlRepository: PostsSqlRepository,
-    private readonly commentsSqlRepository: CommentsSqlRepository,
-    private readonly uuidProvider: UuidProvider,
+    private readonly usersRepository: UsersRepository,
+    private readonly postsRepository: PostsRepository,
+    private readonly commentsRepository: CommentsRepository,
   ) {}
 
   async execute(command: CreateCommentCommand): Promise<string> {
-    const fondUser = await this.usersSqlRepository.findByIdOrNotFoundFail(
+    await this.usersRepository.findByIdOrNotFoundFail(command.userId);
+    await this.postsRepository.findByIdOrNotFoundFail(command.postId);
+    const comment = Comment.create(
+      command.commentCreateModel,
+      command.postId,
       command.userId,
     );
-    const fondPost = await this.postsSqlRepository.findByIdOrNotFoundFail(
-      command.postId,
-    );
-    const createCommentDto: Comment = {
-      id: this.uuidProvider.generate(),
-      content: command.commentCreateModel.content,
-      createdAt: new Date(),
-      postId: fondPost.id,
-      userId: fondUser.id,
-    };
-    return await this.commentsSqlRepository.create(createCommentDto);
+    return await this.commentsRepository.create(comment);
   }
 }

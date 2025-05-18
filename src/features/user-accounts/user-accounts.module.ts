@@ -14,7 +14,6 @@ import { UsersController } from './users/api/users.controller';
 import { SecurityDevicesController } from './security-devices/api/security-devices.controller';
 import { CryptoService } from './crypto/crypto.service';
 import { NotificationsModule } from '../notifications/notifications.module';
-import { UsersSqlRepository } from './users/infrastructure/users.sql.repository';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { DeleteAllSecurityDevicesExcludingCurrentUseCase } from './security-devices/application/use-cases/delete-all-security-devices-excluding-current.use-case';
 import { CqrsModule } from '@nestjs/cqrs';
@@ -65,7 +64,6 @@ const queries = [
   GetDevicesQueryHandler,
 ];
 const repositories = [
-  UsersSqlRepository,
   UsersRepository,
   UsersQueryRepository,
   SecurityDevicesRepository,
@@ -100,6 +98,6 @@ const repositories = [
       useClass: ThrottlerGuard,
     },
   ],
-  exports: [UsersSqlRepository],
+  exports: [UsersRepository],
 })
 export class UserAccountsModule {}

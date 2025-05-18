@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../domain/user.entity';
 import { Repository } from 'typeorm';
@@ -65,5 +69,17 @@ export class UsersRepository {
 
   async updateRegistrationConfirmationCode(user: User) {
     await this.usersRepository.save(user);
+  }
+
+  async findByIdOrNotFoundFail(id: string) {
+    const foundUser = await this.findById(id);
+    if (!foundUser) {
+      throw new UnauthorizedException(`User with id ${id} not found`);
+    }
+    return foundUser;
+  }
+
+  private async findById(id: string) {
+    return await this.usersRepository.findOne({ where: { id: id } });
   }
 }

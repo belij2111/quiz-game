@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { CommentViewModel } from '../../api/models/view/comment.view.model';
-import { CommentsSqlQueryRepository } from '../../infrastructure/comments.sql.query-repository';
+import { CommentsQueryRepository } from '../../infrastructure/comments.query-repository';
 
 export class GetCommentByIdQuery {
   constructor(
@@ -11,15 +11,12 @@ export class GetCommentByIdQuery {
 
 @QueryHandler(GetCommentByIdQuery)
 export class GetCommentByIdQueryHandler
-  implements IQueryHandler<GetCommentByIdQuery, CommentViewModel | null>
+  implements IQueryHandler<GetCommentByIdQuery, CommentViewModel>
 {
   constructor(
-    private readonly commentsSqlQueryRepository: CommentsSqlQueryRepository,
+    private readonly commentsQueryRepository: CommentsQueryRepository,
   ) {}
-  async execute(query: GetCommentByIdQuery): Promise<CommentViewModel | null> {
-    return this.commentsSqlQueryRepository.getCommentById(
-      query.currentUserId,
-      query.id,
-    );
+  async execute(query: GetCommentByIdQuery): Promise<CommentViewModel> {
+    return this.commentsQueryRepository.getById(query.currentUserId, query.id);
   }
 }
