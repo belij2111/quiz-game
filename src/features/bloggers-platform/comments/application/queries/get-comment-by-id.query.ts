@@ -5,7 +5,7 @@ import { CommentsQueryRepository } from '../../infrastructure/comments.query-rep
 export class GetCommentByIdQuery {
   constructor(
     public currentUserId: string,
-    public id: string,
+    public id: number,
   ) {}
 }
 

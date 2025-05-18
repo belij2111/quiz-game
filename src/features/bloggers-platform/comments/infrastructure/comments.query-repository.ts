@@ -12,7 +12,7 @@ import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-
 export class CommentsQueryRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
-  async getById(currentUserId: string, id: string): Promise<CommentViewModel> {
+  async getById(currentUserId: string, id: number): Promise<CommentViewModel> {
     const query = this.getBaseQuery();
     query.where('c.id = :id', { id: id });
     const foundComment = await query.getRawOne();
@@ -25,7 +25,7 @@ export class CommentsQueryRepository {
 
   async getAllByPostId(
     currentUserId: string,
-    postId: string,
+    postId: number,
     inputQuery: GetCommentQueryParams,
   ) {
     const { sortBy, sortDirection } = inputQuery;

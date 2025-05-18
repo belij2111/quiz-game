@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Param,
   Put,
   UseGuards,
@@ -14,7 +13,7 @@ import { CommentViewModel } from './models/view/comment.view.model';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param-decorator';
-import { CommentCreateModel } from './models/input/create-comment.input.model';
+import { CreateCommentInputModel } from './models/input/create-comment.input-model';
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param-decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
@@ -23,6 +22,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { DeleteCommentCommand } from '../application/use-cases/delete-comment.use-case';
 import { UpdateLikeStatusForCommentCommand } from '../application/use-cases/update-like-status-for-comment.use-case';
 import { GetCommentByIdQuery } from '../application/queries/get-comment-by-id.query';
+import { IdIsNumberValidationPipe } from '../../../../core/pipes/id-is-number.validation-pipe';
 
 @Controller('/comments')
 export class CommentsController {
@@ -35,15 +35,11 @@ export class CommentsController {
   @UseGuards(JwtOptionalAuthGuard)
   async getById(
     @IdentifyUser() identifyUser: string,
-    @Param('id') id: string,
-  ): Promise<CommentViewModel | null> {
-    const foundComment = await this.queryBus.execute(
+    @Param('id', IdIsNumberValidationPipe) id: number,
+  ): Promise<CommentViewModel> {
+    return await this.queryBus.execute(
       new GetCommentByIdQuery(identifyUser, id),
     );
-    if (!foundComment) {
-      throw new NotFoundException(`Comment with id ${id} not found`);
-    }
-    return foundComment;
   }
 
   @Put('/:commentId')
@@ -53,7 +49,7 @@ export class CommentsController {
   async update(
     @CurrentUserId() currentUserId: string,
     @Param('commentId') commentId: string,
-    @Body() commentCreateModel: CommentCreateModel,
+    @Body() commentCreateModel: CreateCommentInputModel,
   ) {
     await this.commandBus.execute(
       new UpdateCommentCommand(currentUserId, commentId, commentCreateModel),
