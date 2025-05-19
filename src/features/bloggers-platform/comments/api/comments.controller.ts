@@ -13,7 +13,6 @@ import { CommentViewModel } from './models/view/comment.view.model';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param-decorator';
-import { CreateCommentInputModel } from './models/input/create-comment.input-model';
 import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param-decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
@@ -23,6 +22,7 @@ import { DeleteCommentCommand } from '../application/use-cases/delete-comment.us
 import { UpdateLikeStatusForCommentCommand } from '../application/use-cases/update-like-status-for-comment.use-case';
 import { GetCommentByIdQuery } from '../application/queries/get-comment-by-id.query';
 import { IdIsNumberValidationPipe } from '../../../../core/pipes/id-is-number.validation-pipe';
+import { UpdateCommentInputModel } from './models/input/update-comment.input-model';
 
 @Controller('/comments')
 export class CommentsController {
@@ -48,11 +48,11 @@ export class CommentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
     @CurrentUserId() currentUserId: string,
-    @Param('commentId') commentId: string,
-    @Body() commentCreateModel: CreateCommentInputModel,
+    @Param('commentId', IdIsNumberValidationPipe) commentId: number,
+    @Body() commentUpdateModel: UpdateCommentInputModel,
   ) {
     await this.commandBus.execute(
-      new UpdateCommentCommand(currentUserId, commentId, commentCreateModel),
+      new UpdateCommentCommand(currentUserId, commentId, commentUpdateModel),
     );
   }
 

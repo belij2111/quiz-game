@@ -1,13 +1,13 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CommentsSqlRepository } from '../../infrastructure/comments.sql.repository';
 import { ForbiddenException } from '@nestjs/common';
-import { CommentCreateModel } from '../../api/models/input/create-comment.input.model';
+import { CommentsRepository } from '../../infrastructure/comments.repository';
+import { UpdateCommentDto } from '../../dto/update-comment.dto';
 
 export class UpdateCommentCommand {
   constructor(
     public userId: string,
-    public commentId: string,
-    public commentCreateModel: CommentCreateModel,
+    public commentId: number,
+    public commentUpdateModel: UpdateCommentDto,
   ) {}
 }
 
@@ -15,24 +15,20 @@ export class UpdateCommentCommand {
 export class UpdateCommentUseCase
   implements ICommandHandler<UpdateCommentCommand, boolean | null>
 {
-  constructor(private readonly commentsSqlRepository: CommentsSqlRepository) {}
+  constructor(private readonly commentsRepository: CommentsRepository) {}
 
   async execute(command: UpdateCommentCommand): Promise<boolean | null> {
-    const foundComment =
-      await this.commentsSqlRepository.findByIdOrNotFoundFail(
-        command.commentId,
-      );
+    const foundComment = await this.commentsRepository.findByIdOrNotFoundFail(
+      command.commentId,
+    );
     if (foundComment.userId !== command.userId) {
       throw new ForbiddenException([
-        { field: 'user', message: 'The comment is not your own' },
+        { field: 'userId', message: 'The comment is not your own' },
       ]);
     }
-    const updateCommentDto: CommentCreateModel = {
-      content: command.commentCreateModel.content,
-    };
-    return await this.commentsSqlRepository.update(
-      foundComment,
-      updateCommentDto,
-    );
+    foundComment.update({
+      content: command.commentUpdateModel.content,
+    });
+    return await this.commentsRepository.update(foundComment);
   }
 }
