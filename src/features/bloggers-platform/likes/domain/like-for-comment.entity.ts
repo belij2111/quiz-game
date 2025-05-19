@@ -3,7 +3,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseWithNumberIdEntity } from '../../../../core/entities/base-with-number-id.entity';
 import { User } from '../../../user-accounts/users/domain/user.entity';
 import { Comment } from '../../comments/domain/comment.entity';
-import { LikeDto } from '../api/dto/like.dto';
+import { LikeDto } from '../dto/like.dto';
 
 @Entity()
 export class LikeForComment extends BaseWithNumberIdEntity {
@@ -32,5 +32,10 @@ export class LikeForComment extends BaseWithNumberIdEntity {
     likeForComment.userId = userId;
     likeForComment.commentId = commentId;
     return likeForComment;
+  }
+
+  update(data: Partial<LikeForComment>) {
+    Object.assign(this, data);
+    this.updatedAt = new Date();
   }
 }
