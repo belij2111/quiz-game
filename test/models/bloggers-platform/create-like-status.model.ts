@@ -1,6 +1,6 @@
-import { LikeInputModel } from '../../../src/features/bloggers-platform/likes/api/models/input/like.input.model';
+import { LikeInputModel } from '../../../src/features/bloggers-platform/likes/api/models/input/like.input-model';
 
-import { LikeStatus } from '../../../src/features/bloggers-platform/likes/api/models/enums/like-status-enum';
+import { LikeStatus } from '../../../src/features/bloggers-platform/likes/api/models/enums/like-status.enum';
 
 export const createLikeStatusModel = (
   likeStatus: LikeStatus,

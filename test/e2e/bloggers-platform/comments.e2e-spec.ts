@@ -22,7 +22,7 @@ import { LoginSuccessViewModel } from '../../../src/features/user-accounts/auth/
 import { delay } from '../../helpers/delay';
 import { createLikeStatusModel } from '../../models/bloggers-platform/create-like-status.model';
 import { getMockNumberId } from '../../helpers/get-mock-uuid-id';
-import { LikeStatus } from '../../../src/features/bloggers-platform/likes/api/models/enums/like-status-enum';
+import { LikeStatus } from '../../../src/features/bloggers-platform/likes/api/models/enums/like-status.enum';
 
 describe('e2e-Comments', () => {
   let app: INestApplication;

@@ -26,7 +26,7 @@ import {
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param-decorator';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
 import { CommentViewModel } from '../../comments/api/models/view/comment.view.model';
-import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
+import { LikeInputModel } from '../../likes/api/models/input/like.input-model';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param-decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';

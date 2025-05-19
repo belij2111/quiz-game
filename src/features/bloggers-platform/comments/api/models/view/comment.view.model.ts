@@ -1,5 +1,5 @@
 import { CommentDto } from '../../../domain/comment.sql.entity';
-import { LikeStatus } from '../../../../likes/api/models/enums/like-status-enum';
+import { LikeStatus } from '../../../../likes/api/models/enums/like-status.enum';
 
 export class CommentViewModel {
   id: string;

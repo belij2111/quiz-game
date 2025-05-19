@@ -24,7 +24,7 @@ import { BlogViewModel } from '../../../src/features/bloggers-platform/blogs/api
 import { createLikeStatusModel } from '../../models/bloggers-platform/create-like-status.model';
 import { LoginSuccessViewModel } from '../../../src/features/user-accounts/auth/api/models/view/login-success.view-model';
 import { getMockNumberId } from '../../helpers/get-mock-uuid-id';
-import { LikeStatus } from '../../../src/features/bloggers-platform/likes/api/models/enums/like-status-enum';
+import { LikeStatus } from '../../../src/features/bloggers-platform/likes/api/models/enums/like-status.enum';
 
 describe('e2e-Posts', () => {
   let app: INestApplication;

@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostsSqlRepository } from '../../infrastructure/posts.sql.repository';
-import { LikeInputModel } from '../../../likes/api/models/input/like.input.model';
+import { LikeInputModel } from '../../../likes/api/models/input/like.input-model';
 import { LikesForPostSqlRepository } from '../../../likes/infrastructure/likes-for-post.sql.repository';
 import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
 import { LikeForPost } from '../../../likes/domain/like-for-post.sql.entity';
@@ -8,7 +8,7 @@ import { LikeForPost } from '../../../likes/domain/like-for-post.sql.entity';
 export class UpdateLikeStatusForPostCommand {
   constructor(
     public currentUserId: string,
-    public postId: string,
+    public postId: any,
     public likeInputModel: LikeInputModel,
   ) {}
 }

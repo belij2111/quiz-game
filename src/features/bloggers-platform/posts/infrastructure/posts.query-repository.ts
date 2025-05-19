@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PostViewModel } from '../api/models/view/post.view-model';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { LikeStatus } from '../../likes/api/models/enums/like-status-enum';
+import { LikeStatus } from '../../likes/api/models/enums/like-status.enum';
 import { Post } from '../domain/post.entity';
 import { GetPostQueryParams } from '../api/models/input/create-post.input-model';
 import { SortDirection } from '../../../../core/models/base-query-params.input-model';

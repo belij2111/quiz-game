@@ -5,7 +5,7 @@ import { CommentViewModel } from '../../src/features/bloggers-platform/comments/
 import { paginationParams } from '../models/base/pagination.model';
 import { Paginator } from '../../src/core/models/pagination-base.model';
 import { createValidCommentModel } from '../models/bloggers-platform/comment.input-model';
-import { LikeInputModel } from '../../src/features/bloggers-platform/likes/api/models/input/like.input.model';
+import { LikeInputModel } from '../../src/features/bloggers-platform/likes/api/models/input/like.input-model';
 
 export class CommentsTestManager {
   constructor(private readonly app: INestApplication) {}

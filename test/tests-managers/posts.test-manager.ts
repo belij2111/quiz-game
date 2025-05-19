@@ -6,7 +6,7 @@ import { PostViewModel } from '../../src/features/bloggers-platform/posts/api/mo
 import { createValidPostModel } from '../models/bloggers-platform/post.input-model';
 import { paginationParams } from '../models/base/pagination.model';
 import { Paginator } from '../../src/core/models/pagination-base.model';
-import { LikeInputModel } from '../../src/features/bloggers-platform/likes/api/models/input/like.input.model';
+import { LikeInputModel } from '../../src/features/bloggers-platform/likes/api/models/input/like.input-model';
 
 export class PostsTestManager {
   constructor(
