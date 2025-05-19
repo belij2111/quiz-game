@@ -43,6 +43,7 @@ import { Comment } from './comments/domain/comment.entity';
 import { CommentsRepository } from './comments/infrastructure/comments.repository';
 import { CommentsQueryRepository } from './comments/infrastructure/comments.query-repository';
 import { LikeForComment } from './likes/domain/like-for-comment.entity';
+import { LikesForCommentRepository } from './likes/infrastructure/likes-for-comment.repository';
 
 const useCases = [
   CreateBlogUseCase,
@@ -81,6 +82,7 @@ const repositories = [
   PostsQueryRepository,
   CommentsRepository,
   CommentsQueryRepository,
+  LikesForCommentRepository,
 ];
 
 @Module({

@@ -1,50 +1,45 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { LikeInputModel } from '../../../likes/api/models/input/like.input.model';
-import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
-import { LikeForComment } from '../../../likes/domain/like-for-comment.sql.entity';
-import { CommentsSqlRepository } from '../../infrastructure/comments.sql.repository';
-import { LikesForCommentSqlRepository } from '../../../likes/infrastructure/likes-for-comment.sql.repository';
+import { LikeDto } from '../../../likes/dto/like.dto';
+import { CommentsRepository } from '../../infrastructure/comments.repository';
+import { LikesForCommentRepository } from '../../../likes/infrastructure/likes-for-comment.repository';
+import { LikeForComment } from '../../../likes/domain/like-for-comment.entity';
 
 export class UpdateLikeStatusForCommentCommand {
   constructor(
     public currentUserId: string,
-    public commentId: string,
-    public likeInputModel: LikeInputModel,
+    public commentId: number,
+    public likeDto: LikeDto,
   ) {}
 }
 
 @CommandHandler(UpdateLikeStatusForCommentCommand)
 export class UpdateLikeStatusForCommentUseCase
-  implements ICommandHandler<UpdateLikeStatusForCommentCommand, boolean | null>
+  implements
+    ICommandHandler<UpdateLikeStatusForCommentCommand, void | boolean | null>
 {
   constructor(
-    private readonly commentsSqlRepository: CommentsSqlRepository,
-    private readonly likesForCommentSqlRepository: LikesForCommentSqlRepository,
-    private readonly uuidProvider: UuidProvider,
+    private readonly commentsRepository: CommentsRepository,
+    private readonly likesForCommentRepository: LikesForCommentRepository,
   ) {}
 
   async execute(
     command: UpdateLikeStatusForCommentCommand,
-  ): Promise<boolean | null> {
-    await this.commentsSqlRepository.findByIdOrNotFoundFail(command.commentId);
-    const foundLike = await this.likesForCommentSqlRepository.find(
+  ): Promise<void | boolean | null> {
+    await this.commentsRepository.findByIdOrNotFoundFail(command.commentId);
+    const foundLike = await this.likesForCommentRepository.find(
       command.currentUserId,
       command.commentId,
     );
+
     if (foundLike) {
-      return await this.likesForCommentSqlRepository.update(
-        foundLike,
-        command.likeInputModel,
-      );
+      foundLike.update({ likeStatus: command.likeDto.likeStatus });
+      return await this.likesForCommentRepository.update(foundLike);
     }
-    const likeDto: LikeForComment = {
-      id: this.uuidProvider.generate(),
-      createdAt: new Date(),
-      status: command.likeInputModel.likeStatus,
-      userId: command.currentUserId,
-      commentId: command.commentId,
-    };
-    await this.likesForCommentSqlRepository.create(likeDto);
-    return true;
+    const like = LikeForComment.create(
+      command.likeDto,
+      command.currentUserId,
+      command.commentId,
+    );
+    return await this.likesForCommentRepository.create(like);
   }
 }

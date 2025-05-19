@@ -13,7 +13,7 @@ import { CommentViewModel } from './models/view/comment.view.model';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param-decorator';
-import { LikeInputModel } from '../../likes/api/models/input/like.input.model';
+import { LikeInputModel } from '../../likes/api/models/input/like.input-model';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param-decorator';
 import { JwtOptionalAuthGuard } from '../../guards/jwt-optional-auth.guard';
 import { UpdateCommentCommand } from '../application/use-cases/update-comment.use-case';
@@ -73,7 +73,7 @@ export class CommentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateLikeStatus(
     @CurrentUserId() currentUserId: string,
-    @Param('commentId') commentId: string,
+    @Param('commentId', IdIsNumberValidationPipe) commentId: number,
     @Body() likeInputModel: LikeInputModel,
   ) {
     await this.commandBus.execute(
