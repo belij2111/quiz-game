@@ -1,8 +1,9 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BaseWithNumberIdEntity } from '../../../../core/entities/base-with-number-id.entity';
 import { Post } from '../../posts/domain/post.entity';
 import { User } from '../../../user-accounts/users/domain/user.entity';
 import { CreateCommentDto } from '../dto/create-comment.dto';
+import { LikeForComment } from '../../likes/domain/like-for-comment.entity';
 
 @Entity()
 export class Comment extends BaseWithNumberIdEntity {
@@ -20,6 +21,9 @@ export class Comment extends BaseWithNumberIdEntity {
   user: User;
   @Column({ type: 'uuid' })
   public userId: string;
+
+  @OneToMany(() => LikeForComment, (lc) => lc.comment)
+  public likeForComment: LikeForComment[];
 
   static create(
     dto: CreateCommentDto,

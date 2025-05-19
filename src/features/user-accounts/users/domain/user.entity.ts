@@ -6,6 +6,7 @@ import { SecurityDevice } from '../../security-devices/domain/security-device.en
 import { BaseWithUuidIdEntity } from '../../../../core/entities/base-with-uuid-id.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { Comment } from '../../../bloggers-platform/comments/domain/comment.entity';
+import { LikeForComment } from '../../../bloggers-platform/likes/domain/like-for-comment.entity';
 
 @Entity()
 export class User extends BaseWithUuidIdEntity {
@@ -40,7 +41,10 @@ export class User extends BaseWithUuidIdEntity {
   public securityDevice: SecurityDevice;
 
   @OneToMany(() => Comment, (c) => c.user)
-  comment: Comment[];
+  public comment: Comment[];
+
+  @OneToMany(() => LikeForComment, (lc) => lc.user)
+  public likeForComment: LikeForComment[];
 
   static create(dto: CreateUserDto): User {
     const user = new this();
