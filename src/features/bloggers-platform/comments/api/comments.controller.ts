@@ -61,7 +61,7 @@ export class CommentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(
     @CurrentUserId() currentUserId: string,
-    @Param('commentId') commentId: string,
+    @Param('commentId', IdIsNumberValidationPipe) commentId: number,
   ) {
     await this.commandBus.execute(
       new DeleteCommentCommand(currentUserId, commentId),

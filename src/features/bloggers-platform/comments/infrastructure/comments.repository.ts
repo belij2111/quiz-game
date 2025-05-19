@@ -28,6 +28,16 @@ export class CommentsRepository {
     return (result.affected ?? 0) > 0 ? true : null;
   }
 
+  async delete(id: number): Promise<boolean | null> {
+    const result = await this.dataSource
+      .createQueryBuilder()
+      .softDelete()
+      .from(Comment)
+      .where('id = :id', { id: id })
+      .execute();
+    return (result.affected ?? 0) > 0 ? true : null;
+  }
+
   async findByIdOrNotFoundFail(id: number): Promise<Comment> {
     const foundComment = await this.findById(id);
     if (!foundComment) {
