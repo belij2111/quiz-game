@@ -28,8 +28,8 @@ export class CommentViewModel {
     };
     model.createdAt = comment.createdAt.toISOString();
     model.likesInfo = {
-      likesCount: 0,
-      dislikesCount: 0,
+      likesCount: comment.likesCount,
+      dislikesCount: comment.dislikesCount,
       myStatus: currentStatus,
     };
 
