@@ -10,14 +10,15 @@ export class TestingRepository {
     await Promise.all([
       this.dataSource.query(
         `TRUNCATE TABLE 
-        public."users", 
-        public."securityDevices",
+        public."users",
+        public."email_confirmations",
+        public."security_devices",
         public."blogs",
         public."posts",
-        public."likesForPosts",
         public."comments",
-        public."likesForComments"
-         RESTART IDENTITY`,
+        public."like_for_comments",
+        public."like_for_posts"
+        RESTART IDENTITY`,
       ),
     ]);
   }
