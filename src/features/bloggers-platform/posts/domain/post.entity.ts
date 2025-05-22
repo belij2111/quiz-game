@@ -3,6 +3,7 @@ import { BaseWithNumberIdEntity } from '../../../../core/entities/base-with-numb
 import { Blog } from '../../blogs/domain/blog.entity';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { Comment } from '../../comments/domain/comment.entity';
+import { LikeForPost } from '../../likes/domain/like-for-post.entity';
 
 @Entity()
 export class Post extends BaseWithNumberIdEntity {
@@ -26,6 +27,9 @@ export class Post extends BaseWithNumberIdEntity {
     cascade: true,
   })
   comment: Comment[];
+
+  @OneToMany(() => LikeForPost, (lp) => lp.post)
+  likeForPost: LikeForPost[];
 
   static create(dto: CreatePostDto, blogId: number): Post {
     const post = new this();

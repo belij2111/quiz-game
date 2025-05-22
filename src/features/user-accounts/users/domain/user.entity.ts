@@ -7,6 +7,7 @@ import { BaseWithUuidIdEntity } from '../../../../core/entities/base-with-uuid-i
 import { CreateUserDto } from '../dto/create-user.dto';
 import { Comment } from '../../../bloggers-platform/comments/domain/comment.entity';
 import { LikeForComment } from '../../../bloggers-platform/likes/domain/like-for-comment.entity';
+import { LikeForPost } from '../../../bloggers-platform/likes/domain/like-for-post.entity';
 
 @Entity()
 export class User extends BaseWithUuidIdEntity {
@@ -45,6 +46,9 @@ export class User extends BaseWithUuidIdEntity {
 
   @OneToMany(() => LikeForComment, (lc) => lc.user)
   public likeForComment: LikeForComment[];
+
+  @OneToMany(() => LikeForPost, (lp) => lp.user)
+  public likeForPost: LikeForPost[];
 
   static create(dto: CreateUserDto): User {
     const user = new this();

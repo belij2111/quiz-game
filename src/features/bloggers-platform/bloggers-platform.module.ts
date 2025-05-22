@@ -44,6 +44,7 @@ import { CommentsRepository } from './comments/infrastructure/comments.repositor
 import { CommentsQueryRepository } from './comments/infrastructure/comments.query-repository';
 import { LikeForComment } from './likes/domain/like-for-comment.entity';
 import { LikesForCommentRepository } from './likes/infrastructure/likes-for-comment.repository';
+import { LikeForPost } from './likes/domain/like-for-post.entity';
 
 const useCases = [
   CreateBlogUseCase,
@@ -87,7 +88,13 @@ const repositories = [
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Blog, Post, Comment, LikeForComment]),
+    TypeOrmModule.forFeature([
+      Blog,
+      Post,
+      Comment,
+      LikeForComment,
+      LikeForPost,
+    ]),
     CqrsModule,
     UserAccountsModule,
   ],
