@@ -1,50 +1,44 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PostsSqlRepository } from '../../infrastructure/posts.sql.repository';
-import { LikeInputModel } from '../../../likes/api/models/input/like.input-model';
-import { LikesForPostSqlRepository } from '../../../likes/infrastructure/likes-for-post.sql.repository';
-import { UuidProvider } from '../../../../../core/helpers/uuid.provider';
-import { LikeForPost } from '../../../likes/domain/like-for-post.sql.entity';
+import { LikeDto } from '../../../likes/dto/like.dto';
+import { PostsRepository } from '../../infrastructure/posts.repository';
+import { LikesForPostRepository } from '../../../likes/infrastructure/likes-for-post.repository';
+import { LikeForPost } from '../../../likes/domain/like-for-post.entity';
 
 export class UpdateLikeStatusForPostCommand {
   constructor(
     public currentUserId: string,
     public postId: any,
-    public likeInputModel: LikeInputModel,
+    public likeDto: LikeDto,
   ) {}
 }
 
 @CommandHandler(UpdateLikeStatusForPostCommand)
 export class UpdateLikeStatusForPostUseCase
-  implements ICommandHandler<UpdateLikeStatusForPostCommand, boolean | null>
+  implements
+    ICommandHandler<UpdateLikeStatusForPostCommand, void | boolean | null>
 {
   constructor(
-    private readonly postsSqlRepository: PostsSqlRepository,
-    private readonly likesForPostSqlRepository: LikesForPostSqlRepository,
-    private readonly uuidProvider: UuidProvider,
+    private readonly postsRepository: PostsRepository,
+    private readonly likesForPostRepository: LikesForPostRepository,
   ) {}
 
   async execute(
     command: UpdateLikeStatusForPostCommand,
-  ): Promise<boolean | null> {
-    await this.postsSqlRepository.findByIdOrNotFoundFail(command.postId);
-    const foundLike = await this.likesForPostSqlRepository.find(
+  ): Promise<void | boolean | null> {
+    await this.postsRepository.findByIdOrNotFoundFail(command.postId);
+    const foundLike = await this.likesForPostRepository.find(
       command.currentUserId,
       command.postId,
     );
     if (foundLike) {
-      return await this.likesForPostSqlRepository.update(
-        foundLike,
-        command.likeInputModel,
-      );
+      foundLike.update({ likeStatus: command.likeDto.likeStatus });
+      return await this.likesForPostRepository.update(foundLike);
     }
-    const likeDto: LikeForPost = {
-      id: this.uuidProvider.generate(),
-      createdAt: new Date(),
-      status: command.likeInputModel.likeStatus,
-      userId: command.currentUserId,
-      postId: command.postId,
-    };
-    await this.likesForPostSqlRepository.create(likeDto);
-    return true;
+    const like = LikeForPost.create(
+      command.likeDto,
+      command.currentUserId,
+      command.postId,
+    );
+    return await this.likesForPostRepository.create(like);
   }
 }

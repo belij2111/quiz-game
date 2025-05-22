@@ -143,7 +143,7 @@ export class PostsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateLikeStatus(
     @CurrentUserId() currentUserId: string,
-    @Param('postId') postId: string,
+    @Param('postId', IdIsNumberValidationPipe) postId: number,
     @Body() likeInputModel: LikeInputModel,
   ) {
     await this.commandBus.execute(
