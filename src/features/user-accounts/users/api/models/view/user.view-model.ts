@@ -1,4 +1,4 @@
-import { User } from '../../../domain/user.entity';
+import { UserRawDataDto } from '../../../dto/user-raw-data.dto';
 
 export class UserViewModel {
   id: string;
@@ -6,7 +6,7 @@ export class UserViewModel {
   email: string;
   createdAt: Date;
 
-  static mapToView(user: User): UserViewModel {
+  static mapToView(user: UserRawDataDto): UserViewModel {
     const model = new UserViewModel();
     model.id = user.id;
     model.login = user.login;
