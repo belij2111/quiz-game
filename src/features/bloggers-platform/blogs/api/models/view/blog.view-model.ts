@@ -1,4 +1,4 @@
-import { Blog } from '../../../domain/blog.entity';
+import { BlogRawDataDto } from '../../../dto/blog-raw-data.dto';
 
 export class BlogViewModel {
   id: string;
@@ -8,7 +8,7 @@ export class BlogViewModel {
   createdAt: string;
   isMembership: boolean;
 
-  static mapToView(blog: Blog): BlogViewModel {
+  static mapToView(blog: BlogRawDataDto): BlogViewModel {
     const model = new BlogViewModel();
     model.id = blog.id.toString();
     model.name = blog.name;
