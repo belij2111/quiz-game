@@ -1,5 +1,5 @@
-import { PostDto } from '../../../domain/post.sql.entity';
 import { LikeStatus } from '../../../../likes/api/models/enums/like-status.enum';
+import { PostRawDataDto } from '../../../dto/post-raw-data.dto';
 
 export class PostViewModel {
   id: string;
@@ -14,13 +14,16 @@ export class PostViewModel {
     dislikesCount: number;
     myStatus: LikeStatus;
     newestLikes: {
-      addedAt: Date;
+      addedAt: string;
       userId: string;
       login: string;
     }[];
   };
 
-  static mapToView(post: PostDto, currentStatus: LikeStatus): PostViewModel {
+  static mapToView(
+    post: PostRawDataDto,
+    currentStatus: LikeStatus,
+  ): PostViewModel {
     const model = new PostViewModel();
     const newestLikes =
       Array.isArray(post.newestLikes) && post.newestLikes.length > 0
@@ -34,8 +37,8 @@ export class PostViewModel {
     model.blogName = post.blogName;
     model.createdAt = post.createdAt.toISOString();
     model.extendedLikesInfo = {
-      likesCount: 0,
-      dislikesCount: 0,
+      likesCount: Number(post.likesCount),
+      dislikesCount: Number(post.dislikesCount),
       myStatus: currentStatus,
       newestLikes: newestLikes,
     };
