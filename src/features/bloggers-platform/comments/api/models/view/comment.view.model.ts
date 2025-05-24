@@ -1,5 +1,5 @@
-import { CommentDto } from '../../../domain/comment.sql.entity';
 import { LikeStatus } from '../../../../likes/api/models/enums/like-status.enum';
+import { CommentRawDataDto } from '../../../dto/comment-raw-data.dto';
 
 export class CommentViewModel {
   id: string;
@@ -16,7 +16,7 @@ export class CommentViewModel {
   };
 
   static mapToView(
-    comment: CommentDto,
+    comment: CommentRawDataDto,
     currentStatus: LikeStatus,
   ): CommentViewModel {
     const model = new CommentViewModel();
@@ -28,8 +28,8 @@ export class CommentViewModel {
     };
     model.createdAt = comment.createdAt.toISOString();
     model.likesInfo = {
-      likesCount: comment.likesCount,
-      dislikesCount: comment.dislikesCount,
+      likesCount: Number(comment.likesCount),
+      dislikesCount: Number(comment.dislikesCount),
       myStatus: currentStatus,
     };
 
