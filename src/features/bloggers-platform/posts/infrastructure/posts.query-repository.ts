@@ -37,9 +37,10 @@ export class PostsQueryRepository {
     const query = this.getBaseQuery().where('p.blogId = :blogId', {
       blogId: blogId,
     });
-    const direction = sortDirection === SortDirection.Asc ? 'ASC' : 'DESC';
-    if (sortBy && sortDirection) {
-      query.orderBy(`"${sortBy}"`, direction);
+    const sortDirectionIsInUpperCase =
+      sortDirection.toUpperCase() as SortDirection;
+    if (sortBy && sortDirectionIsInUpperCase) {
+      query.orderBy(`"${sortBy}"`, sortDirectionIsInUpperCase);
     }
     query.offset(inputQuery.calculateSkip()).limit(inputQuery.pageSize);
     const foundPosts = await query.getRawMany();
@@ -62,9 +63,10 @@ export class PostsQueryRepository {
   ): Promise<PaginatedViewModel<PostViewModel[]>> {
     const { sortBy, sortDirection } = inputQuery;
     const query = this.getBaseQuery();
-    const direction = sortDirection === SortDirection.Asc ? 'ASC' : 'DESC';
-    if (sortBy && sortDirection) {
-      query.orderBy(`"${sortBy}"`, direction);
+    const sortDirectionIsInUpperCase =
+      sortDirection.toUpperCase() as SortDirection;
+    if (sortBy && sortDirectionIsInUpperCase) {
+      query.orderBy(`"${sortBy}"`, sortDirectionIsInUpperCase);
     }
     query.offset(inputQuery.calculateSkip()).limit(inputQuery.pageSize);
     const foundPosts = await query.getRawMany();

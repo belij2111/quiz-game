@@ -49,9 +49,10 @@ export class BlogsQueryRepository {
     if (searchNameTerm) {
       query.where('b.name iLike :name', { name: `%${searchNameTerm}%` });
     }
-    const direction = sortDirection === SortDirection.Asc ? 'ASC' : 'DESC';
-    if (sortBy && sortDirection) {
-      query.orderBy(`b.${sortBy}`, direction);
+    const sortDirectionIsInUpperCase =
+      sortDirection.toUpperCase() as SortDirection;
+    if (sortBy && sortDirectionIsInUpperCase) {
+      query.orderBy(`"${sortBy}"`, sortDirectionIsInUpperCase);
     }
     query.skip(inputQuery.calculateSkip()).take(inputQuery.pageSize);
 

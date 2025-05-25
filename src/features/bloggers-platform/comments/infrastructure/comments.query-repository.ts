@@ -33,9 +33,10 @@ export class CommentsQueryRepository {
     const query = this.getBaseQuery().where('c.postId = :postId', {
       postId: postId,
     });
-    const direction = sortDirection === SortDirection.Asc ? 'ASC' : 'DESC';
-    if (sortBy && sortDirection) {
-      query.orderBy(`"${sortBy}"`, direction);
+    const sortDirectionIsInUpperCase =
+      sortDirection.toUpperCase() as SortDirection;
+    if (sortBy && sortDirectionIsInUpperCase) {
+      query.orderBy(`"${sortBy}"`, sortDirectionIsInUpperCase);
     }
     query.offset(inputQuery.calculateSkip()).limit(inputQuery.pageSize);
     const foundComments = await query.getRawMany();
