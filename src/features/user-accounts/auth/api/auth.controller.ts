@@ -38,14 +38,14 @@ import { NewPasswordCommand } from '../application/use-cases/new-password.use-ca
 import { LogoutCommand } from '../application/use-cases/logout.use-case';
 import { GetInfoAboutCurrentUserQuery } from '../application/queries/get-info-about-current-user.query';
 
-@Controller('/auth')
+@Controller('auth')
 export class AuthController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
 
-  @Post('/login')
+  @Post('login')
   @Throttle({ default: { limit: 5, ttl: 10000 } })
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
@@ -75,7 +75,7 @@ export class AuthController {
     return;
   }
 
-  @Post('/refresh-token')
+  @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   @UseGuards(RefreshTokenGuard)
   async refreshToken(
@@ -95,7 +95,7 @@ export class AuthController {
     return;
   }
 
-  @Get('/me')
+  @Get('me')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async get(@CurrentUserId() currentUserId: string) {
@@ -104,14 +104,14 @@ export class AuthController {
     );
   }
 
-  @Post('/registration')
+  @Post('registration')
   @Throttle({ default: { limit: 5, ttl: 10000 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async registration(@Body() userCreateModel: CreateUserInputModel) {
     await this.commandBus.execute(new RegisterUserCommand(userCreateModel));
   }
 
-  @Post('/registration-confirmation')
+  @Post('registration-confirmation')
   @Throttle({ default: { limit: 5, ttl: 10000 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async registrationConfirmation(
@@ -125,7 +125,7 @@ export class AuthController {
     );
   }
 
-  @Post('/registration-email-resending')
+  @Post('registration-email-resending')
   @Throttle({ default: { limit: 5, ttl: 10000 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async registrationEmailResending(
@@ -137,7 +137,7 @@ export class AuthController {
     );
   }
 
-  @Post('/password-recovery')
+  @Post('password-recovery')
   @Throttle({ default: { limit: 5, ttl: 10000 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async passwordRecovery(
@@ -148,7 +148,7 @@ export class AuthController {
     );
   }
 
-  @Post('/new-password')
+  @Post('new-password')
   @Throttle({ default: { limit: 5, ttl: 10000 } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async newPassword(
@@ -159,7 +159,7 @@ export class AuthController {
     );
   }
 
-  @Post('/logout')
+  @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(RefreshTokenGuard)
   async logout(

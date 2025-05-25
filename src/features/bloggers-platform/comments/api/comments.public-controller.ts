@@ -24,51 +24,14 @@ import { GetCommentByIdQuery } from '../application/queries/get-comment-by-id.qu
 import { IdIsNumberValidationPipe } from '../../../../core/pipes/id-is-number.validation-pipe';
 import { UpdateCommentInputModel } from './models/input/update-comment.input-model';
 
-@Controller('/comments')
-export class CommentsController {
+@Controller('comments')
+export class CommentsPublicController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
 
-  @Get('/:id')
-  @UseGuards(JwtOptionalAuthGuard)
-  async getById(
-    @IdentifyUser() identifyUser: string,
-    @Param('id', IdIsNumberValidationPipe) id: number,
-  ): Promise<CommentViewModel> {
-    return await this.queryBus.execute(
-      new GetCommentByIdQuery(identifyUser, id),
-    );
-  }
-
-  @Put('/:commentId')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async update(
-    @CurrentUserId() currentUserId: string,
-    @Param('commentId', IdIsNumberValidationPipe) commentId: number,
-    @Body() commentUpdateModel: UpdateCommentInputModel,
-  ) {
-    await this.commandBus.execute(
-      new UpdateCommentCommand(currentUserId, commentId, commentUpdateModel),
-    );
-  }
-
-  @Delete('/:commentId')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(
-    @CurrentUserId() currentUserId: string,
-    @Param('commentId', IdIsNumberValidationPipe) commentId: number,
-  ) {
-    await this.commandBus.execute(
-      new DeleteCommentCommand(currentUserId, commentId),
-    );
-  }
-
-  @Put('/:commentId/like-status')
+  @Put(':commentId/like-status')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async updateLikeStatus(
@@ -82,6 +45,43 @@ export class CommentsController {
         commentId,
         likeInputModel,
       ),
+    );
+  }
+
+  @Put(':commentId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async update(
+    @CurrentUserId() currentUserId: string,
+    @Param('commentId', IdIsNumberValidationPipe) commentId: number,
+    @Body() commentUpdateModel: UpdateCommentInputModel,
+  ) {
+    await this.commandBus.execute(
+      new UpdateCommentCommand(currentUserId, commentId, commentUpdateModel),
+    );
+  }
+
+  @Delete(':commentId')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(
+    @CurrentUserId() currentUserId: string,
+    @Param('commentId', IdIsNumberValidationPipe) commentId: number,
+  ) {
+    await this.commandBus.execute(
+      new DeleteCommentCommand(currentUserId, commentId),
+    );
+  }
+
+  @Get(':id')
+  @UseGuards(JwtOptionalAuthGuard)
+  async getById(
+    @IdentifyUser() identifyUser: string,
+    @Param('id', IdIsNumberValidationPipe) id: number,
+  ): Promise<CommentViewModel> {
+    return await this.queryBus.execute(
+      new GetCommentByIdQuery(identifyUser, id),
     );
   }
 }

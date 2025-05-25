@@ -11,7 +11,7 @@ import { JwtStrategy } from '../../core/strategies/jwt.strategy';
 import { UuidProvider } from '../../core/helpers/uuid.provider';
 import { APP_GUARD } from '@nestjs/core';
 import { UsersController } from './users/api/users.controller';
-import { SecurityDevicesController } from './security-devices/api/security-devices.controller';
+import { SecurityDevicesPublicController } from './security-devices/api/security-devices.public-controller';
 import { CryptoService } from './crypto/crypto.service';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
@@ -41,6 +41,11 @@ import { SecurityDevice } from './security-devices/domain/security-device.entity
 import { SecurityDevicesRepository } from './security-devices/infrastructure/security-devices.repository';
 import { SecurityDevicesQueryRepository } from './security-devices/infrastructure/security-devices.query-repository';
 
+const controllers = [
+  UsersController,
+  AuthController,
+  SecurityDevicesPublicController,
+];
 const strategies = [BasicStrategy, LocalStrategy, JwtStrategy];
 const services = [AuthService, JwtService, CryptoService];
 const useCases = [
@@ -83,7 +88,7 @@ const repositories = [
       },
     ]),
   ],
-  controllers: [UsersController, AuthController, SecurityDevicesController],
+  controllers: [...controllers],
   providers: [
     UserAccountConfig,
     UuidProvider,

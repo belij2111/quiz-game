@@ -38,15 +38,27 @@ import { GetPostByIdQuery } from '../../posts/application/queries/get-post-by-id
 import { GetPostsForSpecifiedBlogQuery } from '../../posts/application/queries/get-posts-for-specified-blog.query';
 import { IdIsNumberValidationPipe } from '../../../../core/pipes/id-is-number.validation-pipe';
 import { UpdateBlogInputModel } from './models/input/update-blog.input-model';
+import { UpdatePostInputModel } from '../../posts/api/models/input/update-post.input-model';
+import { UpdatePostCommand } from '../../posts/application/use-cases/update-post.use-case';
+import { DeletePostCommand } from '../../posts/application/use-cases/delete-post.use-case';
 
-@Controller()
-export class BlogsController {
+@Controller('sa/blogs')
+export class BlogsAdminController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
 
-  @Post('sa/blogs')
+  @Get()
+  @UseGuards(BasicAuthGuard)
+  async getAll(
+    @Query()
+    inputQuery: GetBlogsQueryParams,
+  ): Promise<PaginatedViewModel<BlogViewModel[]>> {
+    return await this.queryBus.execute(new GetBlogsQuery(inputQuery));
+  }
+
+  @Post()
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
   async create(@Body() blogCreateModel: CreateBlogInputModel) {
@@ -56,28 +68,7 @@ export class BlogsController {
     return await this.queryBus.execute(new GetBlogByIdQuery(createdBlogId));
   }
 
-  @Get('blogs')
-  async getAll(
-    @Query()
-    inputQuery: GetBlogsQueryParams,
-  ): Promise<PaginatedViewModel<BlogViewModel[]>> {
-    return await this.queryBus.execute(new GetBlogsQuery(inputQuery));
-  }
-  @Get('sa/blogs')
-  @UseGuards(BasicAuthGuard)
-  async getAllForAdmin(
-    @Query()
-    inputQuery: GetBlogsQueryParams,
-  ): Promise<PaginatedViewModel<BlogViewModel[]>> {
-    return await this.queryBus.execute(new GetBlogsQuery(inputQuery));
-  }
-
-  @Get('blogs/:id')
-  async getById(@Param('id') id: number): Promise<BlogViewModel> {
-    return await this.queryBus.execute(new GetBlogByIdQuery(id));
-  }
-
-  @Put('sa/blogs/:id')
+  @Put(':id')
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -88,7 +79,7 @@ export class BlogsController {
     await this.commandBus.execute(new UpdateBlogCommand(id, updateBlogModel));
   }
 
-  @Delete('sa/blogs/:id')
+  @Delete(':id')
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -96,7 +87,7 @@ export class BlogsController {
     await this.commandBus.execute(new DeleteBlogCommand(id));
   }
 
-  @Post('sa/blogs/:blogId/posts')
+  @Post(':blogId/posts')
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
   @HttpCode(HttpStatus.CREATED)
@@ -113,7 +104,7 @@ export class BlogsController {
     );
   }
 
-  @Get('blogs/:blogId/posts')
+  @Get(':blogId/posts')
   @UseGuards(JwtOptionalAuthGuard)
   async getPostsByBlogId(
     @IdentifyUser() identifyUser: string,
@@ -123,5 +114,30 @@ export class BlogsController {
     return await this.queryBus.execute(
       new GetPostsForSpecifiedBlogQuery(identifyUser, blogId, query),
     );
+  }
+
+  @Put(':blogId/posts/:postId')
+  @UseGuards(BasicAuthGuard)
+  @ApiBasicAuth()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updatePost(
+    @Param('blogId', IdIsNumberValidationPipe) blogId: number,
+    @Param('postId', IdIsNumberValidationPipe) postId: number,
+    @Body() updatePostModel: UpdatePostInputModel,
+  ) {
+    await this.commandBus.execute(
+      new UpdatePostCommand(blogId, postId, updatePostModel),
+    );
+  }
+
+  @Delete(':blogId/posts/:postId')
+  @UseGuards(BasicAuthGuard)
+  @ApiBasicAuth()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deletePost(
+    @Param('blogId', IdIsNumberValidationPipe) blogId: number,
+    @Param('postId', IdIsNumberValidationPipe) postId: number,
+  ) {
+    await this.commandBus.execute(new DeletePostCommand(blogId, postId));
   }
 }

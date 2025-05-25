@@ -25,7 +25,7 @@ import { DeleteUserCommand } from '../application/use-cases/delete-user.use-case
 import { GetAllUsersQuery } from '../application/queries/get-all-users.query';
 import { GetUserByIdQuery } from '../application/queries/get-user-by-id.query';
 
-@Controller('/sa/users')
+@Controller('sa/users')
 @UseGuards(BasicAuthGuard)
 @ApiBasicAuth()
 export class UsersController {

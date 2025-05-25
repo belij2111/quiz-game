@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { PostsController } from './posts/api/posts.controller';
-import { BlogsController } from './blogs/api/blogs.controller';
-import { CommentsController } from './comments/api/comments.controller';
+import { PostsPublicController } from './posts/api/posts.public-controller';
+import { BlogsAdminController } from './blogs/api/blogs.admin-controller';
+import { CommentsPublicController } from './comments/api/comments.public-controller';
 import { BlogIdIsExistConstraint } from './blogs/api/validation/blogId-is-exist.decorator';
 import { UserAccountsModule } from '../user-accounts/user-accounts.module';
 import { UuidProvider } from '../../core/helpers/uuid.provider';
@@ -38,7 +38,14 @@ import { LikeForComment } from './likes/domain/like-for-comment.entity';
 import { LikesForCommentRepository } from './likes/infrastructure/likes-for-comment.repository';
 import { LikeForPost } from './likes/domain/like-for-post.entity';
 import { LikesForPostRepository } from './likes/infrastructure/likes-for-post.repository';
+import { BlogsPublicController } from './blogs/api/blogs.public-controller';
 
+const controllers = [
+  BlogsAdminController,
+  BlogsPublicController,
+  PostsPublicController,
+  CommentsPublicController,
+];
 const useCases = [
   CreateBlogUseCase,
   UpdateBlogUseCase,
@@ -84,7 +91,7 @@ const repositories = [
     CqrsModule,
     UserAccountsModule,
   ],
-  controllers: [BlogsController, PostsController, CommentsController],
+  controllers: [...controllers],
   providers: [
     BlogIdIsExistConstraint,
     UuidProvider,

@@ -15,21 +15,21 @@ import { DeleteAllSecurityDevicesExcludingCurrentCommand } from '../application/
 import { DeleteSecurityDeviceCommand } from '../application/use-cases/delete-security-device.use-case';
 import { GetDevicesQuery } from '../application/queries/get-devices.query';
 
-@Controller('/security')
-export class SecurityDevicesController {
+@Controller('security')
+export class SecurityDevicesPublicController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
 
-  @Get('/devices')
+  @Get('devices')
   @UseGuards(RefreshTokenGuard)
   @HttpCode(HttpStatus.OK)
   async getAll(@CurrentUserId() currentUserId: string) {
     return await this.queryBus.execute(new GetDevicesQuery(currentUserId));
   }
 
-  @Delete('/devices')
+  @Delete('devices')
   @UseGuards(RefreshTokenGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async delete(
@@ -44,7 +44,7 @@ export class SecurityDevicesController {
     );
   }
 
-  @Delete('/devices/:deviceId')
+  @Delete('devices/:deviceId')
   @UseGuards(RefreshTokenGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteById(
