@@ -1,4 +1,4 @@
-class PaginationModel {
+class PaginationInputTestDto {
   constructor(
     public pageNumber: number,
     public pageSize: number,
@@ -7,4 +7,9 @@ class PaginationModel {
   ) {}
 }
 
-export const paginationParams = new PaginationModel(1, 10, 'createdAt', 'asc');
+export const paginationInputParams = new PaginationInputTestDto(
+  1,
+  10,
+  'createdAt',
+  'asc',
+);

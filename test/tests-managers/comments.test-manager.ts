@@ -2,10 +2,10 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { CreateCommentInputModel } from '../../src/features/bloggers-platform/comments/api/models/input/create-comment.input-model';
 import { CommentViewModel } from '../../src/features/bloggers-platform/comments/api/models/view/comment.view.model';
-import { paginationParams } from '../models/base/pagination.model';
-import { Paginator } from '../../src/core/models/pagination-base.model';
+import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { createValidCommentModel } from '../models/bloggers-platform/comment.input-model';
 import { LikeInputModel } from '../../src/features/bloggers-platform/likes/api/models/input/like.input-model';
+import { PaginationViewTestDto } from '../models/base/pagination.view-test-dto';
 
 export class CommentsTestManager {
   constructor(private readonly app: INestApplication) {}
@@ -53,7 +53,8 @@ export class CommentsTestManager {
     postId: number,
     statusCode: number = HttpStatus.OK,
   ) {
-    const { pageNumber, pageSize, sortBy, sortDirection } = paginationParams;
+    const { pageNumber, pageSize, sortBy, sortDirection } =
+      paginationInputParams;
     return request(this.app.getHttpServer())
       .get(`/posts/${postId}/comments`)
       .query({
@@ -67,7 +68,7 @@ export class CommentsTestManager {
 
   expectCorrectPagination(
     createModels: CreateCommentInputModel[],
-    responseModels: Paginator<CommentViewModel[]>,
+    responseModels: PaginationViewTestDto<CommentViewModel[]>,
   ) {
     expect(responseModels.items.length).toBe(createModels.length);
     expect(responseModels.totalCount).toBe(createModels.length);

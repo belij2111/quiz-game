@@ -2,11 +2,11 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { CreateBlogInputModel } from '../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input-model';
 import { BlogViewModel } from '../../src/features/bloggers-platform/blogs/api/models/view/blog.view-model';
 import request from 'supertest';
-import { paginationParams } from '../models/base/pagination.model';
+import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { createValidBlogModel } from '../models/bloggers-platform/blog.input-model';
-import { Paginator } from '../../src/core/models/pagination-base.model';
 import { CoreConfig } from '../../src/core/core.config';
 import { CreatePostInputModel } from '../../src/features/bloggers-platform/posts/api/models/input/create-post.input-model';
+import { PaginationViewTestDto } from '../models/base/pagination.view-test-dto';
 
 export class BlogsTestManager {
   constructor(
@@ -52,7 +52,8 @@ export class BlogsTestManager {
   }
 
   async getBlogsWithPaging(statusCode: number = HttpStatus.OK) {
-    const { pageNumber, pageSize, sortBy, sortDirection } = paginationParams;
+    const { pageNumber, pageSize, sortBy, sortDirection } =
+      paginationInputParams;
     const searchNameTerm = 'Blog';
     return request(this.app.getHttpServer())
       .get('/blogs')
@@ -68,7 +69,7 @@ export class BlogsTestManager {
 
   expectCorrectPagination(
     createdModels: BlogViewModel[],
-    responseModels: Paginator<BlogViewModel[]>,
+    responseModels: PaginationViewTestDto<BlogViewModel[]>,
   ) {
     expect(responseModels.items.length).toBe(createdModels.length);
     expect(responseModels.totalCount).toBe(createdModels.length);
@@ -164,7 +165,8 @@ export class BlogsTestManager {
   }
 
   async getPostsByBlogId(blogId: number, statusCode: number = HttpStatus.OK) {
-    const { pageNumber, pageSize, sortBy, sortDirection } = paginationParams;
+    const { pageNumber, pageSize, sortBy, sortDirection } =
+      paginationInputParams;
     return request(this.app.getHttpServer())
       .get(`/blogs/${blogId}/posts`)
       .query({

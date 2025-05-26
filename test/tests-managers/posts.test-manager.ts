@@ -4,9 +4,9 @@ import { CoreConfig } from '../../src/core/core.config';
 import { CreatePostInputModel } from '../../src/features/bloggers-platform/posts/api/models/input/create-post.input-model';
 import { PostViewModel } from '../../src/features/bloggers-platform/posts/api/models/view/post.view-model';
 import { createValidPostModel } from '../models/bloggers-platform/post.input-model';
-import { paginationParams } from '../models/base/pagination.model';
-import { Paginator } from '../../src/core/models/pagination-base.model';
+import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { LikeInputModel } from '../../src/features/bloggers-platform/likes/api/models/input/like.input-model';
+import { PaginationViewTestDto } from '../models/base/pagination.view-test-dto';
 
 export class PostsTestManager {
   constructor(
@@ -62,7 +62,8 @@ export class PostsTestManager {
   }
 
   async getPostsWithPaging(statusCode: number = HttpStatus.OK) {
-    const { pageNumber, pageSize, sortBy, sortDirection } = paginationParams;
+    const { pageNumber, pageSize, sortBy, sortDirection } =
+      paginationInputParams;
     return request(this.app.getHttpServer())
       .get('/posts')
       .query({
@@ -76,7 +77,7 @@ export class PostsTestManager {
 
   expectCorrectPagination(
     createModels: PostViewModel[],
-    responseModels: Paginator<PostViewModel[]>,
+    responseModels: PaginationViewTestDto<PostViewModel[]>,
   ) {
     expect(responseModels.items.length).toBe(createModels.length);
     expect(responseModels.totalCount).toBe(createModels.length);

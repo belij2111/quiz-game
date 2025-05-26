@@ -1,11 +1,11 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { CoreConfig } from '../../src/core/core.config';
 import request from 'supertest';
-import { paginationParams } from '../models/base/pagination.model';
-import { Paginator } from '../../src/core/models/pagination-base.model';
+import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { createValidUserModel } from '../models/user-accounts/user.input-model';
 import { CreateUserInputTestDto } from '../models/bloggers-platform/input-test-dto/create-user.input-test-dto';
 import { UserViewTestDto } from '../models/bloggers-platform/view-test-dto/user.view-test-dto';
+import { PaginationViewTestDto } from '../models/base/pagination.view-test-dto';
 
 export class UsersTestManager {
   constructor(
@@ -61,7 +61,8 @@ export class UsersTestManager {
   }
 
   async getUsersWithPaging(statusCode: number = HttpStatus.OK) {
-    const { pageNumber, pageSize, sortBy, sortDirection } = paginationParams;
+    const { pageNumber, pageSize, sortBy, sortDirection } =
+      paginationInputParams;
     const searchLoginTerm = 'user';
     const searchEmailTerm = 'user';
     return request(this.app.getHttpServer())
@@ -80,7 +81,7 @@ export class UsersTestManager {
 
   expectCorrectPagination(
     createdModels: UserViewTestDto[],
-    responseModels: Paginator<UserViewTestDto[]>,
+    responseModels: PaginationViewTestDto<UserViewTestDto[]>,
   ) {
     expect(responseModels.items.length).toBe(createdModels.length);
     expect(responseModels.totalCount).toBe(createdModels.length);
@@ -91,7 +92,8 @@ export class UsersTestManager {
   }
 
   async getUsersIsNotAuthorized(statusCode: number = HttpStatus.UNAUTHORIZED) {
-    const { pageNumber, pageSize, sortBy, sortDirection } = paginationParams;
+    const { pageNumber, pageSize, sortBy, sortDirection } =
+      paginationInputParams;
     const searchLoginTerm = 'user';
     const searchEmailTerm = 'user';
     return request(this.app.getHttpServer())
