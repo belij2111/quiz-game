@@ -1,9 +1,9 @@
-import { CreateUserInputModel } from '../../../src/features/user-accounts/users/api/models/input/create-user.input-model';
+import { CreateUserInputTestDto } from '../bloggers-platform/input-test-dto/create-user.input-test-dto';
 
 export const createValidUserModel = (
   count: number = 1,
-): CreateUserInputModel => {
-  const userModel = new CreateUserInputModel();
+): CreateUserInputTestDto => {
+  const userModel = new CreateUserInputTestDto();
   userModel.login = `User_${count}`;
   userModel.password = `qwerty_${count}`;
   userModel.email = `user_${count}@gmail.com`;
@@ -12,8 +12,8 @@ export const createValidUserModel = (
 
 export const createInValidUserModel = (
   count: number = 1,
-): CreateUserInputModel => {
-  const invalidUserModel = new CreateUserInputModel();
+): CreateUserInputTestDto => {
+  const invalidUserModel = new CreateUserInputTestDto();
   invalidUserModel.login = `User_${count}`;
   invalidUserModel.password = `qwerty_${count}`;
   invalidUserModel.email = `invalid email${count}`;
@@ -22,10 +22,10 @@ export const createInValidUserModel = (
 
 export const createSeveralUsersModels = (
   count: number = 1,
-): CreateUserInputModel[] => {
-  const users: CreateUserInputModel[] = [];
+): CreateUserInputTestDto[] => {
+  const users: CreateUserInputTestDto[] = [];
   for (let i = 1; i <= count; i++) {
-    const userModel = new CreateUserInputModel();
+    const userModel = new CreateUserInputTestDto();
     userModel.login = `User_${i}`;
     userModel.password = `qwerty_${i}`;
     userModel.email = `user_${i}@gmail.com`;

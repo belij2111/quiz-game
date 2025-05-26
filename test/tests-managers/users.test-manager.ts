@@ -1,11 +1,11 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { CoreConfig } from '../../src/core/core.config';
 import request from 'supertest';
-import { CreateUserInputModel } from '../../src/features/user-accounts/users/api/models/input/create-user.input-model';
-import { UserViewModel } from '../../src/features/user-accounts/users/api/models/view/user.view-model';
 import { paginationParams } from '../models/base/pagination.model';
 import { Paginator } from '../../src/core/models/pagination-base.model';
 import { createValidUserModel } from '../models/user-accounts/user.input-model';
+import { CreateUserInputTestDto } from '../models/bloggers-platform/input-test-dto/create-user.input-test-dto';
+import { UserViewTestDto } from '../models/bloggers-platform/view-test-dto/user.view-test-dto';
 
 export class UsersTestManager {
   constructor(
@@ -14,7 +14,7 @@ export class UsersTestManager {
   ) {}
 
   async createUser(
-    createdModel: CreateUserInputModel,
+    createdModel: CreateUserInputTestDto,
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())
@@ -26,15 +26,15 @@ export class UsersTestManager {
   }
 
   expectCorrectModel(
-    createdModel: CreateUserInputModel,
-    responseModel: UserViewModel,
+    createdModel: CreateUserInputTestDto,
+    responseModel: UserViewTestDto,
   ) {
     expect(createdModel.login).toBe(responseModel.login);
     expect(createdModel.email).toBe(responseModel.email);
   }
 
   async createUserIsNotAuthorized(
-    createdModel: CreateUserInputModel,
+    createdModel: CreateUserInputTestDto,
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())
@@ -48,7 +48,7 @@ export class UsersTestManager {
     count: number = 1,
     statusCode: number = HttpStatus.CREATED,
   ) {
-    const users: UserViewModel[] = [];
+    const users: UserViewTestDto[] = [];
     for (let i = 1; i <= count; i++) {
       const response = await request(this.app.getHttpServer())
         .post('/sa/users')
@@ -79,8 +79,8 @@ export class UsersTestManager {
   }
 
   expectCorrectPagination(
-    createdModels: UserViewModel[],
-    responseModels: Paginator<UserViewModel[]>,
+    createdModels: UserViewTestDto[],
+    responseModels: Paginator<UserViewTestDto[]>,
   ) {
     expect(responseModels.items.length).toBe(createdModels.length);
     expect(responseModels.totalCount).toBe(createdModels.length);

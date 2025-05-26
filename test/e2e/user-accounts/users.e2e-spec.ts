@@ -2,12 +2,12 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { UsersTestManager } from '../../tests-managers/users.test-manager';
 import { initSettings } from '../../helpers/init-settings';
 import { deleteAllData } from '../../helpers/delete-all-data';
-import { CreateUserInputModel } from '../../../src/features/user-accounts/users/api/models/input/create-user.input-model';
 import {
   createInValidUserModel,
   createValidUserModel,
 } from '../../models/user-accounts/user.input-model';
 import { getMockUuidId } from '../../helpers/get-mock-uuid-id';
+import { CreateUserInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-user.input-test-dto';
 
 describe('e2e-Users', () => {
   let app: INestApplication;
@@ -22,7 +22,7 @@ describe('e2e-Users', () => {
     await deleteAllData(app);
   });
   afterEach(async () => {
-    await deleteAllData(app);
+    // await deleteAllData(app);
   });
   afterAll(async () => {
     await app.close();
@@ -30,7 +30,7 @@ describe('e2e-Users', () => {
 
   describe('POST/users', () => {
     it(`should create new user : STATUS 201`, async () => {
-      const validUserModel: CreateUserInputModel = createValidUserModel();
+      const validUserModel: CreateUserInputTestDto = createValidUserModel();
       const createdResponse = await usersTestManager.createUser(
         validUserModel,
         HttpStatus.CREATED,
@@ -38,14 +38,14 @@ describe('e2e-Users', () => {
       usersTestManager.expectCorrectModel(validUserModel, createdResponse);
     });
     it(`shouldn't create new user with incorrect input data : STATUS 400`, async () => {
-      const invalidUserModel: CreateUserInputModel = createInValidUserModel();
+      const invalidUserModel: CreateUserInputTestDto = createInValidUserModel();
       await usersTestManager.createUser(
         invalidUserModel,
         HttpStatus.BAD_REQUEST,
       );
     });
     it(`shouldn't create new user if the request is unauthorized : STATUS 401`, async () => {
-      const validUserModel: CreateUserInputModel = createValidUserModel();
+      const validUserModel: CreateUserInputTestDto = createValidUserModel();
       await usersTestManager.createUserIsNotAuthorized(
         validUserModel,
         HttpStatus.UNAUTHORIZED,
@@ -63,7 +63,7 @@ describe('e2e-Users', () => {
         createdUsers,
         createdResponse.body,
       );
-      // console.log('createdResponse.body :', createdResponse.body);
+      console.log('createdResponse.body :', createdResponse.body);
     });
     it(`shouldn't return users with paging if the request is unauthorized : STATUS 401`, async () => {
       await usersTestManager.createUsers(3);
@@ -73,12 +73,12 @@ describe('e2e-Users', () => {
 
   describe('DELETE/users/:id', () => {
     it(`should delete the user by ID : STATUS 204`, async () => {
-      const validUserModel: CreateUserInputModel = createValidUserModel(1);
+      const validUserModel: CreateUserInputTestDto = createValidUserModel(1);
       const createdUser = await usersTestManager.createUser(validUserModel);
       await usersTestManager.deleteById(createdUser.id, HttpStatus.NO_CONTENT);
     });
     it(`shouldn't delete user by ID if the request is unauthorized : STATUS 401`, async () => {
-      const validUserModel: CreateUserInputModel = createValidUserModel(1);
+      const validUserModel: CreateUserInputTestDto = createValidUserModel(1);
       const createdUser = await usersTestManager.createUser(validUserModel);
       await usersTestManager.deleteByIdIsNotAuthorized(
         createdUser.id,
