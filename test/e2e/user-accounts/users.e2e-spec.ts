@@ -22,7 +22,7 @@ describe('e2e-Users', () => {
     await deleteAllData(app);
   });
   afterEach(async () => {
-    // await deleteAllData(app);
+    await deleteAllData(app);
   });
   afterAll(async () => {
     await app.close();
