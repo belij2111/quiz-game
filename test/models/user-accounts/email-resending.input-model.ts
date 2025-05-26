@@ -1,17 +1,17 @@
-import { CreateUserInputModel } from '../../../src/features/user-accounts/users/api/models/input/create-user.input-model';
-import { RegistrationEmailResendingInputModel } from '../../../src/features/user-accounts/auth/api/models/input/registration-email-resending.input-model';
+import { CreateUserInputTestDto } from '../bloggers-platform/input-test-dto/create-user.input-test-dto';
+import { RegistrationEmailResendingInputTestDto } from './input-test-dto/registration-email-resending.input-test-dto';
 
 export const createEmailResendingInputModel = (
-  userModel: CreateUserInputModel,
-): RegistrationEmailResendingInputModel => {
-  const emailResendingModel = new RegistrationEmailResendingInputModel();
+  userModel: CreateUserInputTestDto,
+): RegistrationEmailResendingInputTestDto => {
+  const emailResendingModel = new RegistrationEmailResendingInputTestDto();
   emailResendingModel.email = userModel.email;
   return emailResendingModel;
 };
 
 export const createInvalidEmailResendingInputModel =
-  (): RegistrationEmailResendingInputModel => {
-    const emailResendingModel = new RegistrationEmailResendingInputModel();
+  (): RegistrationEmailResendingInputTestDto => {
+    const emailResendingModel = new RegistrationEmailResendingInputTestDto();
     emailResendingModel.email = 'invalidEmail@email.com';
     return emailResendingModel;
   };

@@ -1,16 +1,17 @@
-import { RegistrationConfirmationCodeInputModel } from '../../../src/features/user-accounts/auth/api/models/input/registration-confirmation-code.input-model';
+import { RegistrationConfirmationCodeInputTestDto } from './input-test-dto/registration-confirmation-code.input-test-dto';
 
 export const createRegistrationConfirmationCodeInputModel = (
   confirmationCode: string,
-): RegistrationConfirmationCodeInputModel => {
-  const confirmationCodeModel = new RegistrationConfirmationCodeInputModel();
+): RegistrationConfirmationCodeInputTestDto => {
+  const confirmationCodeModel = new RegistrationConfirmationCodeInputTestDto();
   confirmationCodeModel.code = confirmationCode;
   return confirmationCodeModel;
 };
 
 export const createInvalidRegistrationConfirmationCodeInputModel =
-  (): RegistrationConfirmationCodeInputModel => {
-    const confirmationCodeModel = new RegistrationConfirmationCodeInputModel();
+  (): RegistrationConfirmationCodeInputTestDto => {
+    const confirmationCodeModel =
+      new RegistrationConfirmationCodeInputTestDto();
     confirmationCodeModel.code = '12121212-1212-1212-1212-121212121212';
     return confirmationCodeModel;
   };

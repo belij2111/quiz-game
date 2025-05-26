@@ -1,19 +1,17 @@
-import { CreateUserInputModel } from '../../../src/features/user-accounts/users/api/models/input/create-user.input-model';
-import { RegistrationEmailResendingInputModel } from '../../../src/features/user-accounts/auth/api/models/input/registration-email-resending.input-model';
-import { PasswordRecoveryInputModel } from '../../../src/features/user-accounts/auth/api/models/input/password-recovery.input-model';
+import { CreateUserInputTestDto } from '../bloggers-platform/input-test-dto/create-user.input-test-dto';
+import { PasswordRecoveryInputTestDto } from './input-test-dto/password-recovery.input-test-dto';
 
 export const createPasswordRecoveryInputModel = (
-  userModel: CreateUserInputModel,
-): PasswordRecoveryInputModel => {
-  const passwordRecoveryModel = new PasswordRecoveryInputModel();
+  userModel: CreateUserInputTestDto,
+): PasswordRecoveryInputTestDto => {
+  const passwordRecoveryModel = new PasswordRecoveryInputTestDto();
   passwordRecoveryModel.email = userModel.email;
   return passwordRecoveryModel;
 };
 
 export const createInvalidPasswordRecoveryInputModel =
-  (): PasswordRecoveryInputModel => {
-    const invalidPasswordRecoveryModel =
-      new RegistrationEmailResendingInputModel();
+  (): PasswordRecoveryInputTestDto => {
+    const invalidPasswordRecoveryModel = new PasswordRecoveryInputTestDto();
     invalidPasswordRecoveryModel.email = 'invalid password recovery email';
     return invalidPasswordRecoveryModel;
   };

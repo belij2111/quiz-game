@@ -1,17 +1,18 @@
-import { NewPasswordRecoveryInputModel } from '../../../src/features/user-accounts/auth/api/models/input/new-password-recovery.input-model';
+import { NewPasswordRecoveryInputTestDto } from './input-test-dto/new-password-recovery.input-test-dto';
 
 export const createNewPasswordRecoveryInputModel = (
   recoveryCode: string,
-): NewPasswordRecoveryInputModel => {
-  const newPasswordRecoveryModel = new NewPasswordRecoveryInputModel();
+): NewPasswordRecoveryInputTestDto => {
+  const newPasswordRecoveryModel = new NewPasswordRecoveryInputTestDto();
   newPasswordRecoveryModel.newPassword = 'qwerty-new';
   newPasswordRecoveryModel.recoveryCode = recoveryCode;
   return newPasswordRecoveryModel;
 };
 
 export const createInvalidNewPasswordRecoveryInputModel =
-  (): NewPasswordRecoveryInputModel => {
-    const invalidNewPasswordRecoveryModel = new NewPasswordRecoveryInputModel();
+  (): NewPasswordRecoveryInputTestDto => {
+    const invalidNewPasswordRecoveryModel =
+      new NewPasswordRecoveryInputTestDto();
     invalidNewPasswordRecoveryModel.newPassword = 'new';
     invalidNewPasswordRecoveryModel.recoveryCode = 'invalid recoveryCode';
     return invalidNewPasswordRecoveryModel;

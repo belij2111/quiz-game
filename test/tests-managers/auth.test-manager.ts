@@ -1,14 +1,14 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { CreateUserInputModel } from '../../src/features/user-accounts/users/api/models/input/create-user.input-model';
 import request from 'supertest';
-import { LoginInputModel } from '../../src/features/user-accounts/auth/api/models/input/login.input-model';
 import { CoreConfig } from '../../src/core/core.config';
-import { MeViewModel } from '../../src/features/user-accounts/auth/api/models/view/me.view-model';
-import { UserViewModel } from '../../src/features/user-accounts/users/api/models/view/user.view-model';
-import { RegistrationEmailResendingInputModel } from '../../src/features/user-accounts/auth/api/models/input/registration-email-resending.input-model';
-import { RegistrationConfirmationCodeInputModel } from '../../src/features/user-accounts/auth/api/models/input/registration-confirmation-code.input-model';
-import { PasswordRecoveryInputModel } from '../../src/features/user-accounts/auth/api/models/input/password-recovery.input-model';
-import { NewPasswordRecoveryInputModel } from '../../src/features/user-accounts/auth/api/models/input/new-password-recovery.input-model';
+import { CreateUserInputTestDto } from '../models/bloggers-platform/input-test-dto/create-user.input-test-dto';
+import { UserViewTestDto } from '../models/bloggers-platform/view-test-dto/user.view-test-dto';
+import { MeViewTestDto } from '../models/user-accounts/view-test-dto/me.view-test-dto';
+import { LoginInputTestDto } from '../models/user-accounts/input-test-dto/login.input-test-dto';
+import { RegistrationEmailResendingInputTestDto } from '../models/user-accounts/input-test-dto/registration-email-resending.input-test-dto';
+import { PasswordRecoveryInputTestDto } from '../models/user-accounts/input-test-dto/password-recovery.input-test-dto';
+import { NewPasswordRecoveryInputTestDto } from '../models/user-accounts/input-test-dto/new-password-recovery.input-test-dto';
+import { RegistrationConfirmationCodeInputTestDto } from '../models/user-accounts/input-test-dto/registration-confirmation-code.input-test-dto';
 
 export class AuthTestManager {
   constructor(
@@ -17,10 +17,10 @@ export class AuthTestManager {
   ) {}
 
   async loginUser(
-    createdModel: CreateUserInputModel,
+    createdModel: CreateUserInputTestDto,
     statusCode: number = HttpStatus.OK,
   ) {
-    const loginModel: LoginInputModel = {
+    const loginModel: LoginInputTestDto = {
       loginOrEmail: createdModel.email,
       password: createdModel.password,
     };
@@ -48,7 +48,7 @@ export class AuthTestManager {
   }
 
   async loginWithRateLimit(
-    createdModel: CreateUserInputModel,
+    createdModel: CreateUserInputTestDto,
     countAttempts: number,
   ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
     const promises: Array<
@@ -92,14 +92,17 @@ export class AuthTestManager {
     return response.body;
   }
 
-  expectCorrectMe(createdUser: UserViewModel, createdResponse: MeViewModel) {
+  expectCorrectMe(
+    createdUser: UserViewTestDto,
+    createdResponse: MeViewTestDto,
+  ) {
     expect(createdUser.login).toBe(createdResponse.login);
     expect(createdUser.email).toBe(createdResponse.email);
     expect(createdUser.id).toBe(createdResponse.userId);
   }
 
   async registration(
-    createdModel: CreateUserInputModel,
+    createdModel: CreateUserInputTestDto,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     await request(this.app.getHttpServer())
@@ -110,7 +113,7 @@ export class AuthTestManager {
 
   expectCorrectSendEmail(
     sendEmailSpy: jest.SpyInstance,
-    validUserModel: CreateUserInputModel,
+    validUserModel: CreateUserInputTestDto,
     callCount: number = 1,
   ) {
     expect(sendEmailSpy).toHaveBeenCalled();
@@ -124,7 +127,7 @@ export class AuthTestManager {
   }
 
   async registrationWithRateLimit(
-    createdUsers: CreateUserInputModel[],
+    createdUsers: CreateUserInputTestDto[],
   ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
     const promises: Array<
       Promise<{ accessToken: string; refreshToken: string } | Error>
@@ -137,7 +140,7 @@ export class AuthTestManager {
   }
 
   async registrationConfirmation(
-    createdModel: RegistrationConfirmationCodeInputModel,
+    createdModel: RegistrationConfirmationCodeInputTestDto,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     await request(this.app.getHttpServer())
@@ -147,7 +150,7 @@ export class AuthTestManager {
   }
 
   async registrationConfirmationWithRateLimit(
-    createdModel: RegistrationConfirmationCodeInputModel,
+    createdModel: RegistrationConfirmationCodeInputTestDto,
     countAttempts: number,
   ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
     const promises: Array<
@@ -162,7 +165,7 @@ export class AuthTestManager {
   }
 
   async registrationEmailResending(
-    createdModel: RegistrationEmailResendingInputModel,
+    createdModel: RegistrationEmailResendingInputTestDto,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     await request(this.app.getHttpServer())
@@ -172,7 +175,7 @@ export class AuthTestManager {
   }
 
   async registrationEmailResendingWithRateLimit(
-    createdModel: RegistrationEmailResendingInputModel,
+    createdModel: RegistrationEmailResendingInputTestDto,
     countAttempts: number,
   ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
     const promises: Array<
@@ -187,7 +190,7 @@ export class AuthTestManager {
   }
 
   async passwordRecovery(
-    createdModel: PasswordRecoveryInputModel,
+    createdModel: PasswordRecoveryInputTestDto,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     await request(this.app.getHttpServer())
@@ -197,7 +200,7 @@ export class AuthTestManager {
   }
 
   async passwordRecoveryWithRateLimit(
-    createdModel: RegistrationEmailResendingInputModel,
+    createdModel: RegistrationEmailResendingInputTestDto,
     countAttempts: number,
   ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
     const promises: Array<
@@ -210,7 +213,7 @@ export class AuthTestManager {
   }
 
   async newPassword(
-    createdModel: NewPasswordRecoveryInputModel,
+    createdModel: NewPasswordRecoveryInputTestDto,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     await request(this.app.getHttpServer())
@@ -220,7 +223,7 @@ export class AuthTestManager {
   }
 
   async newPasswordWithRateLimit(
-    createdModel: NewPasswordRecoveryInputModel,
+    createdModel: NewPasswordRecoveryInputTestDto,
     countAttempts: number,
   ): Promise<Array<{ accessToken: string; refreshToken: string } | Error>> {
     const promises: Array<
