@@ -1,12 +1,13 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { CreateBlogInputModel } from '../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input-model';
-import { BlogViewModel } from '../../src/features/bloggers-platform/blogs/api/models/view/blog.view-model';
 import request from 'supertest';
 import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { createValidBlogModel } from '../models/bloggers-platform/blog.input-model';
 import { CoreConfig } from '../../src/core/core.config';
 import { CreatePostInputModel } from '../../src/features/bloggers-platform/posts/api/models/input/create-post.input-model';
 import { PaginationViewTestDto } from '../models/base/pagination.view-test-dto';
+import { CreateBlogInputTestDto } from '../models/bloggers-platform/input-test-dto/create-blog.input-test-dto';
+import { UpdateBlogInputTestDto } from '../models/bloggers-platform/input-test-dto/update-blog.input-test-dto';
+import { BlogViewTestDto } from '../models/bloggers-platform/view-test-dto/blog.view-test-dto';
 
 export class BlogsTestManager {
   constructor(
@@ -15,7 +16,7 @@ export class BlogsTestManager {
   ) {}
 
   async createBlog(
-    createdModel: CreateBlogInputModel,
+    createdModel: CreateBlogInputTestDto,
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())
@@ -27,8 +28,8 @@ export class BlogsTestManager {
   }
 
   expectCorrectModel(
-    createdModel: CreateBlogInputModel,
-    responseModel: BlogViewModel,
+    createdModel: CreateBlogInputTestDto,
+    responseModel: BlogViewTestDto,
   ) {
     expect(createdModel.name).toBe(responseModel.name);
     expect(createdModel.description).toBe(responseModel.description);
@@ -39,7 +40,7 @@ export class BlogsTestManager {
     count: number = 1,
     statusCode: number = HttpStatus.CREATED,
   ) {
-    const blogs: BlogViewModel[] = [];
+    const blogs: BlogViewTestDto[] = [];
     for (let i = 1; i <= count; i++) {
       const response = await request(this.app.getHttpServer())
         .post('/sa/blogs')
@@ -68,8 +69,8 @@ export class BlogsTestManager {
   }
 
   expectCorrectPagination(
-    createdModels: BlogViewModel[],
-    responseModels: PaginationViewTestDto<BlogViewModel[]>,
+    createdModels: BlogViewTestDto[],
+    responseModels: PaginationViewTestDto<BlogViewTestDto[]>,
   ) {
     expect(responseModels.items.length).toBe(createdModels.length);
     expect(responseModels.totalCount).toBe(createdModels.length);
@@ -80,7 +81,7 @@ export class BlogsTestManager {
   }
 
   async createBlogIsNotAuthorized(
-    createdModel: CreateBlogInputModel,
+    createdModel: CreateBlogInputTestDto,
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())
@@ -99,25 +100,25 @@ export class BlogsTestManager {
 
   async updateBlog(
     id: number,
-    createdModel: CreateBlogInputModel,
+    updatedModel: UpdateBlogInputTestDto,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     return request(this.app.getHttpServer())
       .put('/sa/blogs/' + id)
       .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
-      .send(createdModel)
+      .send(updatedModel)
       .expect(statusCode);
   }
 
   async updateBlogIsNotAuthorized(
     id: number,
-    createdModel: CreateBlogInputModel,
+    updatedModel: UpdateBlogInputTestDto,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     return request(this.app.getHttpServer())
       .put('/sa/blogs/' + id)
       .auth('invalid login', 'invalid password')
-      .send(createdModel)
+      .send(updatedModel)
       .expect(statusCode);
   }
 
