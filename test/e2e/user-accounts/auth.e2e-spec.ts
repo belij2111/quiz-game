@@ -31,6 +31,7 @@ import { SendEmailWithRecoveryCodeEventHandlerMock } from '../../mock/send-email
 import { SendEmailWithRecoveryCodeEventHandler } from '../../../src/features/notifications/event-handlers/send-email-with-recovery-code.event-handler';
 import { CreateUserInputTestDto } from '../../models/user-accounts/input-test-dto/create-user.input-test-dto';
 import { UserViewTestDto } from '../../models/user-accounts/view-test-dto/user.view-test-dto';
+import { LoginSuccessViewTestDto } from '../../models/user-accounts/view-test-dto/login-success.view-test-dto';
 
 describe('e2e-Auth', () => {
   let app: INestApplication;
@@ -103,7 +104,7 @@ describe('e2e-Auth', () => {
   });
 
   describe('POST/auth/refresh-token', () => {
-    let loginResult: { accessToken: any; refreshToken: string } | undefined;
+    let loginResult: LoginSuccessViewTestDto | undefined;
     beforeEach(async () => {
       await usersTestManager.createUser(validUserModel);
       loginResult = await authTestManager.loginUser(validUserModel);
@@ -128,7 +129,7 @@ describe('e2e-Auth', () => {
 
   describe('GET/auth/me', () => {
     let createdUser: UserViewTestDto;
-    let loginResult: { accessToken: any; refreshToken: string } | undefined;
+    let loginResult: LoginSuccessViewTestDto | undefined;
     beforeEach(async () => {
       createdUser = await usersTestManager.createUser(validUserModel);
       loginResult = await authTestManager.loginUser(validUserModel);
@@ -358,7 +359,7 @@ describe('e2e-Auth', () => {
   });
 
   describe('POST/auth/logout', () => {
-    let loginResult: { accessToken: any; refreshToken: string } | undefined;
+    let loginResult: LoginSuccessViewTestDto | undefined;
     let refreshToken: string;
     beforeEach(async () => {
       await authTestManager.registration(validUserModel);

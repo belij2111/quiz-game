@@ -9,6 +9,7 @@ import { RegistrationEmailResendingInputTestDto } from '../models/user-accounts/
 import { PasswordRecoveryInputTestDto } from '../models/user-accounts/input-test-dto/password-recovery.input-test-dto';
 import { NewPasswordRecoveryInputTestDto } from '../models/user-accounts/input-test-dto/new-password-recovery.input-test-dto';
 import { RegistrationConfirmationCodeInputTestDto } from '../models/user-accounts/input-test-dto/registration-confirmation-code.input-test-dto';
+import { LoginSuccessViewTestDto } from '../models/user-accounts/view-test-dto/login-success.view-test-dto';
 
 export class AuthTestManager {
   constructor(
@@ -19,7 +20,7 @@ export class AuthTestManager {
   async loginUser(
     createdModel: CreateUserInputTestDto,
     statusCode: number = HttpStatus.OK,
-  ) {
+  ): Promise<LoginSuccessViewTestDto | undefined> {
     const loginModel: LoginInputTestDto = {
       loginOrEmail: createdModel.email,
       password: createdModel.password,

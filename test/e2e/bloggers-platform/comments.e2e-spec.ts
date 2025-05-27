@@ -13,7 +13,6 @@ import {
 import { UsersTestManager } from '../../tests-managers/users.test-manager';
 import { AuthTestManager } from '../../tests-managers/auth.test-manager';
 import { CoreTestManager } from '../../tests-managers/core.test-manager';
-import { LoginSuccessViewModel } from '../../../src/features/user-accounts/auth/api/models/view/login-success.view-model';
 import { delay } from '../../helpers/delay';
 import { createLikeStatusModel } from '../../models/bloggers-platform/create-like-status.model';
 import { getMockNumberId } from '../../helpers/get-mock-uuid-id';
@@ -23,6 +22,7 @@ import { BlogViewTestDto } from '../../models/bloggers-platform/view-test-dto/bl
 import { PostViewTestDto } from '../../models/bloggers-platform/view-test-dto/post.view-test-dto';
 import { CommentViewTestDto } from '../../models/bloggers-platform/view-test-dto/comment.view-test-dto';
 import { LikeStatusTestEnum } from '../../models/bloggers-platform/enums/like-status.test-enum';
+import { LoginSuccessViewTestDto } from '../../models/user-accounts/view-test-dto/login-success.view-test-dto';
 
 describe('e2e-Comments', () => {
   let app: INestApplication;
@@ -35,7 +35,7 @@ describe('e2e-Comments', () => {
   let createdBlog: BlogViewTestDto;
   let createdPost: PostViewTestDto;
   let createdComment: CommentViewTestDto;
-  let loginResult: LoginSuccessViewModel | undefined;
+  let loginResult: LoginSuccessViewTestDto | undefined;
 
   beforeAll(async () => {
     const result = await initSettings();
