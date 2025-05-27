@@ -1,9 +1,9 @@
-import { CreateBlogInputModel } from '../../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input-model';
+import { CreateBlogInputTestDto } from './input-test-dto/create-blog.input-test-dto';
 
 export const createValidBlogModel = (
   count: number = 1,
-): CreateBlogInputModel => {
-  const blogModel = new CreateBlogInputModel();
+): CreateBlogInputTestDto => {
+  const blogModel = new CreateBlogInputTestDto();
   blogModel.name = `Blog${count}`;
   blogModel.description = `new blog ${count}`;
   blogModel.websiteUrl = `https://www.example${count}.com`;
@@ -12,8 +12,8 @@ export const createValidBlogModel = (
 
 export const createInValidBlogModel = (
   count: number = 1,
-): CreateBlogInputModel => {
-  const invalidBlogModel = new CreateBlogInputModel();
+): CreateBlogInputTestDto => {
+  const invalidBlogModel = new CreateBlogInputTestDto();
   invalidBlogModel.name = `Blog${count}`;
   invalidBlogModel.description = `new blog ${count}`;
   invalidBlogModel.websiteUrl = `invalid url${count}`;
