@@ -3,11 +3,11 @@ import request from 'supertest';
 import { CoreConfig } from '../../src/core/core.config';
 import { createValidPostModel } from '../models/bloggers-platform/post.input-model';
 import { paginationInputParams } from '../models/base/pagination.input-test-dto';
-import { LikeInputModel } from '../../src/features/bloggers-platform/likes/api/models/input/like.input-model';
 import { PaginationViewTestDto } from '../models/base/pagination.view-test-dto';
 import { CreatePostInputTestDto } from '../models/bloggers-platform/input-test-dto/create-post.input-test-dto';
 import { UpdatePostInputTestDto } from '../models/bloggers-platform/input-test-dto/update-post.input-test-dto';
 import { PostViewTestDto } from '../models/bloggers-platform/view-test-dto/post.view-test-dto';
+import { LikeInputTestDTO } from '../models/bloggers-platform/input-test-dto/like.input-test-dto';
 
 export class PostsTestManager {
   constructor(
@@ -146,7 +146,7 @@ export class PostsTestManager {
   async updateLikeStatus(
     accessToken: string,
     postId: number,
-    createdModel: LikeInputModel | string,
+    createdModel: LikeInputTestDTO | string,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     await request(this.app.getHttpServer())

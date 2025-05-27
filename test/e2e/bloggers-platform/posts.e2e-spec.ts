@@ -20,11 +20,11 @@ import { delay } from '../../helpers/delay';
 import { createLikeStatusModel } from '../../models/bloggers-platform/create-like-status.model';
 import { LoginSuccessViewModel } from '../../../src/features/user-accounts/auth/api/models/view/login-success.view-model';
 import { getMockNumberId } from '../../helpers/get-mock-uuid-id';
-import { LikeStatus } from '../../../src/features/bloggers-platform/likes/api/models/enums/like-status.enum';
 import { CreateBlogInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-blog.input-test-dto';
 import { PostViewTestDto } from '../../models/bloggers-platform/view-test-dto/post.view-test-dto';
 import { BlogViewTestDto } from '../../models/bloggers-platform/view-test-dto/blog.view-test-dto';
 import { CreateCommentInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-comment.input-test-dto';
+import { LikeStatusTestEnum } from '../../models/bloggers-platform/enums/like-status.test-enum';
 
 describe('e2e-Posts', () => {
   let app: INestApplication;
@@ -295,7 +295,9 @@ describe('e2e-Posts', () => {
       loginResult = await coreTestManager.loginUser();
     });
     it(`should update the like status for the post : STATUS 204`, async () => {
-      const updateLikeStatusModel = createLikeStatusModel(LikeStatus.Like);
+      const updateLikeStatusModel = createLikeStatusModel(
+        LikeStatusTestEnum.Like,
+      );
       await postsTestManager.updateLikeStatus(
         loginResult!.accessToken,
         createdPost.id,
@@ -313,7 +315,9 @@ describe('e2e-Posts', () => {
       );
     });
     it(`shouldn't update the like status if accessTokens expired : STATUS 401`, async () => {
-      const updateLikeStatusModel = createLikeStatusModel(LikeStatus.Dislike);
+      const updateLikeStatusModel = createLikeStatusModel(
+        LikeStatusTestEnum.Dislike,
+      );
       await delay(10000);
       await postsTestManager.updateLikeStatus(
         loginResult!.accessToken,
@@ -323,7 +327,9 @@ describe('e2e-Posts', () => {
       );
     });
     it(`shouldn't update the like status if the postId does not exist : STATUS 404`, async () => {
-      const updateLikeStatusModel = createLikeStatusModel(LikeStatus.Dislike);
+      const updateLikeStatusModel = createLikeStatusModel(
+        LikeStatusTestEnum.Dislike,
+      );
       const nonExistentId = getMockNumberId();
       await postsTestManager.updateLikeStatus(
         loginResult!.accessToken,

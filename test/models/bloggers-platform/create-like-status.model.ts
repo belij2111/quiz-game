@@ -1,11 +1,10 @@
-import { LikeInputModel } from '../../../src/features/bloggers-platform/likes/api/models/input/like.input-model';
-
-import { LikeStatus } from '../../../src/features/bloggers-platform/likes/api/models/enums/like-status.enum';
+import { LikeStatusTestEnum } from './enums/like-status.test-enum';
+import { LikeInputTestDTO } from './input-test-dto/like.input-test-dto';
 
 export const createLikeStatusModel = (
-  likeStatus: LikeStatus,
-): LikeInputModel => {
-  const likeModel = new LikeInputModel();
+  likeStatus: LikeStatusTestEnum,
+): LikeInputTestDTO => {
+  const likeModel = new LikeInputTestDTO();
   likeModel.likeStatus = likeStatus;
   return likeModel;
 };

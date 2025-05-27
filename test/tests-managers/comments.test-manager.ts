@@ -2,11 +2,11 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { createValidCommentModel } from '../models/bloggers-platform/comment.input-model';
-import { LikeInputModel } from '../../src/features/bloggers-platform/likes/api/models/input/like.input-model';
 import { PaginationViewTestDto } from '../models/base/pagination.view-test-dto';
 import { CreateCommentInputTestDto } from '../models/bloggers-platform/input-test-dto/create-comment.input-test-dto';
 import { UpdateCommentInputTestDto } from '../models/bloggers-platform/input-test-dto/update-comment.input-test-dto';
 import { CommentViewTestDto } from '../models/bloggers-platform/view-test-dto/comment.view-test-dto';
+import { LikeInputTestDTO } from '../models/bloggers-platform/input-test-dto/like.input-test-dto';
 
 export class CommentsTestManager {
   constructor(private readonly app: INestApplication) {}
@@ -113,7 +113,7 @@ export class CommentsTestManager {
   async updateLikeStatus(
     accessToken: string,
     commentId: number,
-    createdModel: LikeInputModel | string,
+    createdModel: LikeInputTestDTO | string,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     await request(this.app.getHttpServer())

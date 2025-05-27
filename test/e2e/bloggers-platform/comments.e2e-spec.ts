@@ -17,12 +17,12 @@ import { LoginSuccessViewModel } from '../../../src/features/user-accounts/auth/
 import { delay } from '../../helpers/delay';
 import { createLikeStatusModel } from '../../models/bloggers-platform/create-like-status.model';
 import { getMockNumberId } from '../../helpers/get-mock-uuid-id';
-import { LikeStatus } from '../../../src/features/bloggers-platform/likes/api/models/enums/like-status.enum';
 import { CreateBlogInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-blog.input-test-dto';
 import { CreateCommentInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-comment.input-test-dto';
 import { BlogViewTestDto } from '../../models/bloggers-platform/view-test-dto/blog.view-test-dto';
 import { PostViewTestDto } from '../../models/bloggers-platform/view-test-dto/post.view-test-dto';
 import { CommentViewTestDto } from '../../models/bloggers-platform/view-test-dto/comment.view-test-dto';
+import { LikeStatusTestEnum } from '../../models/bloggers-platform/enums/like-status.test-enum';
 
 describe('e2e-Comments', () => {
   let app: INestApplication;
@@ -174,7 +174,9 @@ describe('e2e-Comments', () => {
 
   describe('PUT/comment/:commentId/like-status', () => {
     it(`should update the like status for the comment : STATUS 204`, async () => {
-      const updateLikeStatusModel = createLikeStatusModel(LikeStatus.Like);
+      const updateLikeStatusModel = createLikeStatusModel(
+        LikeStatusTestEnum.Like,
+      );
       await commentsTestManager.updateLikeStatus(
         loginResult!.accessToken,
         createdComment.id,
@@ -192,7 +194,9 @@ describe('e2e-Comments', () => {
       );
     });
     it(`shouldn't update the like status if accessTokens expired : STATUS 401`, async () => {
-      const updateLikeStatusModel = createLikeStatusModel(LikeStatus.Dislike);
+      const updateLikeStatusModel = createLikeStatusModel(
+        LikeStatusTestEnum.Dislike,
+      );
       await delay(10000);
       await commentsTestManager.updateLikeStatus(
         loginResult!.accessToken,
@@ -202,7 +206,9 @@ describe('e2e-Comments', () => {
       );
     });
     it(`shouldn't update the like status if the commentId does not exist : STATUS 404`, async () => {
-      const updateLikeStatusModel = createLikeStatusModel(LikeStatus.None);
+      const updateLikeStatusModel = createLikeStatusModel(
+        LikeStatusTestEnum.None,
+      );
       const nonExistentId = getMockNumberId();
       await commentsTestManager.updateLikeStatus(
         loginResult!.accessToken,
