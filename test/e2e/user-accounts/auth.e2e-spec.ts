@@ -30,6 +30,7 @@ import { SendEmailConfirmationWhenRegisteringUserEventHandler } from '../../../s
 import { SendEmailWithRecoveryCodeEventHandlerMock } from '../../mock/send-email-with-recovery-code-event-handler.mock';
 import { SendEmailWithRecoveryCodeEventHandler } from '../../../src/features/notifications/event-handlers/send-email-with-recovery-code.event-handler';
 import { CreateUserInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-user.input-test-dto';
+import { UserViewTestDto } from '../../models/bloggers-platform/view-test-dto/user.view-test-dto';
 
 describe('e2e-Auth', () => {
   let app: INestApplication;
@@ -37,6 +38,7 @@ describe('e2e-Auth', () => {
   let authTestManager: AuthTestManager;
   let sendEmailConfirmationWhenRegisteringUserEventHandlerMock: SendEmailConfirmationWhenRegisteringUserEventHandlerMock;
   let sendEmailWithRecoveryCodeEventHandlerMock: SendEmailWithRecoveryCodeEventHandlerMock;
+  let validUserModel: CreateUserInputTestDto;
   beforeEach(async () => {
     const result = await initSettings([
       {
@@ -58,6 +60,7 @@ describe('e2e-Auth', () => {
     sendEmailWithRecoveryCodeEventHandlerMock = app.get(
       SendEmailWithRecoveryCodeEventHandler,
     );
+    validUserModel = createValidUserModel();
   });
   beforeEach(async () => {
     await deleteAllData(app);
@@ -69,26 +72,19 @@ describe('e2e-Auth', () => {
     await app.close();
   });
   describe('POST/auth/login', () => {
-    it(`should login user to the system : STATUS 200`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
+    beforeEach(async () => {
       await usersTestManager.createUser(validUserModel);
+    });
+    it(`should login user to the system : STATUS 200`, async () => {
       const createdResponse = await authTestManager.loginUser(
         validUserModel,
         HttpStatus.OK,
       );
-      // console.log(
-      //   'createdResponse.accessToken :',
-      //   createdResponse!.accessToken,
-      // );
-      // console.log(
-      //   'createdResponse.refreshToken :',
-      //   createdResponse!.refreshToken,
-      // );
+      // console.log('accessToken :', createdResponse!.accessToken);
+      // console.log('refreshToken :', createdResponse!.refreshToken);
       authTestManager.expectCorrectLoginUser(createdResponse);
     });
     it(`shouldn't login user to the system if the password or login is wrong : STATUS 401`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
-      await usersTestManager.createUser(validUserModel);
       const invalidUserModel: CreateUserInputTestDto = createInValidUserModel();
       await authTestManager.loginUser(
         invalidUserModel,
@@ -97,8 +93,6 @@ describe('e2e-Auth', () => {
     });
 
     it(`should restrict login if the limit is exceeded : STATUS 429`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
-      await usersTestManager.createUser(validUserModel);
       const createdResponse = await authTestManager.loginWithRateLimit(
         validUserModel,
         6,
@@ -109,28 +103,21 @@ describe('e2e-Auth', () => {
   });
 
   describe('POST/auth/refresh-token', () => {
-    it(`should generate a new pair of tokens : STATUS 200`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
+    let loginResult: { accessToken: any; refreshToken: string } | undefined;
+    beforeEach(async () => {
       await usersTestManager.createUser(validUserModel);
-      const loginResult = await authTestManager.loginUser(validUserModel);
+      loginResult = await authTestManager.loginUser(validUserModel);
+    });
+    it(`should generate a new pair of tokens : STATUS 200`, async () => {
       const createdResponse = await authTestManager.refreshToken(
         loginResult!.refreshToken,
         HttpStatus.OK,
       );
-      // console.log(
-      //   'createdResponse.accessToken :',
-      //   createdResponse!.accessToken,
-      // );
-      // console.log(
-      //   'createdResponse.refreshToken :',
-      //   createdResponse!.refreshToken,
-      // );
+      // console.log('accessToken :', createdResponse!.accessToken);
+      // console.log('refreshToken :', createdResponse!.refreshToken);
       authTestManager.expectCorrectLoginUser(createdResponse);
     });
     it(`shouldn't generate a new pair of tokens if refreshToken expired : STATUS 401`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
-      await usersTestManager.createUser(validUserModel);
-      const loginResult = await authTestManager.loginUser(validUserModel);
       await delay(20000);
       await authTestManager.refreshToken(
         loginResult!.refreshToken,
@@ -140,10 +127,13 @@ describe('e2e-Auth', () => {
   });
 
   describe('GET/auth/me', () => {
+    let createdUser: UserViewTestDto;
+    let loginResult: { accessToken: any; refreshToken: string } | undefined;
+    beforeEach(async () => {
+      createdUser = await usersTestManager.createUser(validUserModel);
+      loginResult = await authTestManager.loginUser(validUserModel);
+    });
     it(`should return users info with correct accessTokens : STATUS 200`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
-      const createdUser = await usersTestManager.createUser(validUserModel);
-      const loginResult = await authTestManager.loginUser(validUserModel);
       const createdResponse = await authTestManager.me(
         loginResult!.accessToken,
         HttpStatus.OK,
@@ -152,9 +142,6 @@ describe('e2e-Auth', () => {
       authTestManager.expectCorrectMe(createdUser, createdResponse);
     });
     it(`shouldn't return users info with if accessTokens expired : STATUS 401`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
-      await usersTestManager.createUser(validUserModel);
-      const loginResult = await authTestManager.loginUser(validUserModel);
       await delay(10000);
       await authTestManager.me(
         loginResult!.accessToken,
@@ -165,7 +152,6 @@ describe('e2e-Auth', () => {
 
   describe('POST/auth/registration', () => {
     it(`should register user in system : STATUS 204`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
       const sendEmailSpy = jest.spyOn(
         sendEmailConfirmationWhenRegisteringUserEventHandlerMock,
         'handle',
@@ -174,7 +160,7 @@ describe('e2e-Auth', () => {
       authTestManager.expectCorrectSendEmail(sendEmailSpy, validUserModel);
     });
     it(`shouldn't register user in system with incorrect input data : STATUS 400`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel(7);
+      validUserModel = createValidUserModel(7);
       await usersTestManager.createUser(validUserModel);
       await authTestManager.registration(
         validUserModel,
@@ -190,7 +176,7 @@ describe('e2e-Auth', () => {
       authTestManager.expectTooManyRequests(createdResponse);
     });
     it(`should delete the registered user by ID : STATUS 204`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
+      validUserModel = createValidUserModel();
       await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
       const fondUsers = await usersTestManager.getUsersWithPaging(
         HttpStatus.OK,
@@ -204,9 +190,10 @@ describe('e2e-Auth', () => {
   });
 
   describe('POST/auth/registration-confirmation', () => {
-    it(`should confirm the user's registration in system : STATUS 204`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
+    beforeEach(async () => {
       await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
+    });
+    it(`should confirm the user's registration in system : STATUS 204`, async () => {
       const confirmationCode =
         sendEmailConfirmationWhenRegisteringUserEventHandlerMock.sentEmails[0]
           .code;
@@ -219,8 +206,6 @@ describe('e2e-Auth', () => {
       );
     });
     it(`shouldn't confirm the user's registration with incorrect input data : STATUS 400`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
-      await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
       const invalidConfirmationCode =
         createInvalidRegistrationConfirmationCodeInputModel();
       await authTestManager.registrationConfirmation(
@@ -229,8 +214,6 @@ describe('e2e-Auth', () => {
       );
     });
     it(`shouldn't confirm the user's registration if the limit is exceeded : STATUS 429`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
-      await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
       const confirmationCode =
         sendEmailConfirmationWhenRegisteringUserEventHandlerMock.sentEmails[0]
           .code;
@@ -246,24 +229,23 @@ describe('e2e-Auth', () => {
   });
 
   describe('POST/auth/registration-email-resending', () => {
+    beforeEach(async () => {
+      await authTestManager.registration(validUserModel);
+    });
     it(`should resend confirmation registration by email : STATUS 204`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
       const sendEmailSpy = jest.spyOn(
         sendEmailConfirmationWhenRegisteringUserEventHandlerMock,
         'handle',
       );
-      await authTestManager.registration(validUserModel);
       const emailResendingModel =
         createEmailResendingInputModel(validUserModel);
       await authTestManager.registrationEmailResending(
         emailResendingModel,
         HttpStatus.NO_CONTENT,
       );
-      authTestManager.expectCorrectSendEmail(sendEmailSpy, validUserModel, 2);
+      authTestManager.expectCorrectSendEmail(sendEmailSpy, validUserModel, 1);
     });
     it(`shouldn't resend confirmation registration with incorrect input data : STATUS 400 `, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
-      await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
       const invalidEmailResendingModel =
         createInvalidEmailResendingInputModel();
       await authTestManager.registrationEmailResending(
@@ -272,8 +254,6 @@ describe('e2e-Auth', () => {
       );
     });
     it(`shouldn't resend confirmation registration if the limit is exceeded : STATUS 429`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
-      await authTestManager.registration(validUserModel);
       const emailResendingModel =
         createEmailResendingInputModel(validUserModel);
       const createdResponse =
@@ -286,13 +266,14 @@ describe('e2e-Auth', () => {
   });
 
   describe('POST/auth/password-recovery', () => {
+    beforeEach(async () => {
+      await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
+    });
     it(`should recover password via email confirmation : STATUS 204`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
       const sendEmailSpy = jest.spyOn(
         sendEmailWithRecoveryCodeEventHandlerMock,
         'handle',
       );
-      await authTestManager.registration(validUserModel, HttpStatus.NO_CONTENT);
       const passwordRecoveryModel =
         createPasswordRecoveryInputModel(validUserModel);
       await authTestManager.passwordRecovery(
@@ -302,8 +283,6 @@ describe('e2e-Auth', () => {
       authTestManager.expectCorrectSendEmail(sendEmailSpy, validUserModel, 1);
     });
     it(`shouldn't recover password with incorrect input data : STATUS 400 `, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
-      await authTestManager.registration(validUserModel);
       const invalidPasswordRecoveryModel =
         createInvalidPasswordRecoveryInputModel();
       await authTestManager.passwordRecovery(
@@ -312,8 +291,6 @@ describe('e2e-Auth', () => {
       );
     });
     it(`shouldn't recover password if the limit is exceeded : STATUS 429 `, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
-      await authTestManager.registration(validUserModel);
       const passwordRecoveryModel =
         createPasswordRecoveryInputModel(validUserModel);
       const createdResponse =
@@ -326,22 +303,31 @@ describe('e2e-Auth', () => {
   });
 
   describe('POST/auth/new-password', () => {
-    it(`should confirm password recovery : STATUS 204`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
+    beforeEach(async () => {
       await authTestManager.registration(validUserModel);
-      const recoveryCode =
-        sendEmailConfirmationWhenRegisteringUserEventHandlerMock.sentEmails[0]
-          .code;
+    });
+    it(`should confirm password recovery : STATUS 204`, async () => {
+      const sendEmailSpy = jest.spyOn(
+        sendEmailWithRecoveryCodeEventHandlerMock,
+        'handle',
+      );
+      const passwordRecoveryModel =
+        createPasswordRecoveryInputModel(validUserModel);
+      await authTestManager.passwordRecovery(
+        passwordRecoveryModel,
+        HttpStatus.NO_CONTENT,
+      );
+      const recoveryCode = sendEmailSpy.mock.calls[0][0].code;
+      // console.log('recoveryCode :', recoveryCode);
       const newPasswordRecoveryModel =
         createNewPasswordRecoveryInputModel(recoveryCode);
       await authTestManager.newPassword(
         newPasswordRecoveryModel,
         HttpStatus.NO_CONTENT,
       );
+      authTestManager.expectCorrectSendEmail(sendEmailSpy, validUserModel);
     });
     it(`shouldn't confirm password recovery with incorrect input data : STATUS 400`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
-      await authTestManager.registration(validUserModel);
       const invalidNewPasswordRecoveryModel =
         createInvalidNewPasswordRecoveryInputModel();
       await authTestManager.newPassword(
@@ -350,11 +336,17 @@ describe('e2e-Auth', () => {
       );
     });
     it(`shouldn't confirm password recovery if the limit is exceeded : STATUS 429`, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
-      await authTestManager.registration(validUserModel);
-      const recoveryCode =
-        sendEmailConfirmationWhenRegisteringUserEventHandlerMock.sentEmails[0]
-          .code;
+      const sendEmailSpy = jest.spyOn(
+        sendEmailWithRecoveryCodeEventHandlerMock,
+        'handle',
+      );
+      const passwordRecoveryModel =
+        createPasswordRecoveryInputModel(validUserModel);
+      await authTestManager.passwordRecovery(
+        passwordRecoveryModel,
+        HttpStatus.NO_CONTENT,
+      );
+      const recoveryCode = sendEmailSpy.mock.calls[0][0].code;
       const newPasswordRecoveryModel =
         createNewPasswordRecoveryInputModel(recoveryCode);
       const createdResponse = await authTestManager.newPasswordWithRateLimit(
@@ -366,18 +358,17 @@ describe('e2e-Auth', () => {
   });
 
   describe('POST/auth/logout', () => {
-    it(`should clear the user session and log out  : STATUS 204 `, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
+    let loginResult: { accessToken: any; refreshToken: string } | undefined;
+    let refreshToken: string;
+    beforeEach(async () => {
       await authTestManager.registration(validUserModel);
-      const loginResult = await authTestManager.loginUser(validUserModel);
-      const refreshToken = loginResult!.refreshToken;
+      loginResult = await authTestManager.loginUser(validUserModel);
+      refreshToken = loginResult!.refreshToken;
+    });
+    it(`should clear the user session and log out  : STATUS 204 `, async () => {
       await authTestManager.logout(refreshToken, HttpStatus.NO_CONTENT);
     });
     it(`shouldn't clear the user session and log out if refreshToken expired  : STATUS 401 `, async () => {
-      const validUserModel: CreateUserInputTestDto = createValidUserModel();
-      await authTestManager.registration(validUserModel);
-      const loginResult = await authTestManager.loginUser(validUserModel);
-      const refreshToken = loginResult!.refreshToken;
       await delay(20000);
       await authTestManager.logout(refreshToken, HttpStatus.UNAUTHORIZED);
     });
