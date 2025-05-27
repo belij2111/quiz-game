@@ -3,7 +3,6 @@ import { initSettings } from '../../helpers/init-settings';
 import { BlogsTestManager } from '../../tests-managers/blogs.test-manager';
 import { deleteAllData } from '../../helpers/delete-all-data';
 import { PostsTestManager } from '../../tests-managers/posts.test-manager';
-import { CreateBlogInputModel } from '../../../src/features/bloggers-platform/blogs/api/models/input/create-blog.input-model';
 import { createValidBlogModel } from '../../models/bloggers-platform/blog.input-model';
 import { createValidPostModel } from '../../models/bloggers-platform/post.input-model';
 import { CommentsTestManager } from '../../tests-managers/comments.test-manager';
@@ -11,18 +10,19 @@ import {
   createInValidCommentModel,
   createValidCommentModel,
 } from '../../models/bloggers-platform/comment.input-model';
-import { CreateCommentInputModel } from '../../../src/features/bloggers-platform/comments/api/models/input/create-comment.input-model';
 import { UsersTestManager } from '../../tests-managers/users.test-manager';
 import { AuthTestManager } from '../../tests-managers/auth.test-manager';
 import { CoreTestManager } from '../../tests-managers/core.test-manager';
-import { BlogViewModel } from '../../../src/features/bloggers-platform/blogs/api/models/view/blog.view-model';
-import { PostViewModel } from '../../../src/features/bloggers-platform/posts/api/models/view/post.view-model';
-import { CommentViewModel } from '../../../src/features/bloggers-platform/comments/api/models/view/comment.view.model';
 import { LoginSuccessViewModel } from '../../../src/features/user-accounts/auth/api/models/view/login-success.view-model';
 import { delay } from '../../helpers/delay';
 import { createLikeStatusModel } from '../../models/bloggers-platform/create-like-status.model';
 import { getMockNumberId } from '../../helpers/get-mock-uuid-id';
 import { LikeStatus } from '../../../src/features/bloggers-platform/likes/api/models/enums/like-status.enum';
+import { CreateBlogInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-blog.input-test-dto';
+import { CreateCommentInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-comment.input-test-dto';
+import { BlogViewTestDto } from '../../models/bloggers-platform/view-test-dto/blog.view-test-dto';
+import { PostViewTestDto } from '../../models/bloggers-platform/view-test-dto/post.view-test-dto';
+import { CommentViewTestDto } from '../../models/bloggers-platform/view-test-dto/comment.view-test-dto';
 
 describe('e2e-Comments', () => {
   let app: INestApplication;
@@ -32,9 +32,9 @@ describe('e2e-Comments', () => {
   let authTestManager: AuthTestManager;
   let coreTestManager: CoreTestManager;
   let commentsTestManager: CommentsTestManager;
-  let createdBlog: BlogViewModel;
-  let createdPost: PostViewModel;
-  let createdComment: CommentViewModel;
+  let createdBlog: BlogViewTestDto;
+  let createdPost: PostViewTestDto;
+  let createdComment: CommentViewTestDto;
   let loginResult: LoginSuccessViewModel | undefined;
 
   beforeAll(async () => {
@@ -50,13 +50,13 @@ describe('e2e-Comments', () => {
   });
   beforeEach(async () => {
     await deleteAllData(app);
-    const validBlogModel: CreateBlogInputModel = createValidBlogModel();
+    const validBlogModel: CreateBlogInputTestDto = createValidBlogModel();
     createdBlog = await blogsTestManager.createBlog(validBlogModel);
     const validPostModel = createValidPostModel(createdBlog.id);
     createdPost = await postsTestManager.createPost(validPostModel);
     await delay(3000);
     loginResult = await coreTestManager.loginUser();
-    const validCommentModel: CreateCommentInputModel =
+    const validCommentModel: CreateCommentInputTestDto =
       createValidCommentModel();
     createdComment = await commentsTestManager.createComment(
       loginResult!.accessToken,

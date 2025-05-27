@@ -1,11 +1,12 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { CreateCommentInputModel } from '../../src/features/bloggers-platform/comments/api/models/input/create-comment.input-model';
-import { CommentViewModel } from '../../src/features/bloggers-platform/comments/api/models/view/comment.view.model';
 import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { createValidCommentModel } from '../models/bloggers-platform/comment.input-model';
 import { LikeInputModel } from '../../src/features/bloggers-platform/likes/api/models/input/like.input-model';
 import { PaginationViewTestDto } from '../models/base/pagination.view-test-dto';
+import { CreateCommentInputTestDto } from '../models/bloggers-platform/input-test-dto/create-comment.input-test-dto';
+import { UpdateCommentInputTestDto } from '../models/bloggers-platform/input-test-dto/update-comment.input-test-dto';
+import { CommentViewTestDto } from '../models/bloggers-platform/view-test-dto/comment.view-test-dto';
 
 export class CommentsTestManager {
   constructor(private readonly app: INestApplication) {}
@@ -13,7 +14,7 @@ export class CommentsTestManager {
   async createComment(
     accessToken: string,
     postId: number,
-    createdModel: CreateCommentInputModel,
+    createdModel: CreateCommentInputTestDto,
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())
@@ -25,8 +26,8 @@ export class CommentsTestManager {
   }
 
   expectCorrectModel(
-    createdModel: CreateCommentInputModel,
-    responseModel: CommentViewModel,
+    createdModel: CreateCommentInputTestDto,
+    responseModel: CommentViewTestDto,
   ) {
     expect(createdModel.content).toBe(responseModel.content);
   }
@@ -37,7 +38,7 @@ export class CommentsTestManager {
     count: number,
     statusCode: number = HttpStatus.CREATED,
   ) {
-    const comments: CommentViewModel[] = [];
+    const comments: CommentViewTestDto[] = [];
     for (let i = 1; i <= count; i++) {
       const response = await request(this.app.getHttpServer())
         .post(`/posts/${postId}/comments`)
@@ -67,8 +68,8 @@ export class CommentsTestManager {
   }
 
   expectCorrectPagination(
-    createModels: CreateCommentInputModel[],
-    responseModels: PaginationViewTestDto<CommentViewModel[]>,
+    createModels: CreateCommentInputTestDto[],
+    responseModels: PaginationViewTestDto<CommentViewTestDto[]>,
   ) {
     expect(responseModels.items.length).toBe(createModels.length);
     expect(responseModels.totalCount).toBe(createModels.length);
@@ -88,13 +89,13 @@ export class CommentsTestManager {
   async update(
     accessToken: string,
     commentId: number,
-    createdModel: CreateCommentInputModel,
+    updatedModel: UpdateCommentInputTestDto,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     await request(this.app.getHttpServer())
       .put(`/comments/${commentId}`)
       .auth(accessToken, { type: 'bearer' })
-      .send(createdModel)
+      .send(updatedModel)
       .expect(statusCode);
   }
 

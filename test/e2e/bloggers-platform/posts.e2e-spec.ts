@@ -8,7 +8,6 @@ import {
   createInValidPostModel,
   createValidPostModel,
 } from '../../models/bloggers-platform/post.input-model';
-import { CreateCommentInputModel } from '../../../src/features/bloggers-platform/comments/api/models/input/create-comment.input-model';
 import {
   createInValidCommentModel,
   createValidCommentModel,
@@ -25,6 +24,7 @@ import { LikeStatus } from '../../../src/features/bloggers-platform/likes/api/mo
 import { CreateBlogInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-blog.input-test-dto';
 import { PostViewTestDto } from '../../models/bloggers-platform/view-test-dto/post.view-test-dto';
 import { BlogViewTestDto } from '../../models/bloggers-platform/view-test-dto/blog.view-test-dto';
+import { CreateCommentInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-comment.input-test-dto';
 
 describe('e2e-Posts', () => {
   let app: INestApplication;
@@ -198,7 +198,7 @@ describe('e2e-Posts', () => {
       createdPost = await postsTestManager.createPost(validPostModel);
     });
     it(`should create comment for specified post : STATUS 201`, async () => {
-      const validCommentModel: CreateCommentInputModel =
+      const validCommentModel: CreateCommentInputTestDto =
         createValidCommentModel();
       const loginResult = await coreTestManager.loginUser();
       const createdResponse = await commentsTestManager.createComment(
@@ -214,7 +214,7 @@ describe('e2e-Posts', () => {
       );
     });
     it(`shouldn't create comment with incorrect input data : STATUS 400`, async () => {
-      const invalidCommentModel: CreateCommentInputModel =
+      const invalidCommentModel: CreateCommentInputTestDto =
         createInValidCommentModel();
       const loginResult = await coreTestManager.loginUser();
       await commentsTestManager.createComment(
@@ -225,7 +225,7 @@ describe('e2e-Posts', () => {
       );
     });
     it(`shouldn't create comment if accessTokens expired : STATUS 401`, async () => {
-      const validCommentModel: CreateCommentInputModel =
+      const validCommentModel: CreateCommentInputTestDto =
         createValidCommentModel();
       const loginResult = await coreTestManager.loginUser();
       await delay(10000);
@@ -237,7 +237,7 @@ describe('e2e-Posts', () => {
       );
     });
     it(`shouldn't create comment if the postId does not exist : STATUS 404`, async () => {
-      const validCommentModel: CreateCommentInputModel =
+      const validCommentModel: CreateCommentInputTestDto =
         createValidCommentModel();
       const loginResult = await coreTestManager.loginUser();
       const nonExistentId = getMockNumberId();
