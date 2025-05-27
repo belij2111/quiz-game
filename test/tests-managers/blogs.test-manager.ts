@@ -3,11 +3,11 @@ import request from 'supertest';
 import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { createValidBlogModel } from '../models/bloggers-platform/blog.input-model';
 import { CoreConfig } from '../../src/core/core.config';
-import { CreatePostInputModel } from '../../src/features/bloggers-platform/posts/api/models/input/create-post.input-model';
 import { PaginationViewTestDto } from '../models/base/pagination.view-test-dto';
 import { CreateBlogInputTestDto } from '../models/bloggers-platform/input-test-dto/create-blog.input-test-dto';
 import { UpdateBlogInputTestDto } from '../models/bloggers-platform/input-test-dto/update-blog.input-test-dto';
 import { BlogViewTestDto } from '../models/bloggers-platform/view-test-dto/blog.view-test-dto';
+import { CreatePostInputTestDto } from '../models/bloggers-platform/input-test-dto/create-post.input-test-dto';
 
 export class BlogsTestManager {
   constructor(
@@ -141,7 +141,7 @@ export class BlogsTestManager {
 
   async createPostByBlogId(
     blogId: number,
-    createdModel: CreatePostInputModel,
+    createdModel: CreatePostInputTestDto,
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())
@@ -154,7 +154,7 @@ export class BlogsTestManager {
 
   async createPostByBlogIdIsNotAuthorized(
     blogId: number,
-    createdModel: CreatePostInputModel,
+    createdModel: CreatePostInputTestDto,
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())

@@ -1,12 +1,13 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { CoreConfig } from '../../src/core/core.config';
-import { CreatePostInputModel } from '../../src/features/bloggers-platform/posts/api/models/input/create-post.input-model';
-import { PostViewModel } from '../../src/features/bloggers-platform/posts/api/models/view/post.view-model';
 import { createValidPostModel } from '../models/bloggers-platform/post.input-model';
 import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { LikeInputModel } from '../../src/features/bloggers-platform/likes/api/models/input/like.input-model';
 import { PaginationViewTestDto } from '../models/base/pagination.view-test-dto';
+import { CreatePostInputTestDto } from '../models/bloggers-platform/input-test-dto/create-post.input-test-dto';
+import { UpdatePostInputTestDto } from '../models/bloggers-platform/input-test-dto/update-post.input-test-dto';
+import { PostViewTestDto } from '../models/bloggers-platform/view-test-dto/post.view-test-dto';
 
 export class PostsTestManager {
   constructor(
@@ -15,7 +16,7 @@ export class PostsTestManager {
   ) {}
 
   async createPost(
-    createdModel: CreatePostInputModel,
+    createdModel: CreatePostInputTestDto,
     statusCode: number = HttpStatus.CREATED,
   ) {
     const response = await request(this.app.getHttpServer())
@@ -31,7 +32,7 @@ export class PostsTestManager {
     count: number,
     statusCode: number = HttpStatus.CREATED,
   ) {
-    const posts: PostViewModel[] = [];
+    const posts: PostViewTestDto[] = [];
     for (let i = 1; i <= count; i++) {
       const response = await request(this.app.getHttpServer())
         .post('/posts')
@@ -43,7 +44,7 @@ export class PostsTestManager {
     return posts;
   }
 
-  expectCorrectModel(createdModel: any, responseModel: PostViewModel) {
+  expectCorrectModel(createdModel: any, responseModel: PostViewTestDto) {
     expect(createdModel.title).toBe(responseModel.title);
     expect(createdModel.shortDescription).toBe(responseModel.shortDescription);
     expect(createdModel.content).toBe(responseModel.content);
@@ -51,7 +52,7 @@ export class PostsTestManager {
   }
 
   async createPostIsNotAuthorized(
-    createdModel: CreatePostInputModel,
+    createdModel: CreatePostInputTestDto,
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())
@@ -76,8 +77,8 @@ export class PostsTestManager {
   }
 
   expectCorrectPagination(
-    createModels: PostViewModel[],
-    responseModels: PaginationViewTestDto<PostViewModel[]>,
+    createModels: PostViewTestDto[],
+    responseModels: PaginationViewTestDto<PostViewTestDto[]>,
   ) {
     expect(responseModels.items.length).toBe(createModels.length);
     expect(responseModels.totalCount).toBe(createModels.length);
@@ -97,26 +98,26 @@ export class PostsTestManager {
   async updatePost(
     id: number,
     blogId: number,
-    createdModel: CreatePostInputModel,
+    updatedModel: UpdatePostInputTestDto,
     statusCode: number = HttpStatus.NO_CONTENT,
   ) {
     return request(this.app.getHttpServer())
       .put(`/sa/blogs/${blogId}/posts/${id}/`)
       .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
-      .send(createdModel)
+      .send(updatedModel)
       .expect(statusCode);
   }
 
   async updatePostIsNotAuthorized(
     id: number,
     blogId: number,
-    createdModel: CreatePostInputModel,
+    updatedModel: UpdatePostInputTestDto,
     statusCode: number = HttpStatus.UNAUTHORIZED,
   ) {
     return request(this.app.getHttpServer())
       .put(`/sa/blogs/${blogId}/posts/${id}/`)
       .auth('invalid login', 'invalid password')
-      .send(createdModel)
+      .send(updatedModel)
       .expect(statusCode);
   }
 
