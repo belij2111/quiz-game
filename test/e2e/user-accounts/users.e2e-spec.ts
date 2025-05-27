@@ -7,7 +7,7 @@ import {
   createValidUserModel,
 } from '../../models/user-accounts/user.input-model';
 import { getMockUuidId } from '../../helpers/get-mock-uuid-id';
-import { CreateUserInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-user.input-test-dto';
+import { CreateUserInputTestDto } from '../../models/user-accounts/input-test-dto/create-user.input-test-dto';
 
 describe('e2e-Users', () => {
   let app: INestApplication;

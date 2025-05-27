@@ -1,8 +1,8 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { CoreConfig } from '../../src/core/core.config';
-import { CreateUserInputTestDto } from '../models/bloggers-platform/input-test-dto/create-user.input-test-dto';
-import { UserViewTestDto } from '../models/bloggers-platform/view-test-dto/user.view-test-dto';
+import { CreateUserInputTestDto } from '../models/user-accounts/input-test-dto/create-user.input-test-dto';
+import { UserViewTestDto } from '../models/user-accounts/view-test-dto/user.view-test-dto';
 import { MeViewTestDto } from '../models/user-accounts/view-test-dto/me.view-test-dto';
 import { LoginInputTestDto } from '../models/user-accounts/input-test-dto/login.input-test-dto';
 import { RegistrationEmailResendingInputTestDto } from '../models/user-accounts/input-test-dto/registration-email-resending.input-test-dto';

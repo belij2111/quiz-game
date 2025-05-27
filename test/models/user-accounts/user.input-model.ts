@@ -1,4 +1,4 @@
-import { CreateUserInputTestDto } from '../bloggers-platform/input-test-dto/create-user.input-test-dto';
+import { CreateUserInputTestDto } from './input-test-dto/create-user.input-test-dto';
 
 export const createValidUserModel = (
   count: number = 1,

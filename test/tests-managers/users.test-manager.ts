@@ -3,8 +3,8 @@ import { CoreConfig } from '../../src/core/core.config';
 import request from 'supertest';
 import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { createValidUserModel } from '../models/user-accounts/user.input-model';
-import { CreateUserInputTestDto } from '../models/bloggers-platform/input-test-dto/create-user.input-test-dto';
-import { UserViewTestDto } from '../models/bloggers-platform/view-test-dto/user.view-test-dto';
+import { CreateUserInputTestDto } from '../models/user-accounts/input-test-dto/create-user.input-test-dto';
+import { UserViewTestDto } from '../models/user-accounts/view-test-dto/user.view-test-dto';
 import { PaginationViewTestDto } from '../models/base/pagination.view-test-dto';
 
 export class UsersTestManager {

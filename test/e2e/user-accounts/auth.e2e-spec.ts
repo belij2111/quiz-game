@@ -29,8 +29,8 @@ import { SendEmailConfirmationWhenRegisteringUserEventHandlerMock } from '../../
 import { SendEmailConfirmationWhenRegisteringUserEventHandler } from '../../../src/features/notifications/event-handlers/send-email-confirmation-when-registering-user.event-handler';
 import { SendEmailWithRecoveryCodeEventHandlerMock } from '../../mock/send-email-with-recovery-code-event-handler.mock';
 import { SendEmailWithRecoveryCodeEventHandler } from '../../../src/features/notifications/event-handlers/send-email-with-recovery-code.event-handler';
-import { CreateUserInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-user.input-test-dto';
-import { UserViewTestDto } from '../../models/bloggers-platform/view-test-dto/user.view-test-dto';
+import { CreateUserInputTestDto } from '../../models/user-accounts/input-test-dto/create-user.input-test-dto';
+import { UserViewTestDto } from '../../models/user-accounts/view-test-dto/user.view-test-dto';
 
 describe('e2e-Auth', () => {
   let app: INestApplication;

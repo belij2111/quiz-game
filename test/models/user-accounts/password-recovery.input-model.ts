@@ -1,4 +1,4 @@
-import { CreateUserInputTestDto } from '../bloggers-platform/input-test-dto/create-user.input-test-dto';
+import { CreateUserInputTestDto } from './input-test-dto/create-user.input-test-dto';
 import { PasswordRecoveryInputTestDto } from './input-test-dto/password-recovery.input-test-dto';
 
 export const createPasswordRecoveryInputModel = (

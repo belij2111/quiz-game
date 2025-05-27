@@ -1,4 +1,4 @@
-import { CreateUserInputTestDto } from '../bloggers-platform/input-test-dto/create-user.input-test-dto';
+import { CreateUserInputTestDto } from './input-test-dto/create-user.input-test-dto';
 import { RegistrationEmailResendingInputTestDto } from './input-test-dto/registration-email-resending.input-test-dto';
 
 export const createEmailResendingInputModel = (
