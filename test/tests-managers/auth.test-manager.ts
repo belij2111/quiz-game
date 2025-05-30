@@ -1,6 +1,5 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { CoreConfig } from '../../src/core/core.config';
 import { CreateUserInputTestDto } from '../models/user-accounts/input-test-dto/create-user.input-test-dto';
 import { UserViewTestDto } from '../models/user-accounts/view-test-dto/user.view-test-dto';
 import { MeViewTestDto } from '../models/user-accounts/view-test-dto/me.view-test-dto';
@@ -12,10 +11,7 @@ import { RegistrationConfirmationCodeInputTestDto } from '../models/user-account
 import { LoginSuccessViewTestDto } from '../models/user-accounts/view-test-dto/login-success.view-test-dto';
 
 export class AuthTestManager {
-  constructor(
-    private readonly app: INestApplication,
-    private readonly coreConfig: CoreConfig,
-  ) {}
+  constructor(private readonly app: INestApplication) {}
 
   async loginUser(
     createdModel: CreateUserInputTestDto,

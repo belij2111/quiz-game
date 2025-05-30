@@ -31,7 +31,7 @@ describe('e2e-Blogs-admin', () => {
     app = result.app;
     const coreConfig = result.coreConfig;
     blogsAdminTestManager = new BlogsAdminTestManager(app, coreConfig);
-    postsTestManager = new PostsTestManager(app, coreConfig);
+    postsTestManager = new PostsTestManager(app);
     coreTestManager = new CoreTestManager();
   });
   beforeEach(async () => {

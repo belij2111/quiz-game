@@ -21,7 +21,7 @@ describe('e2e-Blogs-public', () => {
     app = result.app;
     const coreConfig = result.coreConfig;
     blogsAdminTestManager = new BlogsAdminTestManager(app, coreConfig);
-    blogsPublicTestManager = new BlogsPublicTestManager(app, coreConfig);
+    blogsPublicTestManager = new BlogsPublicTestManager(app);
     coreTestManager = new CoreTestManager();
   });
   beforeEach(async () => {

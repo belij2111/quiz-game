@@ -1,13 +1,9 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { paginationInputParams } from '../models/base/pagination.input-test-dto';
-import { CoreConfig } from '../../src/core/core.config';
 
 export class BlogsPublicTestManager {
-  constructor(
-    private readonly app: INestApplication,
-    private readonly coreConfig: CoreConfig,
-  ) {}
+  constructor(private readonly app: INestApplication) {}
 
   async getBlogsWithPaging(statusCode: number = HttpStatus.OK) {
     const { pageNumber, pageSize, sortBy, sortDirection } =

@@ -54,7 +54,7 @@ describe('e2e-Auth', () => {
     app = result.app;
     const coreConfig = result.coreConfig;
     usersTestManager = new UsersTestManager(app, coreConfig);
-    authTestManager = new AuthTestManager(app, coreConfig);
+    authTestManager = new AuthTestManager(app);
     sendEmailConfirmationWhenRegisteringUserEventHandlerMock = app.get(
       SendEmailConfirmationWhenRegisteringUserEventHandler,
     );

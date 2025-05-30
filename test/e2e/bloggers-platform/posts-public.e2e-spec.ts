@@ -46,9 +46,9 @@ describe('e2e-Posts', () => {
     app = result.app;
     const coreConfig = result.coreConfig;
     blogsAdminTestManager = new BlogsAdminTestManager(app, coreConfig);
-    postsTestManager = new PostsTestManager(app, coreConfig);
+    postsTestManager = new PostsTestManager(app);
     usersTestManager = new UsersTestManager(app, coreConfig);
-    authTestManager = new AuthTestManager(app, coreConfig);
+    authTestManager = new AuthTestManager(app);
     coreTestManager = new CoreTestManager();
     coreTestManager.setUsersTestManager(usersTestManager);
     coreTestManager.setAuthTestManager(authTestManager);
