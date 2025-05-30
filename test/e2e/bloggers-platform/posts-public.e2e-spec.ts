@@ -49,7 +49,9 @@ describe('e2e-Posts', () => {
     postsTestManager = new PostsTestManager(app, coreConfig);
     usersTestManager = new UsersTestManager(app, coreConfig);
     authTestManager = new AuthTestManager(app, coreConfig);
-    coreTestManager = new CoreTestManager(usersTestManager, authTestManager);
+    coreTestManager = new CoreTestManager();
+    coreTestManager.setUsersTestManager(usersTestManager);
+    coreTestManager.setAuthTestManager(authTestManager);
     commentsTestManager = new CommentsTestManager(app);
   });
   beforeEach(async () => {
@@ -141,7 +143,7 @@ describe('e2e-Posts', () => {
         createdPost.id,
         HttpStatus.OK,
       );
-      commentsTestManager.expectCorrectPagination(
+      await coreTestManager.expectCorrectPagination<CommentViewTestDto>(
         createdComments,
         createdResponse.body,
       );
@@ -236,7 +238,7 @@ describe('e2e-Posts', () => {
       const createdResponse = await postsTestManager.getPostsWithPaging(
         HttpStatus.OK,
       );
-      postsTestManager.expectCorrectPagination(
+      await coreTestManager.expectCorrectPagination<PostViewTestDto>(
         createdPosts,
         createdResponse.body,
       );

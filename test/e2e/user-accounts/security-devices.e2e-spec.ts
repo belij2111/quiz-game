@@ -21,7 +21,9 @@ describe('e2e-Security-Devices', () => {
     const coreConfig = result.coreConfig;
     usersTestManager = new UsersTestManager(app, coreConfig);
     authTestManager = new AuthTestManager(app, coreConfig);
-    coreTestManager = new CoreTestManager(usersTestManager, authTestManager);
+    coreTestManager = new CoreTestManager();
+    coreTestManager.setUsersTestManager(usersTestManager);
+    coreTestManager.setAuthTestManager(authTestManager);
     securityDevicesTestManager = new SecurityDevicesTestManager(app);
   });
   beforeEach(async () => {

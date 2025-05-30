@@ -2,8 +2,6 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { CoreConfig } from '../../src/core/core.config';
-import { PaginationViewTestDto } from '../models/base/pagination.view-test-dto';
-import { BlogViewTestDto } from '../models/bloggers-platform/view-test-dto/blog.view-test-dto';
 
 export class BlogsPublicTestManager {
   constructor(
@@ -25,18 +23,6 @@ export class BlogsPublicTestManager {
         sortDirection,
       })
       .expect(statusCode);
-  }
-
-  expectCorrectPagination(
-    createdModels: BlogViewTestDto[],
-    responseModels: PaginationViewTestDto<BlogViewTestDto[]>,
-  ) {
-    expect(responseModels.items.length).toBe(createdModels.length);
-    expect(responseModels.totalCount).toBe(createdModels.length);
-    expect(responseModels.items).toEqual(createdModels);
-    expect(responseModels.pagesCount).toBe(1);
-    expect(responseModels.page).toBe(1);
-    expect(responseModels.pageSize).toBe(10);
   }
 
   async getPostsByBlogId(blogId: number, statusCode: number = HttpStatus.OK) {

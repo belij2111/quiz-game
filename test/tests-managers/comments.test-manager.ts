@@ -2,7 +2,6 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { createValidCommentModel } from '../models/bloggers-platform/comment.input-model';
-import { PaginationViewTestDto } from '../models/base/pagination.view-test-dto';
 import { CreateCommentInputTestDto } from '../models/bloggers-platform/input-test-dto/create-comment.input-test-dto';
 import { UpdateCommentInputTestDto } from '../models/bloggers-platform/input-test-dto/update-comment.input-test-dto';
 import { CommentViewTestDto } from '../models/bloggers-platform/view-test-dto/comment.view-test-dto';
@@ -65,18 +64,6 @@ export class CommentsTestManager {
         sortDirection,
       })
       .expect(statusCode);
-  }
-
-  expectCorrectPagination(
-    createModels: CreateCommentInputTestDto[],
-    responseModels: PaginationViewTestDto<CommentViewTestDto[]>,
-  ) {
-    expect(responseModels.items.length).toBe(createModels.length);
-    expect(responseModels.totalCount).toBe(createModels.length);
-    expect(responseModels.items).toEqual(createModels);
-    expect(responseModels.pagesCount).toBe(1);
-    expect(responseModels.page).toBe(1);
-    expect(responseModels.pageSize).toBe(10);
   }
 
   async getCommentById(id: number, statusCode: number = HttpStatus.OK) {

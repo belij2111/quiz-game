@@ -3,7 +3,6 @@ import request from 'supertest';
 import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { createValidBlogModel } from '../models/bloggers-platform/blog.input-model';
 import { CoreConfig } from '../../src/core/core.config';
-import { PaginationViewTestDto } from '../models/base/pagination.view-test-dto';
 import { CreateBlogInputTestDto } from '../models/bloggers-platform/input-test-dto/create-blog.input-test-dto';
 import { UpdateBlogInputTestDto } from '../models/bloggers-platform/input-test-dto/update-blog.input-test-dto';
 import { BlogViewTestDto } from '../models/bloggers-platform/view-test-dto/blog.view-test-dto';
@@ -70,18 +69,6 @@ export class BlogsAdminTestManager {
         sortDirection,
       })
       .expect(statusCode);
-  }
-
-  expectCorrectPagination(
-    createdModels: BlogViewTestDto[],
-    responseModels: PaginationViewTestDto<BlogViewTestDto[]>,
-  ) {
-    expect(responseModels.items.length).toBe(createdModels.length);
-    expect(responseModels.totalCount).toBe(createdModels.length);
-    expect(responseModels.items).toEqual(createdModels);
-    expect(responseModels.pagesCount).toBe(1);
-    expect(responseModels.page).toBe(1);
-    expect(responseModels.pageSize).toBe(10);
   }
 
   async getBlogsIsNotAuthorized(statusCode: number = HttpStatus.UNAUTHORIZED) {

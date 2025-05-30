@@ -47,7 +47,9 @@ describe('e2e-Comments', () => {
     blogsAdminTestManager = new BlogsAdminTestManager(app, coreConfig);
     usersTestManager = new UsersTestManager(app, coreConfig);
     authTestManager = new AuthTestManager(app, coreConfig);
-    coreTestManager = new CoreTestManager(usersTestManager, authTestManager);
+    coreTestManager = new CoreTestManager();
+    coreTestManager.setUsersTestManager(usersTestManager);
+    coreTestManager.setAuthTestManager(authTestManager);
     commentsTestManager = new CommentsTestManager(app);
   });
   beforeEach(async () => {

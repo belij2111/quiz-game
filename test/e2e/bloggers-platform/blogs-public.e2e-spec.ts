@@ -3,18 +3,18 @@ import { initSettings } from '../../helpers/init-settings';
 import { createValidBlogModel } from '../../models/bloggers-platform/blog.input-model';
 import { BlogsAdminTestManager } from '../../tests-managers/blogs.admin-test-manager';
 import { deleteAllData } from '../../helpers/delete-all-data';
-import { PostsTestManager } from '../../tests-managers/posts.test-manager';
 import { getMockNumberId } from '../../helpers/get-mock-uuid-id';
 import { CreateBlogInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-blog.input-test-dto';
 import { BlogsPublicTestManager } from '../../tests-managers/blogs.public-test-manager';
 import { BlogViewTestDto } from '../../models/bloggers-platform/view-test-dto/blog.view-test-dto';
 import { PostViewTestDto } from '../../models/bloggers-platform/view-test-dto/post.view-test-dto';
+import { CoreTestManager } from '../../tests-managers/core.test-manager';
 
 describe('e2e-Blogs-public', () => {
   let app: INestApplication;
   let blogsAdminTestManager: BlogsAdminTestManager;
   let blogsPublicTestManager: BlogsPublicTestManager;
-  let postsTestManager: PostsTestManager;
+  let coreTestManager: CoreTestManager;
 
   beforeAll(async () => {
     const result = await initSettings();
@@ -22,7 +22,7 @@ describe('e2e-Blogs-public', () => {
     const coreConfig = result.coreConfig;
     blogsAdminTestManager = new BlogsAdminTestManager(app, coreConfig);
     blogsPublicTestManager = new BlogsPublicTestManager(app, coreConfig);
-    postsTestManager = new PostsTestManager(app, coreConfig);
+    coreTestManager = new CoreTestManager();
   });
   beforeEach(async () => {
     await deleteAllData(app);
@@ -41,7 +41,7 @@ describe('e2e-Blogs-public', () => {
       const createdResponse = await blogsPublicTestManager.getBlogsWithPaging(
         HttpStatus.OK,
       );
-      blogsPublicTestManager.expectCorrectPagination(
+      await coreTestManager.expectCorrectPagination<BlogViewTestDto>(
         createdBlogs,
         createdResponse.body,
       );
@@ -60,7 +60,7 @@ describe('e2e-Blogs-public', () => {
         createdBlog.id,
         HttpStatus.OK,
       );
-      postsTestManager.expectCorrectPagination(
+      await coreTestManager.expectCorrectPagination<PostViewTestDto>(
         createdPosts,
         createdResponse.body,
       );

@@ -18,11 +18,13 @@ import { BlogViewTestDto } from '../../models/bloggers-platform/view-test-dto/bl
 import { PostViewTestDto } from '../../models/bloggers-platform/view-test-dto/post.view-test-dto';
 import { CreatePostInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-post.input-test-dto';
 import { UpdatePostInputTestDto } from '../../models/bloggers-platform/input-test-dto/update-post.input-test-dto';
+import { CoreTestManager } from '../../tests-managers/core.test-manager';
 
 describe('e2e-Blogs-admin', () => {
   let app: INestApplication;
   let blogsAdminTestManager: BlogsAdminTestManager;
   let postsTestManager: PostsTestManager;
+  let coreTestManager: CoreTestManager;
 
   beforeAll(async () => {
     const result = await initSettings();
@@ -30,6 +32,7 @@ describe('e2e-Blogs-admin', () => {
     const coreConfig = result.coreConfig;
     blogsAdminTestManager = new BlogsAdminTestManager(app, coreConfig);
     postsTestManager = new PostsTestManager(app, coreConfig);
+    coreTestManager = new CoreTestManager();
   });
   beforeEach(async () => {
     await deleteAllData(app);
@@ -48,7 +51,7 @@ describe('e2e-Blogs-admin', () => {
       const createdResponse = await blogsAdminTestManager.getBlogsWithPaging(
         HttpStatus.OK,
       );
-      blogsAdminTestManager.expectCorrectPagination(
+      await coreTestManager.expectCorrectPagination<BlogViewTestDto>(
         createdBlogs,
         createdResponse.body,
       );
@@ -238,7 +241,7 @@ describe('e2e-Blogs-admin', () => {
         createdBlog.id,
         HttpStatus.OK,
       );
-      postsTestManager.expectCorrectPagination(
+      await coreTestManager.expectCorrectPagination<PostViewTestDto>(
         createdPosts,
         createdResponse.body,
       );
