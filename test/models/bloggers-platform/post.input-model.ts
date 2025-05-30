@@ -1,19 +1,21 @@
-import { Post } from '../../../src/features/bloggers-platform/posts/domain/post.entity';
+import { CreatePostInputTestDto } from './input-test-dto/create-post.input-test-dto';
 
-export const createValidPostModel = (blogId: any, count: number = 1): any => {
-  const postModel = new Post();
+export const createValidPostModel = (
+  count: number = 1,
+): CreatePostInputTestDto => {
+  const postModel = new CreatePostInputTestDto();
   postModel.title = `Post${count}`;
   postModel.shortDescription = `new post${count}`;
   postModel.content = `new content of post${count}`;
-  postModel.blogId = blogId;
   return postModel;
 };
 
-export const createInValidPostModel = (blogId: any, count: number = 1): any => {
-  const invalidPostModel = new Post();
+export const createInValidPostModel = (
+  count: number = 1,
+): CreatePostInputTestDto => {
+  const invalidPostModel = new CreatePostInputTestDto();
   invalidPostModel.title = `33333333333333333333333333333333333333333333333333Post${count}`;
   invalidPostModel.shortDescription = `new post${count}`;
   invalidPostModel.content = `new content of post${count}`;
-  invalidPostModel.blogId = blogId;
   return invalidPostModel;
 };

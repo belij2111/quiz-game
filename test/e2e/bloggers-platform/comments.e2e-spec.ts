@@ -1,8 +1,7 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { initSettings } from '../../helpers/init-settings';
-import { BlogsTestManager } from '../../tests-managers/blogs.test-manager';
+import { BlogsAdminTestManager } from '../../tests-managers/blogs.admin-test-manager';
 import { deleteAllData } from '../../helpers/delete-all-data';
-import { PostsTestManager } from '../../tests-managers/posts.test-manager';
 import { createValidBlogModel } from '../../models/bloggers-platform/blog.input-model';
 import { createValidPostModel } from '../../models/bloggers-platform/post.input-model';
 import { CommentsTestManager } from '../../tests-managers/comments.test-manager';
@@ -14,7 +13,10 @@ import { UsersTestManager } from '../../tests-managers/users.test-manager';
 import { AuthTestManager } from '../../tests-managers/auth.test-manager';
 import { CoreTestManager } from '../../tests-managers/core.test-manager';
 import { delay } from '../../helpers/delay';
-import { createLikeStatusModel } from '../../models/bloggers-platform/create-like-status.model';
+import {
+  createInvalidLikeStatusModel,
+  createLikeStatusModel,
+} from '../../models/bloggers-platform/create-like-status.model';
 import { getMockNumberId } from '../../helpers/get-mock-uuid-id';
 import { CreateBlogInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-blog.input-test-dto';
 import { CreateCommentInputTestDto } from '../../models/bloggers-platform/input-test-dto/create-comment.input-test-dto';
@@ -23,11 +25,12 @@ import { PostViewTestDto } from '../../models/bloggers-platform/view-test-dto/po
 import { CommentViewTestDto } from '../../models/bloggers-platform/view-test-dto/comment.view-test-dto';
 import { LikeStatusTestEnum } from '../../models/bloggers-platform/enums/like-status.test-enum';
 import { LoginSuccessViewTestDto } from '../../models/user-accounts/view-test-dto/login-success.view-test-dto';
+import { LikeInputTestDTO } from '../../models/bloggers-platform/input-test-dto/like.input-test-dto';
+import { UpdateCommentInputModel } from '../../../src/features/bloggers-platform/comments/api/models/input/update-comment.input-model';
 
 describe('e2e-Comments', () => {
   let app: INestApplication;
-  let blogsTestManager: BlogsTestManager;
-  let postsTestManager: PostsTestManager;
+  let blogsAdminTestManager: BlogsAdminTestManager;
   let usersTestManager: UsersTestManager;
   let authTestManager: AuthTestManager;
   let coreTestManager: CoreTestManager;
@@ -41,8 +44,7 @@ describe('e2e-Comments', () => {
     const result = await initSettings();
     app = result.app;
     const coreConfig = result.coreConfig;
-    blogsTestManager = new BlogsTestManager(app, coreConfig);
-    postsTestManager = new PostsTestManager(app, coreConfig);
+    blogsAdminTestManager = new BlogsAdminTestManager(app, coreConfig);
     usersTestManager = new UsersTestManager(app, coreConfig);
     authTestManager = new AuthTestManager(app, coreConfig);
     coreTestManager = new CoreTestManager(usersTestManager, authTestManager);
@@ -51,9 +53,12 @@ describe('e2e-Comments', () => {
   beforeEach(async () => {
     await deleteAllData(app);
     const validBlogModel: CreateBlogInputTestDto = createValidBlogModel();
-    createdBlog = await blogsTestManager.createBlog(validBlogModel);
-    const validPostModel = createValidPostModel(createdBlog.id);
-    createdPost = await postsTestManager.createPost(validPostModel);
+    createdBlog = await blogsAdminTestManager.createBlog(validBlogModel);
+    const validPostModel = createValidPostModel();
+    createdPost = await blogsAdminTestManager.createPostByBlogId(
+      createdBlog.id,
+      validPostModel,
+    );
     await delay(3000);
     loginResult = await coreTestManager.loginUser();
     const validCommentModel: CreateCommentInputTestDto =
@@ -71,17 +76,45 @@ describe('e2e-Comments', () => {
     await app.close();
   });
 
-  describe('GET/comments/:id', () => {
-    it(`should return comment by ID : STATUS 200`, async () => {
-      await commentsTestManager.getCommentById(
+  describe('PUT/comment/:commentId/like-status', () => {
+    it(`should update the like status for the comment : STATUS 204`, async () => {
+      const updateLikeStatusModel: LikeInputTestDTO | undefined =
+        createLikeStatusModel(LikeStatusTestEnum.Like);
+      await commentsTestManager.updateLikeStatus(
+        loginResult!.accessToken,
         createdComment.id,
-        HttpStatus.OK,
+        updateLikeStatusModel,
+        HttpStatus.NO_CONTENT,
       );
     });
-    it(`shouldn't return comment by ID if it does not exist : STATUS 404`, async () => {
+    it(`shouldn't update the like status with incorrect input data : STATUS 400`, async () => {
+      const invalidUpdateLikeStatusModel = createInvalidLikeStatusModel();
+      await commentsTestManager.updateLikeStatus(
+        loginResult!.accessToken,
+        createdComment.id,
+        invalidUpdateLikeStatusModel,
+        HttpStatus.BAD_REQUEST,
+      );
+    });
+    it(`shouldn't update the like status if accessTokens expired : STATUS 401`, async () => {
+      const updateLikeStatusModel: LikeInputTestDTO | undefined =
+        createLikeStatusModel(LikeStatusTestEnum.Dislike);
+      await delay(10000);
+      await commentsTestManager.updateLikeStatus(
+        loginResult!.accessToken,
+        createdComment.id,
+        updateLikeStatusModel,
+        HttpStatus.UNAUTHORIZED,
+      );
+    });
+    it(`shouldn't update the like status if the commentId does not exist : STATUS 404`, async () => {
+      const updateLikeStatusModel: LikeInputTestDTO | undefined =
+        createLikeStatusModel(LikeStatusTestEnum.None);
       const nonExistentId = getMockNumberId();
-      await commentsTestManager.getCommentById(
+      await commentsTestManager.updateLikeStatus(
+        loginResult!.accessToken,
         nonExistentId,
+        updateLikeStatusModel,
         HttpStatus.NOT_FOUND,
       );
     });
@@ -89,7 +122,8 @@ describe('e2e-Comments', () => {
 
   describe('PUT/comment/:commentId', () => {
     it(`should update comment by commentId : STATUS 204`, async () => {
-      const updatedCommentModel = createValidCommentModel(555);
+      const updatedCommentModel: UpdateCommentInputModel =
+        createValidCommentModel(555);
       await commentsTestManager.update(
         loginResult!.accessToken,
         createdComment.id,
@@ -98,7 +132,8 @@ describe('e2e-Comments', () => {
       );
     });
     it(`shouldn't update comment with incorrect input data : STATUS 400`, async () => {
-      const invalidUpdatedCommentModel = createInValidCommentModel(333);
+      const invalidUpdatedCommentModel: UpdateCommentInputModel =
+        createInValidCommentModel(333);
       await commentsTestManager.update(
         loginResult!.accessToken,
         createdComment.id,
@@ -107,7 +142,8 @@ describe('e2e-Comments', () => {
       );
     });
     it(`shouldn't update comment if accessTokens expired : STATUS 401`, async () => {
-      const updatedCommentModel = createValidCommentModel(555);
+      const updatedCommentModel: UpdateCommentInputModel =
+        createValidCommentModel(555);
       await delay(10000);
       await commentsTestManager.update(
         loginResult!.accessToken,
@@ -117,7 +153,8 @@ describe('e2e-Comments', () => {
       );
     });
     it(`shouldn't update comment if it belongs to another user : STATUS 403`, async () => {
-      const updatedCommentModel = createValidCommentModel(555);
+      const updatedCommentModel: UpdateCommentInputModel =
+        createValidCommentModel(555);
       loginResult = await coreTestManager.loginUser(2);
       await commentsTestManager.update(
         loginResult!.accessToken,
@@ -127,7 +164,8 @@ describe('e2e-Comments', () => {
       );
     });
     it(`shouldn't update comment by commentId if it does not exist : STATUS 404`, async () => {
-      const updatedCommentModel = createValidCommentModel(555);
+      const updatedCommentModel: UpdateCommentInputModel =
+        createValidCommentModel(555);
       const nonExistentId = getMockNumberId();
       await commentsTestManager.update(
         loginResult!.accessToken,
@@ -172,48 +210,17 @@ describe('e2e-Comments', () => {
     });
   });
 
-  describe('PUT/comment/:commentId/like-status', () => {
-    it(`should update the like status for the comment : STATUS 204`, async () => {
-      const updateLikeStatusModel = createLikeStatusModel(
-        LikeStatusTestEnum.Like,
-      );
-      await commentsTestManager.updateLikeStatus(
-        loginResult!.accessToken,
+  describe('GET/comments/:id', () => {
+    it(`should return comment by ID : STATUS 200`, async () => {
+      await commentsTestManager.getCommentById(
         createdComment.id,
-        updateLikeStatusModel,
-        HttpStatus.NO_CONTENT,
+        HttpStatus.OK,
       );
     });
-    it(`shouldn't update the like status with incorrect input data : STATUS 400`, async () => {
-      const invalidUpdateLikeStatusModel = 'invalid like status';
-      await commentsTestManager.updateLikeStatus(
-        loginResult!.accessToken,
-        createdComment.id,
-        invalidUpdateLikeStatusModel,
-        HttpStatus.BAD_REQUEST,
-      );
-    });
-    it(`shouldn't update the like status if accessTokens expired : STATUS 401`, async () => {
-      const updateLikeStatusModel = createLikeStatusModel(
-        LikeStatusTestEnum.Dislike,
-      );
-      await delay(10000);
-      await commentsTestManager.updateLikeStatus(
-        loginResult!.accessToken,
-        createdComment.id,
-        updateLikeStatusModel,
-        HttpStatus.UNAUTHORIZED,
-      );
-    });
-    it(`shouldn't update the like status if the commentId does not exist : STATUS 404`, async () => {
-      const updateLikeStatusModel = createLikeStatusModel(
-        LikeStatusTestEnum.None,
-      );
+    it(`shouldn't return comment by ID if it does not exist : STATUS 404`, async () => {
       const nonExistentId = getMockNumberId();
-      await commentsTestManager.updateLikeStatus(
-        loginResult!.accessToken,
+      await commentsTestManager.getCommentById(
         nonExistentId,
-        updateLikeStatusModel,
         HttpStatus.NOT_FOUND,
       );
     });

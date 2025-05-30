@@ -8,3 +8,7 @@ export const createLikeStatusModel = (
   likeModel.likeStatus = likeStatus;
   return likeModel;
 };
+
+export const createInvalidLikeStatusModel = (): string => {
+  return 'invalid like status';
+};

@@ -8,8 +8,11 @@ import { CreateBlogInputTestDto } from '../models/bloggers-platform/input-test-d
 import { UpdateBlogInputTestDto } from '../models/bloggers-platform/input-test-dto/update-blog.input-test-dto';
 import { BlogViewTestDto } from '../models/bloggers-platform/view-test-dto/blog.view-test-dto';
 import { CreatePostInputTestDto } from '../models/bloggers-platform/input-test-dto/create-post.input-test-dto';
+import { PostViewTestDto } from '../models/bloggers-platform/view-test-dto/post.view-test-dto';
+import { createValidPostModel } from '../models/bloggers-platform/post.input-model';
+import { UpdatePostInputTestDto } from '../models/bloggers-platform/input-test-dto/update-post.input-test-dto';
 
-export class BlogsTestManager {
+export class BlogsAdminTestManager {
   constructor(
     private readonly app: INestApplication,
     private readonly coreConfig: CoreConfig,
@@ -57,7 +60,8 @@ export class BlogsTestManager {
       paginationInputParams;
     const searchNameTerm = 'Blog';
     return request(this.app.getHttpServer())
-      .get('/blogs')
+      .get('/sa/blogs')
+      .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
       .query({
         searchNameTerm,
         pageNumber,
@@ -80,6 +84,23 @@ export class BlogsTestManager {
     expect(responseModels.pageSize).toBe(10);
   }
 
+  async getBlogsIsNotAuthorized(statusCode: number = HttpStatus.UNAUTHORIZED) {
+    const { pageNumber, pageSize, sortBy, sortDirection } =
+      paginationInputParams;
+    const searchNameTerm = 'Blog';
+    return request(this.app.getHttpServer())
+      .get('/sa/blogs')
+      .auth('invalid login', 'invalid password')
+      .query({
+        searchNameTerm,
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection,
+      })
+      .expect(statusCode);
+  }
+
   async createBlogIsNotAuthorized(
     createdModel: CreateBlogInputTestDto,
     statusCode: number = HttpStatus.UNAUTHORIZED,
@@ -89,13 +110,6 @@ export class BlogsTestManager {
       .auth('invalid login', 'invalid password')
       .send(createdModel)
       .expect(statusCode);
-  }
-
-  async getBlogById(id: number, statusCode: number = HttpStatus.NOT_FOUND) {
-    const response = await request(this.app.getHttpServer())
-      .get('/blogs/' + id)
-      .expect(statusCode);
-    return response.body;
   }
 
   async updateBlog(
@@ -165,17 +179,83 @@ export class BlogsTestManager {
     return response.body;
   }
 
+  async createPosts(
+    blogId: number,
+    count: number,
+    statusCode: number = HttpStatus.CREATED,
+  ) {
+    const posts: PostViewTestDto[] = [];
+    for (let i = 1; i <= count; i++) {
+      const response = await request(this.app.getHttpServer())
+        .post(`/sa/blogs/${blogId}/posts`)
+        .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
+        .send(createValidPostModel(i))
+        .expect(statusCode);
+      posts.push(response.body);
+    }
+    return posts;
+  }
+
   async getPostsByBlogId(blogId: number, statusCode: number = HttpStatus.OK) {
     const { pageNumber, pageSize, sortBy, sortDirection } =
       paginationInputParams;
     return request(this.app.getHttpServer())
-      .get(`/blogs/${blogId}/posts`)
+      .get(`/sa/blogs/${blogId}/posts`)
+      .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
       .query({
         pageNumber,
         pageSize,
         sortBy,
         sortDirection,
       })
+      .expect(statusCode);
+  }
+
+  async updatePost(
+    id: number,
+    blogId: number,
+    updatedModel: UpdatePostInputTestDto,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    return request(this.app.getHttpServer())
+      .put(`/sa/blogs/${blogId}/posts/${id}/`)
+      .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
+      .send(updatedModel)
+      .expect(statusCode);
+  }
+
+  async updatePostIsNotAuthorized(
+    id: number,
+    blogId: number,
+    updatedModel: UpdatePostInputTestDto,
+    statusCode: number = HttpStatus.UNAUTHORIZED,
+  ) {
+    return request(this.app.getHttpServer())
+      .put(`/sa/blogs/${blogId}/posts/${id}/`)
+      .auth('invalid login', 'invalid password')
+      .send(updatedModel)
+      .expect(statusCode);
+  }
+
+  async deletePostById(
+    id: number,
+    blogId: number,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    return request(this.app.getHttpServer())
+      .delete(`/sa/blogs/${blogId}/posts/${id}/`)
+      .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
+      .expect(statusCode);
+  }
+
+  async deletePostByIdIsNotAuthorized(
+    id: number,
+    blogId: number,
+    statusCode: number = HttpStatus.UNAUTHORIZED,
+  ) {
+    return request(this.app.getHttpServer())
+      .delete(`/sa/blogs/${blogId}/posts/${id}/`)
+      .auth('invalid login', 'invalid password')
       .expect(statusCode);
   }
 }
