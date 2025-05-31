@@ -38,6 +38,9 @@ import { NewPasswordCommand } from '../application/use-cases/new-password.use-ca
 import { LogoutCommand } from '../application/use-cases/logout.use-case';
 import { GetInfoAboutCurrentUserQuery } from '../application/queries/get-info-about-current-user.query';
 
+const THROTTLE_LIMIT = 5;
+const THROTTLE_TTL_MS = 10000;
+
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -46,7 +49,7 @@ export class AuthController {
   ) {}
 
   @Post('login')
-  @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @Throttle({ default: { limit: THROTTLE_LIMIT, ttl: THROTTLE_TTL_MS } })
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   async login(
@@ -105,14 +108,14 @@ export class AuthController {
   }
 
   @Post('registration')
-  @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @Throttle({ default: { limit: THROTTLE_LIMIT, ttl: THROTTLE_TTL_MS } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async registration(@Body() userCreateModel: CreateUserInputModel) {
     await this.commandBus.execute(new RegisterUserCommand(userCreateModel));
   }
 
   @Post('registration-confirmation')
-  @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @Throttle({ default: { limit: THROTTLE_LIMIT, ttl: THROTTLE_TTL_MS } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async registrationConfirmation(
     @Body()
@@ -126,7 +129,7 @@ export class AuthController {
   }
 
   @Post('registration-email-resending')
-  @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @Throttle({ default: { limit: THROTTLE_LIMIT, ttl: THROTTLE_TTL_MS } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async registrationEmailResending(
     @Body()
@@ -138,7 +141,7 @@ export class AuthController {
   }
 
   @Post('password-recovery')
-  @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @Throttle({ default: { limit: THROTTLE_LIMIT, ttl: THROTTLE_TTL_MS } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async passwordRecovery(
     @Body() passwordRecoveryInputModel: PasswordRecoveryInputModel,
@@ -149,7 +152,7 @@ export class AuthController {
   }
 
   @Post('new-password')
-  @Throttle({ default: { limit: 5, ttl: 10000 } })
+  @Throttle({ default: { limit: THROTTLE_LIMIT, ttl: THROTTLE_TTL_MS } })
   @HttpCode(HttpStatus.NO_CONTENT)
   async newPassword(
     @Body() newPasswordRecoveryInputModel: NewPasswordRecoveryInputModel,
