@@ -72,6 +72,22 @@ export class CoreConfig {
     this.configService.get('IS_SWAGGER_ENABLED'),
   ) as boolean;
 
+  @IsBoolean({
+    message:
+      'Set Env variable IS_DB_SYNCHRONIZE to enable/disable, available values: true, false, 1, 0, dangerous for security!',
+  })
+  IS_DB_SYNCHRONIZE = configValidationUtility.convertToBoolean(
+    this.configService.get('IS_DB_SYNCHRONIZE'),
+  ) as boolean;
+
+  @IsBoolean({
+    message:
+      'Set Env variable IS_DB_LOGGING to enable/disable, available values: true, false, 1, 0, dangerous for security!',
+  })
+  IS_DB_LOGGING = configValidationUtility.convertToBoolean(
+    this.configService.get('IS_DB_LOGGING'),
+  ) as boolean;
+
   constructor(private configService: ConfigService<any, true>) {
     configValidationUtility.validateConfig(this);
   }
