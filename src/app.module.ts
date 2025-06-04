@@ -7,23 +7,19 @@ import { CoreConfig } from './core/core.config';
 import { CoreModule } from './core/core.module';
 import { NotificationsModule } from './features/notifications/notifications.module';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { CustomNamingStrategy } from './core/strategies/custom-naming.strategy';
+import { dbBaseOptions } from './core/db/db-base-options';
 
 @Module({
   imports: [
     configModule,
     TypeOrmModule.forRootAsync({
-      useFactory: (coreConfig: CoreConfig): TypeOrmModuleOptions => {
+      useFactory: (): TypeOrmModuleOptions => {
         return {
-          type: 'postgres',
-          url: coreConfig.DATABASE_URL,
-          namingStrategy: new CustomNamingStrategy(),
-          synchronize: true,
+          ...dbBaseOptions,
           autoLoadEntities: true,
-          logging: false,
         };
       },
-      inject: [CoreConfig],
+      inject: [],
     }),
     CoreModule,
     UserAccountsModule,
