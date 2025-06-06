@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, Index, OneToMany } from 'typeorm';
 import { BaseWithNumberIdEntity } from '../../../../core/entities/base-with-number-id.entity';
 import { Post } from '../../posts/domain/post.entity';
 import { CreateBlogDto } from '../dto/create-blog.dto';
@@ -6,6 +6,7 @@ import { CreateBlogDto } from '../dto/create-blog.dto';
 @Entity()
 export class Blog extends BaseWithNumberIdEntity {
   @Column({ type: 'varchar', collation: 'C' })
+  @Index()
   public name: string;
 
   @Column({ type: 'varchar', collation: 'C' })
