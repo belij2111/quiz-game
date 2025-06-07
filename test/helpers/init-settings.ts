@@ -2,7 +2,6 @@ import { Test, TestingModuleBuilder } from '@nestjs/testing';
 import { appSetup } from '../../src/setup/app.setup';
 import { CoreConfig } from '../../src/core/core.config';
 import { initAppModule } from '../../src/init-app-module';
-import { deleteAllData } from './delete-all-data';
 
 export const initSettings = async (
   services?: { service: any; serviceMock: any }[],
@@ -30,7 +29,6 @@ export const initSettings = async (
   await app.init();
 
   const httpServer = app.getHttpServer();
-  await deleteAllData(app);
 
   return {
     app,
