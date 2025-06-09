@@ -7,15 +7,24 @@ export function swaggerSetup(app: INestApplication, coreConfig: CoreConfig) {
   if (coreConfig.isSwaggerEnabled) {
     const config = new DocumentBuilder()
       .setTitle('BLOGGER API')
-      .addBearerAuth()
       .setVersion('1.0')
-      .addBearerAuth()
-      .addBasicAuth(
+      .addBearerAuth(
         {
           type: 'http',
-          scheme: 'basic',
+          description: 'Enter JWT Bearer token only',
         },
-        'basicAuth',
+        'bearer',
+      )
+      .addBasicAuth()
+      .addApiKey(
+        {
+          type: 'apiKey',
+          description:
+            'JWT refreshToken inside cookie. Must be correct, and must not expire',
+          name: 'refreshToken',
+          in: 'cookie',
+        },
+        'refreshToken',
       )
       .build();
 

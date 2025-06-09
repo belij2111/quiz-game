@@ -71,6 +71,23 @@ export class BlogsAdminTestManager {
       .expect(statusCode);
   }
 
+  async getBlogsByName(blogsCount: number, statusCode: number = HttpStatus.OK) {
+    const { pageNumber, sortBy, sortDirection } = paginationInputParams;
+    const pageSize = blogsCount;
+    const searchNameTerm = 'Blog1';
+    return request(this.app.getHttpServer())
+      .get('/sa/blogs')
+      .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
+      .query({
+        searchNameTerm,
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection,
+      })
+      .expect(statusCode);
+  }
+
   async getBlogsIsNotAuthorized(statusCode: number = HttpStatus.UNAUTHORIZED) {
     const { pageNumber, pageSize, sortBy, sortDirection } =
       paginationInputParams;

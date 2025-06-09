@@ -22,7 +22,18 @@ import {
 } from '../../posts/api/models/input/create-post.input-model';
 import { PostViewModel } from '../../posts/api/models/view/post.view-model';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
-import { ApiBasicAuth } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBasicAuth,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param-decorator';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param-decorator';
@@ -43,6 +54,7 @@ import { UpdatePostCommand } from '../../posts/application/use-cases/update-post
 import { DeletePostCommand } from '../../posts/application/use-cases/delete-post.use-case';
 
 @Controller('sa/blogs')
+@ApiTags('Blogs SA')
 export class BlogsAdminController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -51,6 +63,9 @@ export class BlogsAdminController {
 
   @Get()
   @UseGuards(BasicAuthGuard)
+  @ApiBasicAuth()
+  @ApiOkResponse()
+  @ApiUnauthorizedResponse()
   async getAll(
     @Query()
     inputQuery: GetBlogsQueryParams,
@@ -61,6 +76,9 @@ export class BlogsAdminController {
   @Post()
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
+  @ApiCreatedResponse()
+  @ApiBadRequestResponse()
+  @ApiUnauthorizedResponse()
   async create(@Body() blogCreateModel: CreateBlogInputModel) {
     const createdBlogId = await this.commandBus.execute(
       new CreateBlogCommand(blogCreateModel),
@@ -70,8 +88,11 @@ export class BlogsAdminController {
 
   @Put(':id')
   @UseGuards(BasicAuthGuard)
-  @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBasicAuth()
+  @ApiNoContentResponse()
+  @ApiBadRequestResponse()
+  @ApiUnauthorizedResponse()
   async update(
     @Param('id', IdIsNumberValidationPipe) id: number,
     @Body() updateBlogModel: UpdateBlogInputModel,
@@ -81,16 +102,24 @@ export class BlogsAdminController {
 
   @Delete(':id')
   @UseGuards(BasicAuthGuard)
-  @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBasicAuth()
+  @ApiNoContentResponse()
+  @ApiUnauthorizedResponse()
+  @ApiNotFoundResponse()
   async delete(@Param('id', IdIsNumberValidationPipe) id: number) {
     await this.commandBus.execute(new DeleteBlogCommand(id));
   }
 
   @Post(':blogId/posts')
   @UseGuards(BasicAuthGuard)
-  @ApiBasicAuth()
   @HttpCode(HttpStatus.CREATED)
+  @ApiBasicAuth()
+  @ApiCreatedResponse()
+  @ApiBadRequestResponse()
+  @ApiUnauthorizedResponse()
+  @ApiNotFoundResponse()
+  @ApiParam({ name: 'blogId', type: String, required: true })
   async createPostByBlogId(
     @CurrentUserId() currentUserId: string,
     @Param('blogId', IdIsNumberValidationPipe) blogId: number,
@@ -106,6 +135,11 @@ export class BlogsAdminController {
 
   @Get(':blogId/posts')
   @UseGuards(JwtOptionalAuthGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse()
+  @ApiUnauthorizedResponse()
+  @ApiNotFoundResponse()
+  @ApiParam({ name: 'blogId', type: String, required: true })
   async getPostsByBlogId(
     @IdentifyUser() identifyUser: string,
     @Param('blogId', IdIsNumberValidationPipe) blogId: number,
@@ -118,8 +152,14 @@ export class BlogsAdminController {
 
   @Put(':blogId/posts/:postId')
   @UseGuards(BasicAuthGuard)
-  @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBasicAuth()
+  @ApiNoContentResponse()
+  @ApiBadRequestResponse()
+  @ApiUnauthorizedResponse()
+  @ApiNotFoundResponse()
+  @ApiParam({ name: 'blogId', type: String, required: true })
+  @ApiParam({ name: 'postId', type: String, required: true })
   async updatePost(
     @Param('blogId', IdIsNumberValidationPipe) blogId: number,
     @Param('postId', IdIsNumberValidationPipe) postId: number,
@@ -132,8 +172,13 @@ export class BlogsAdminController {
 
   @Delete(':blogId/posts/:postId')
   @UseGuards(BasicAuthGuard)
-  @ApiBasicAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBasicAuth()
+  @ApiNoContentResponse()
+  @ApiUnauthorizedResponse()
+  @ApiNotFoundResponse()
+  @ApiParam({ name: 'blogId', type: String, required: true })
+  @ApiParam({ name: 'postId', type: String, required: true })
   async deletePost(
     @Param('blogId', IdIsNumberValidationPipe) blogId: number,
     @Param('postId', IdIsNumberValidationPipe) postId: number,

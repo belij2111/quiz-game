@@ -12,7 +12,17 @@ import {
 } from '@nestjs/common';
 import { PostViewModel } from './models/view/post.view-model';
 import { GetPostQueryParams } from './models/input/create-post.input-model';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
 import {
   CreateCommentInputModel,
@@ -34,6 +44,7 @@ import { GetCommentsForSpecificPostQuery } from '../../comments/application/quer
 import { IdIsNumberValidationPipe } from '../../../../core/pipes/id-is-number.validation-pipe';
 
 @Controller('posts')
+@ApiTags('Posts')
 export class PostsPublicController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -42,8 +53,13 @@ export class PostsPublicController {
 
   @Put(':postId/like-status')
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBearerAuth()
+  @ApiNoContentResponse()
+  @ApiBadRequestResponse()
+  @ApiUnauthorizedResponse()
+  @ApiNotFoundResponse()
+  @ApiParam({ name: 'postId', type: String, required: true })
   async updateLikeStatus(
     @CurrentUserId() currentUserId: string,
     @Param('postId', IdIsNumberValidationPipe) postId: number,
@@ -56,6 +72,9 @@ export class PostsPublicController {
 
   @Get(':postId/comments')
   @UseGuards(JwtOptionalAuthGuard)
+  @ApiOkResponse()
+  @ApiNotFoundResponse()
+  @ApiParam({ name: 'postId', type: String, required: true })
   async getCommentsByPostId(
     @IdentifyUser() identifyUser: string,
     @Param('postId', IdIsNumberValidationPipe) postId: number,
@@ -69,6 +88,11 @@ export class PostsPublicController {
   @Post(':postId/comments')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @ApiCreatedResponse()
+  @ApiBadRequestResponse()
+  @ApiUnauthorizedResponse()
+  @ApiNotFoundResponse()
+  @ApiParam({ name: 'postId', type: String, required: true })
   async createCommentByPostId(
     @CurrentUserId() currentUserId: string,
     @Param('postId', IdIsNumberValidationPipe) postId: number,
@@ -84,6 +108,7 @@ export class PostsPublicController {
 
   @Get()
   @UseGuards(JwtOptionalAuthGuard)
+  @ApiOkResponse()
   async getAll(
     @IdentifyUser() identifyUser: string,
     @Query() query: GetPostQueryParams,
@@ -93,6 +118,9 @@ export class PostsPublicController {
 
   @Get(':id')
   @UseGuards(JwtOptionalAuthGuard)
+  @ApiOkResponse()
+  @ApiNotFoundResponse()
+  @ApiParam({ name: 'id', type: String, required: true })
   async getById(
     @IdentifyUser() identifyUser: string,
     @Param('id') id: number,

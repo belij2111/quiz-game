@@ -11,12 +11,20 @@ import { GetBlogByIdQuery } from '../application/queries/get-blog-by-id.query';
 import { GetBlogsQuery } from '../application/queries/get-blogs.query';
 import { GetPostsForSpecifiedBlogQuery } from '../../posts/application/queries/get-posts-for-specified-blog.query';
 import { IdIsNumberValidationPipe } from '../../../../core/pipes/id-is-number.validation-pipe';
+import {
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('blogs')
+@ApiTags('Blogs')
 export class BlogsPublicController {
   constructor(private readonly queryBus: QueryBus) {}
 
   @Get()
+  @ApiOkResponse()
   async getAll(
     @Query()
     inputQuery: GetBlogsQueryParams,
@@ -26,6 +34,8 @@ export class BlogsPublicController {
 
   @Get(':blogId/posts')
   @UseGuards(JwtOptionalAuthGuard)
+  @ApiOkResponse()
+  @ApiParam({ name: 'blogId', type: String, required: true })
   async getPostsByBlogId(
     @IdentifyUser() identifyUser: string,
     @Param('blogId', IdIsNumberValidationPipe) blogId: number,
@@ -37,6 +47,9 @@ export class BlogsPublicController {
   }
 
   @Get(':id')
+  @ApiOkResponse()
+  @ApiNotFoundResponse()
+  @ApiParam({ name: 'id', type: String, required: true })
   async getById(@Param('id') id: number): Promise<BlogViewModel> {
     return await this.queryBus.execute(new GetBlogByIdQuery(id));
   }

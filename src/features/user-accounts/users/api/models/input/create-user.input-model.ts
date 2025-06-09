@@ -1,6 +1,7 @@
 import { IsEmail, IsEnum, IsOptional, Length, Matches } from 'class-validator';
 import { TrimIsString } from '../../../../../../core/decorators/validation/trim-is-string';
 import { BaseSortablePaginationParams } from '../../../../../../core/models/base-query-params.input-model';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserInputModel {
   @TrimIsString()
@@ -11,12 +12,14 @@ export class CreateUserInputModel {
     message:
       'login should contain only letters, numbers, underscores, and hyphens',
   })
+  @ApiProperty()
   login: string;
 
   @TrimIsString()
   @Length(6, 20, {
     message: 'password length should be from 6 to 20 symbols',
   })
+  @ApiProperty()
   password: string;
 
   @TrimIsString()
@@ -24,6 +27,7 @@ export class CreateUserInputModel {
   @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, {
     message: 'email should follow the pattern: example@example.com',
   })
+  @ApiProperty()
   email: string;
 }
 
@@ -39,9 +43,23 @@ export class GetUsersQueryParams extends BaseSortablePaginationParams<UsersSortB
 
   @TrimIsString()
   @IsOptional()
+  @ApiProperty({
+    required: false,
+    type: String,
+    description:
+      'Search term for user Login: Login should contains this term in any position',
+    default: null,
+  })
   searchLoginTerm: string | null = null;
 
   @TrimIsString()
   @IsOptional()
+  @ApiProperty({
+    required: false,
+    type: String,
+    description:
+      'Search term for user Email: Email should contains this term in any position',
+    default: null,
+  })
   searchEmailTerm: string | null = null;
 }

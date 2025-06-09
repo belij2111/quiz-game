@@ -17,7 +17,16 @@ import {
   CreateUserInputModel,
 } from './models/input/create-user.input-model';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
-import { ApiBasicAuth } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBasicAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateUserCommand } from '../application/use-cases/create-user.use-case';
@@ -28,6 +37,7 @@ import { GetUserByIdQuery } from '../application/queries/get-user-by-id.query';
 @Controller('sa/users')
 @UseGuards(BasicAuthGuard)
 @ApiBasicAuth()
+@ApiTags('Users SA')
 export class UsersController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -36,6 +46,9 @@ export class UsersController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @ApiCreatedResponse()
+  @ApiBadRequestResponse()
+  @ApiUnauthorizedResponse()
   async create(@Body() userCreateModel: CreateUserInputModel) {
     const createdUserId = await this.commandBus.execute(
       new CreateUserCommand(userCreateModel),
@@ -45,6 +58,8 @@ export class UsersController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @ApiOkResponse()
+  @ApiUnauthorizedResponse()
   async getAll(
     @Query()
     inputQuery: GetUsersQueryParams,
@@ -54,6 +69,9 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse()
+  @ApiUnauthorizedResponse()
+  @ApiNotFoundResponse()
   async delete(@Param('id') id: string) {
     const deletionResult: boolean = await this.commandBus.execute(
       new DeleteUserCommand(id),

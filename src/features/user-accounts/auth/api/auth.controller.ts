@@ -37,11 +37,24 @@ import { PasswordRecoveryCommand } from '../application/use-cases/password-recov
 import { NewPasswordCommand } from '../application/use-cases/new-password.use-case';
 import { LogoutCommand } from '../application/use-cases/logout.use-case';
 import { GetInfoAboutCurrentUserQuery } from '../application/queries/get-info-about-current-user.query';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiBody,
+  ApiCookieAuth,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiTooManyRequestsResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { LoginInputModel } from './models/input/login.input-model';
 
 const THROTTLE_LIMIT = 5;
 const THROTTLE_TTL_MS = 10000;
 
 @Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -52,6 +65,11 @@ export class AuthController {
   @Throttle({ default: { limit: THROTTLE_LIMIT, ttl: THROTTLE_TTL_MS } })
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
+  @ApiOkResponse()
+  @ApiBadRequestResponse()
+  @ApiUnauthorizedResponse()
+  @ApiTooManyRequestsResponse()
+  @ApiBody({ type: LoginInputModel })
   async login(
     @Req() req: ExpressRequest,
     @Res() res: ExpressResponse,
@@ -81,6 +99,9 @@ export class AuthController {
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   @UseGuards(RefreshTokenGuard)
+  @ApiCookieAuth('refreshToken')
+  @ApiOkResponse()
+  @ApiUnauthorizedResponse()
   async refreshToken(
     @Res() res: ExpressResponse,
     @Req() { user, deviceId }: UserInfoInputModel,
@@ -101,6 +122,9 @@ export class AuthController {
   @Get('me')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse()
+  @ApiUnauthorizedResponse()
   async get(@CurrentUserId() currentUserId: string) {
     return this.queryBus.execute(
       new GetInfoAboutCurrentUserQuery(currentUserId),
@@ -110,6 +134,10 @@ export class AuthController {
   @Post('registration')
   @Throttle({ default: { limit: THROTTLE_LIMIT, ttl: THROTTLE_TTL_MS } })
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse()
+  @ApiBadRequestResponse()
+  @ApiTooManyRequestsResponse()
+  @ApiBody({ type: CreateUserInputModel })
   async registration(@Body() userCreateModel: CreateUserInputModel) {
     await this.commandBus.execute(new RegisterUserCommand(userCreateModel));
   }
@@ -117,6 +145,9 @@ export class AuthController {
   @Post('registration-confirmation')
   @Throttle({ default: { limit: THROTTLE_LIMIT, ttl: THROTTLE_TTL_MS } })
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse()
+  @ApiBadRequestResponse()
+  @ApiTooManyRequestsResponse()
   async registrationConfirmation(
     @Body()
     registrationConfirmationCodeModel: RegistrationConfirmationCodeInputModel,
@@ -131,6 +162,9 @@ export class AuthController {
   @Post('registration-email-resending')
   @Throttle({ default: { limit: THROTTLE_LIMIT, ttl: THROTTLE_TTL_MS } })
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse()
+  @ApiBadRequestResponse()
+  @ApiTooManyRequestsResponse()
   async registrationEmailResending(
     @Body()
     registrationEmailResendingModel: RegistrationEmailResendingInputModel,
@@ -143,6 +177,9 @@ export class AuthController {
   @Post('password-recovery')
   @Throttle({ default: { limit: THROTTLE_LIMIT, ttl: THROTTLE_TTL_MS } })
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse()
+  @ApiBadRequestResponse()
+  @ApiTooManyRequestsResponse()
   async passwordRecovery(
     @Body() passwordRecoveryInputModel: PasswordRecoveryInputModel,
   ) {
@@ -154,6 +191,9 @@ export class AuthController {
   @Post('new-password')
   @Throttle({ default: { limit: THROTTLE_LIMIT, ttl: THROTTLE_TTL_MS } })
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse()
+  @ApiBadRequestResponse()
+  @ApiTooManyRequestsResponse()
   async newPassword(
     @Body() newPasswordRecoveryInputModel: NewPasswordRecoveryInputModel,
   ) {
@@ -165,6 +205,8 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(RefreshTokenGuard)
+  @ApiNoContentResponse()
+  @ApiUnauthorizedResponse()
   async logout(
     @Res() res: ExpressResponse,
     @CurrentDeviceId() deviceId: string,

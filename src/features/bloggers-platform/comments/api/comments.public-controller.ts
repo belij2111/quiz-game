@@ -11,7 +11,17 @@ import {
 } from '@nestjs/common';
 import { CommentViewModel } from './models/view/comment.view.model';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiForbiddenResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param-decorator';
 import { LikeInputModel } from '../../likes/api/models/input/like.input-model';
 import { IdentifyUser } from '../../../../core/decorators/param/identify-user.param-decorator';
@@ -25,6 +35,7 @@ import { IdIsNumberValidationPipe } from '../../../../core/pipes/id-is-number.va
 import { UpdateCommentInputModel } from './models/input/update-comment.input-model';
 
 @Controller('comments')
+@ApiTags('Comments')
 export class CommentsPublicController {
   constructor(
     private readonly commandBus: CommandBus,
@@ -32,8 +43,14 @@ export class CommentsPublicController {
   ) {}
 
   @Put(':commentId/like-status')
-  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiNoContentResponse()
+  @ApiBadRequestResponse()
+  @ApiUnauthorizedResponse()
+  @ApiNotFoundResponse()
+  @ApiParam({ name: 'commentId', type: String, required: true })
   async updateLikeStatus(
     @CurrentUserId() currentUserId: string,
     @Param('commentId', IdIsNumberValidationPipe) commentId: number,
@@ -50,8 +67,14 @@ export class CommentsPublicController {
 
   @Put(':commentId')
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBearerAuth()
+  @ApiNoContentResponse()
+  @ApiBadRequestResponse()
+  @ApiUnauthorizedResponse()
+  @ApiForbiddenResponse()
+  @ApiNotFoundResponse()
+  @ApiParam({ name: 'commentId', type: String, required: true })
   async update(
     @CurrentUserId() currentUserId: string,
     @Param('commentId', IdIsNumberValidationPipe) commentId: number,
@@ -65,6 +88,12 @@ export class CommentsPublicController {
   @Delete(':commentId')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiBearerAuth()
+  @ApiNoContentResponse()
+  @ApiUnauthorizedResponse()
+  @ApiForbiddenResponse()
+  @ApiNotFoundResponse()
+  @ApiParam({ name: 'commentId', type: String, required: true })
   async delete(
     @CurrentUserId() currentUserId: string,
     @Param('commentId', IdIsNumberValidationPipe) commentId: number,
@@ -76,6 +105,9 @@ export class CommentsPublicController {
 
   @Get(':id')
   @UseGuards(JwtOptionalAuthGuard)
+  @ApiOkResponse()
+  @ApiNotFoundResponse()
+  @ApiParam({ name: 'id', type: String, required: true })
   async getById(
     @IdentifyUser() identifyUser: string,
     @Param('id', IdIsNumberValidationPipe) id: number,
