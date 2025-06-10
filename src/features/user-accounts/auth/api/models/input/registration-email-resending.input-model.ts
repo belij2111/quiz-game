@@ -2,12 +2,18 @@ import { TrimIsString } from '../../../../../../core/decorators/validation/trim-
 import { IsEmail, Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
+const EMAIL_PATTERN = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+
 export class RegistrationEmailResendingInputModel {
   @TrimIsString()
   @IsEmail()
-  @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, {
+  @Matches(EMAIL_PATTERN, {
     message: 'email should follow the pattern: example@example.com',
   })
-  @ApiProperty()
+  @ApiProperty({
+    pattern: `${EMAIL_PATTERN}`,
+    example: 'example@example.com',
+    description: 'Email of already registered but not confirmed user',
+  })
   email: string;
 }

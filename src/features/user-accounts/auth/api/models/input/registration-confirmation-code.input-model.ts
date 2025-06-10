@@ -3,6 +3,6 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class RegistrationConfirmationCodeInputModel {
   @TrimIsString()
-  @ApiProperty()
+  @ApiProperty({ description: 'Code that be sent via Email inside link' })
   code: string;
 }

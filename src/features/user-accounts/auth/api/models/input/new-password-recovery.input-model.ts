@@ -2,12 +2,18 @@ import { TrimIsString } from '../../../../../../core/decorators/validation/trim-
 import { Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
+const NEW_PASSWORD_MIN_LENGTH = 6;
+const NEW_PASSWORD_MAX_LENGTH = 20;
+
 export class NewPasswordRecoveryInputModel {
   @TrimIsString()
-  @Length(6, 20, {
+  @Length(NEW_PASSWORD_MIN_LENGTH, NEW_PASSWORD_MAX_LENGTH, {
     message: 'password length should be from 6 to 20 symbols',
   })
-  @ApiProperty()
+  @ApiProperty({
+    minLength: NEW_PASSWORD_MIN_LENGTH,
+    maxLength: NEW_PASSWORD_MAX_LENGTH,
+  })
   newPassword: string;
 
   @TrimIsString()
