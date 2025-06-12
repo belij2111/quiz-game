@@ -12,17 +12,7 @@ import {
 } from '@nestjs/common';
 import { PostViewModel } from './models/view/post.view-model';
 import { GetPostQueryParams } from './models/input/create-post.input-model';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiNoContentResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiParam,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
 import {
   CreateCommentInputModel,
@@ -42,6 +32,12 @@ import { GetPostsQuery } from '../application/queries/get-posts.query';
 import { GetCommentByIdQuery } from '../../comments/application/queries/get-comment-by-id.query';
 import { GetCommentsForSpecificPostQuery } from '../../comments/application/queries/get-comments-for-specified-post.query';
 import { IdIsNumberValidationPipe } from '../../../../core/pipes/id-is-number.validation-pipe';
+import { ApiNoContentConfiguredResponse } from '../../../../core/decorators/swagger/api-no-content-configured-response';
+import { ApiBadRequestConfiguredResponse } from '../../../../core/decorators/swagger/api-bad-request-configured-response';
+import { ApiUnauthorizedConfiguredResponse } from '../../../../core/decorators/swagger/api-unauthorized-configured-response';
+import { ApiNotFoundConfiguredResponse } from '../../../../core/decorators/swagger/api-not-found-configured-response';
+import { ApiOkConfiguredResponse } from '../../../../core/decorators/swagger/api-ok-configured-response';
+import { ApiCreatedConfiguredResponse } from '../../../../core/decorators/swagger/api-created-configured-response';
 
 @Controller('posts')
 @ApiTags('Posts')
@@ -55,10 +51,10 @@ export class PostsPublicController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth()
-  @ApiNoContentResponse()
-  @ApiBadRequestResponse()
-  @ApiUnauthorizedResponse()
-  @ApiNotFoundResponse()
+  @ApiNoContentConfiguredResponse()
+  @ApiBadRequestConfiguredResponse()
+  @ApiUnauthorizedConfiguredResponse()
+  @ApiNotFoundConfiguredResponse(`If post with specified postId is not exists`)
   @ApiParam({ name: 'postId', type: String, required: true })
   async updateLikeStatus(
     @CurrentUserId() currentUserId: string,
@@ -72,8 +68,8 @@ export class PostsPublicController {
 
   @Get(':postId/comments')
   @UseGuards(JwtOptionalAuthGuard)
-  @ApiOkResponse()
-  @ApiNotFoundResponse()
+  @ApiOkConfiguredResponse(CommentViewModel)
+  @ApiNotFoundConfiguredResponse(`If post with specified postId is not exists`)
   @ApiParam({ name: 'postId', type: String, required: true })
   async getCommentsByPostId(
     @IdentifyUser() identifyUser: string,
@@ -88,10 +84,13 @@ export class PostsPublicController {
   @Post(':postId/comments')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiCreatedResponse()
-  @ApiBadRequestResponse()
-  @ApiUnauthorizedResponse()
-  @ApiNotFoundResponse()
+  @ApiCreatedConfiguredResponse(
+    CommentViewModel,
+    'Returns the newly created comment',
+  )
+  @ApiBadRequestConfiguredResponse()
+  @ApiUnauthorizedConfiguredResponse()
+  @ApiNotFoundConfiguredResponse('If post with specified postId is not exists')
   @ApiParam({ name: 'postId', type: String, required: true })
   async createCommentByPostId(
     @CurrentUserId() currentUserId: string,
@@ -108,7 +107,7 @@ export class PostsPublicController {
 
   @Get()
   @UseGuards(JwtOptionalAuthGuard)
-  @ApiOkResponse()
+  @ApiOkConfiguredResponse(PostViewModel)
   async getAll(
     @IdentifyUser() identifyUser: string,
     @Query() query: GetPostQueryParams,
@@ -118,8 +117,8 @@ export class PostsPublicController {
 
   @Get(':id')
   @UseGuards(JwtOptionalAuthGuard)
-  @ApiOkResponse()
-  @ApiNotFoundResponse()
+  @ApiOkConfiguredResponse(PostViewModel, '', false)
+  @ApiNotFoundConfiguredResponse()
   @ApiParam({ name: 'id', type: String, required: true })
   async getById(
     @IdentifyUser() identifyUser: string,

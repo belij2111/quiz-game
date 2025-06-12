@@ -23,16 +23,10 @@ import {
 import { PostViewModel } from '../../posts/api/models/view/post.view-model';
 import { BasicAuthGuard } from '../../../../core/guards/basic-auth.guard';
 import {
-  ApiBadRequestResponse,
   ApiBasicAuth,
   ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiNoContentResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
   ApiParam,
   ApiTags,
-  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
 import { CurrentUserId } from '../../../../core/decorators/param/current-user-id.param-decorator';
@@ -52,6 +46,12 @@ import { UpdateBlogInputModel } from './models/input/update-blog.input-model';
 import { UpdatePostInputModel } from '../../posts/api/models/input/update-post.input-model';
 import { UpdatePostCommand } from '../../posts/application/use-cases/update-post.use-case';
 import { DeletePostCommand } from '../../posts/application/use-cases/delete-post.use-case';
+import { ApiOkConfiguredResponse } from '../../../../core/decorators/swagger/api-ok-configured-response';
+import { ApiUnauthorizedConfiguredResponse } from '../../../../core/decorators/swagger/api-unauthorized-configured-response';
+import { ApiCreatedConfiguredResponse } from '../../../../core/decorators/swagger/api-created-configured-response';
+import { ApiBadRequestConfiguredResponse } from '../../../../core/decorators/swagger/api-bad-request-configured-response';
+import { ApiNoContentConfiguredResponse } from '../../../../core/decorators/swagger/api-no-content-configured-response';
+import { ApiNotFoundConfiguredResponse } from '../../../../core/decorators/swagger/api-not-found-configured-response';
 
 @Controller('sa/blogs')
 @ApiTags('Blogs SA')
@@ -64,8 +64,8 @@ export class BlogsAdminController {
   @Get()
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
-  @ApiOkResponse()
-  @ApiUnauthorizedResponse()
+  @ApiOkConfiguredResponse(BlogViewModel)
+  @ApiUnauthorizedConfiguredResponse()
   async getAll(
     @Query()
     inputQuery: GetBlogsQueryParams,
@@ -76,9 +76,9 @@ export class BlogsAdminController {
   @Post()
   @UseGuards(BasicAuthGuard)
   @ApiBasicAuth()
-  @ApiCreatedResponse()
-  @ApiBadRequestResponse()
-  @ApiUnauthorizedResponse()
+  @ApiCreatedConfiguredResponse(BlogViewModel, 'Returns the newly created blog')
+  @ApiBadRequestConfiguredResponse()
+  @ApiUnauthorizedConfiguredResponse()
   async create(@Body() blogCreateModel: CreateBlogInputModel) {
     const createdBlogId = await this.commandBus.execute(
       new CreateBlogCommand(blogCreateModel),
@@ -90,9 +90,10 @@ export class BlogsAdminController {
   @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBasicAuth()
-  @ApiNoContentResponse()
-  @ApiBadRequestResponse()
-  @ApiUnauthorizedResponse()
+  @ApiNoContentConfiguredResponse()
+  @ApiBadRequestConfiguredResponse()
+  @ApiUnauthorizedConfiguredResponse()
+  @ApiParam({ name: 'id', type: String, description: 'Blog id' })
   async update(
     @Param('id', IdIsNumberValidationPipe) id: number,
     @Body() updateBlogModel: UpdateBlogInputModel,
@@ -104,9 +105,10 @@ export class BlogsAdminController {
   @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBasicAuth()
-  @ApiNoContentResponse()
-  @ApiUnauthorizedResponse()
-  @ApiNotFoundResponse()
+  @ApiNoContentConfiguredResponse()
+  @ApiUnauthorizedConfiguredResponse()
+  @ApiNotFoundConfiguredResponse()
+  @ApiParam({ name: 'id', type: String, description: 'Blog id' })
   async delete(@Param('id', IdIsNumberValidationPipe) id: number) {
     await this.commandBus.execute(new DeleteBlogCommand(id));
   }
@@ -115,11 +117,11 @@ export class BlogsAdminController {
   @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiBasicAuth()
-  @ApiCreatedResponse()
-  @ApiBadRequestResponse()
-  @ApiUnauthorizedResponse()
-  @ApiNotFoundResponse()
-  @ApiParam({ name: 'blogId', type: String, required: true })
+  @ApiCreatedConfiguredResponse(PostViewModel, 'Returns the newly created post')
+  @ApiBadRequestConfiguredResponse()
+  @ApiUnauthorizedConfiguredResponse()
+  @ApiNotFoundConfiguredResponse(`If specified blog is not exists`)
+  @ApiParam({ name: 'blogId', type: String })
   async createPostByBlogId(
     @CurrentUserId() currentUserId: string,
     @Param('blogId', IdIsNumberValidationPipe) blogId: number,
@@ -136,9 +138,9 @@ export class BlogsAdminController {
   @Get(':blogId/posts')
   @UseGuards(JwtOptionalAuthGuard)
   @ApiBearerAuth()
-  @ApiOkResponse()
-  @ApiUnauthorizedResponse()
-  @ApiNotFoundResponse()
+  @ApiOkConfiguredResponse(PostViewModel)
+  @ApiUnauthorizedConfiguredResponse()
+  @ApiNotFoundConfiguredResponse()
   @ApiParam({ name: 'blogId', type: String, required: true })
   async getPostsByBlogId(
     @IdentifyUser() identifyUser: string,
@@ -154,10 +156,10 @@ export class BlogsAdminController {
   @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBasicAuth()
-  @ApiNoContentResponse()
-  @ApiBadRequestResponse()
-  @ApiUnauthorizedResponse()
-  @ApiNotFoundResponse()
+  @ApiNoContentConfiguredResponse()
+  @ApiBadRequestConfiguredResponse()
+  @ApiUnauthorizedConfiguredResponse()
+  @ApiNotFoundConfiguredResponse()
   @ApiParam({ name: 'blogId', type: String, required: true })
   @ApiParam({ name: 'postId', type: String, required: true })
   async updatePost(
@@ -174,9 +176,9 @@ export class BlogsAdminController {
   @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBasicAuth()
-  @ApiNoContentResponse()
-  @ApiUnauthorizedResponse()
-  @ApiNotFoundResponse()
+  @ApiNoContentConfiguredResponse()
+  @ApiUnauthorizedConfiguredResponse()
+  @ApiNotFoundConfiguredResponse()
   @ApiParam({ name: 'blogId', type: String, required: true })
   @ApiParam({ name: 'postId', type: String, required: true })
   async deletePost(

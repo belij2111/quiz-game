@@ -1,24 +1,78 @@
 import { LikeStatus } from '../../../../likes/api/models/enums/like-status.enum';
 import { PostRawDataDto } from '../../../dto/post-raw-data.dto';
+import { ApiProperty } from '@nestjs/swagger';
+
+export class NewestLike {
+  @ApiProperty({
+    format: 'date-time',
+    required: false,
+  })
+  addedAt: string;
+
+  @ApiProperty({ type: String, nullable: true, required: false })
+  userId: string | null;
+
+  @ApiProperty({ type: String, nullable: true, required: false })
+  login: string | null;
+}
+
+export class ExtendedLikesInfo {
+  @ApiProperty({
+    type: 'integer',
+    format: 'int32',
+    description: 'Total likes for parent item',
+    required: false,
+  })
+  likesCount: number;
+
+  @ApiProperty({
+    type: 'integer',
+    format: 'int32',
+    description: 'Total dislikes for parent item',
+    required: false,
+  })
+  dislikesCount: number;
+
+  @ApiProperty({
+    enum: LikeStatus,
+    required: false,
+    description: 'Send None if you want to unlike/un dislike',
+  })
+  myStatus: LikeStatus;
+
+  @ApiProperty({
+    required: false,
+    description: 'Last 3 likes (status "Like")',
+    nullable: true,
+    type: [NewestLike],
+  })
+  newestLikes: NewestLike[] | null;
+}
 
 export class PostViewModel {
+  @ApiProperty()
   id: string;
+
+  @ApiProperty()
   title: string;
+
+  @ApiProperty()
   shortDescription: string;
+
+  @ApiProperty()
   content: string;
+
+  @ApiProperty()
   blogId: string;
+
+  @ApiProperty()
   blogName: string;
+
+  @ApiProperty({ format: 'date-time', required: false })
   createdAt: string;
-  extendedLikesInfo: {
-    likesCount: number;
-    dislikesCount: number;
-    myStatus: LikeStatus;
-    newestLikes: {
-      addedAt: string;
-      userId: string;
-      login: string;
-    }[];
-  };
+
+  @ApiProperty({ type: [ExtendedLikesInfo], required: false })
+  extendedLikesInfo: ExtendedLikesInfo;
 
   static mapToView(
     post: PostRawDataDto,

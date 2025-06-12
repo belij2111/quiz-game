@@ -8,6 +8,7 @@ export class LikeInputModel {
   @ApiProperty({
     enum: LikeStatus,
     description: 'Send None if you want to un like/un dislike',
+    required: false,
   })
   likeStatus: LikeStatus;
 }
