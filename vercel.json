@@ -11,7 +11,6 @@
       "use": "@vercel/node",
       "config": {
         "includeFiles": [
-          "src/**/*.ts",
           "migrations/**/*.ts",
           "src/env/**/*"
         ]
