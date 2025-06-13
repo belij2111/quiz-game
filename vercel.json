@@ -1,6 +1,9 @@
 {
   "version": 2,
   "name": "bloggers-platform-migrations",
+  "env": {
+    "NODE_ENV": "development"
+  },
   "builds": [
     {
       "src": "src/main.ts",
