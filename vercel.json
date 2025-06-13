@@ -10,8 +10,8 @@
       "use": "@vercel/node",
       "config": {
         "includeFiles": [
-          "dist/src/**/*.js",
-          "dist/migrations/**/*.js",
+          "src/**/*.ts",
+          "migrations/**/*.ts",
           "src/env/**/*"
         ]
       }
@@ -20,7 +20,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "dist/src/main.js"
+      "dest": "src/main.ts"
     }
   ]
 }
