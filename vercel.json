@@ -1,6 +1,7 @@
 {
   "version": 2,
   "name": "bloggers-platform-migrations",
+  "buildCommand": "yarn build",
   "env": {
     "NODE_ENV": "development"
   },
@@ -20,7 +21,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/main.ts"
+      "dest": "dist/src/main.js"
     }
   ]
 }
