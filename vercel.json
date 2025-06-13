@@ -4,12 +4,11 @@
   "env": {
     "NODE_ENV": "development"
   },
-  "builds": [
-    {
-      "src": "dist/src/main.js",
-      "use": "@vercel/node"
+  "functions": {
+    "dist/src/main.js": {
+      "runtime": "@vercel/node"
     }
-  ],
+  },
   "routes": [
     {
       "src": "/(.*)",
