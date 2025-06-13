@@ -6,7 +6,7 @@
   },
   "builds": [
     {
-      "src": "dist/src/main.js",
+      "src": "src/main.ts",
       "use": "@vercel/node",
       "config": {
         "includeFiles": [
@@ -22,6 +22,5 @@
       "src": "/(.*)",
       "dest": "dist/src/main.js"
     }
-  ],
-  "buildCommand": "yarn build"
+  ]
 }
