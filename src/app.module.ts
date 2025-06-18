@@ -8,6 +8,7 @@ import { CoreModule } from './core/core.module';
 import { NotificationsModule } from './features/notifications/notifications.module';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { dbBaseOptions } from './core/db/db-base-options';
+import { QuizGameModule } from './features/quiz-game/quiz-game.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { dbBaseOptions } from './core/db/db-base-options';
     UserAccountsModule,
     BloggersPlatformModule,
     NotificationsModule,
+    QuizGameModule,
   ],
   controllers: [],
   providers: [],
