@@ -2,6 +2,9 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddLikeForPosts1749107374156 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `CREATE TYPE "public"."like_for_posts_like_status_enum" AS ENUM('None', 'Like', 'Dislike')`,
+    );
     await queryRunner.query(`CREATE TABLE "like_for_posts"
                              (
                                  "created_at"  TIMESTAMP WITH TIME ZONE                   NOT NULL DEFAULT now(),
