@@ -2,25 +2,16 @@
   "version": 2,
   "name": "bloggers-platform-migrations",
   "buildCommand": "yarn vercel-build",
-  "env": {
-    "NODE_ENV": "development"
-  },
   "builds": [
     {
       "src": "src/main.ts",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "migrations/**/*.ts",
-          "src/env/**/*"
-        ]
-      }
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "api/main.js"
+      "dest": "src/main.ts"
     }
   ]
 }

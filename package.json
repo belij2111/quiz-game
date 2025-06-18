@@ -6,8 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "cross-env NODE_ENV=development nest build",
-    "vercel-build": "yarn build && shx cp -r migrations dist/",
+    "build": "nest build",
+    "vercel-build": "yarn build && shx cp -r migrations dist/ && yarn vercel-migration:run",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "cross-env NODE_ENV=development nest start --watch",
@@ -22,7 +22,8 @@
     "migration:create": "cross-env NODE_ENV=development typeorm-ts-node-commonjs migration:create",
     "migration:generate": "cross-env NODE_ENV=development typeorm-ts-node-commonjs migration:generate -d src/migrations.config.ts",
     "migration:run": "cross-env NODE_ENV=development typeorm-ts-node-commonjs migration:run -d src/migrations.config.ts",
-    "migration:revert": "cross-env NODE_ENV=development typeorm-ts-node-commonjs migration:revert -d src/migrations.config.ts"
+    "migration:revert": "cross-env NODE_ENV=development typeorm-ts-node-commonjs migration:revert -d src/migrations.config.ts",
+    "vercel-migration:run": "typeorm-ts-node-commonjs migration:run -d dist/migrations.config.js"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",
