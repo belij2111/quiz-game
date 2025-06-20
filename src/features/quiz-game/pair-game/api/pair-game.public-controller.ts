@@ -8,7 +8,12 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../../core/guards/jwt-auth.guard';
 import { ApiOkConfiguredResponse } from '../../../../core/decorators/swagger/api-ok-configured-response';
 import { ApiUnauthorizedConfiguredResponse } from '../../../../core/decorators/swagger/api-unauthorized-configured-response';
@@ -26,6 +31,10 @@ export class PairGamePublicController {
   @Post('pairs/connection')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary:
+      'Connect current user to existing random pending pair or create new pair which will be waiting second player ',
+  })
   @ApiBearerAuth()
   @ApiOkConfiguredResponse(
     GamePairViewDto,
@@ -42,6 +51,7 @@ export class PairGamePublicController {
   @Get('pairs/my-current')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Return current unfinished user game' })
   @ApiBearerAuth()
   @ApiOkConfiguredResponse(
     GamePairViewDto,
@@ -56,6 +66,9 @@ export class PairGamePublicController {
   @Post('pairs/my-current/answers')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Send answer for next not answered question in active pair',
+  })
   @ApiBearerAuth()
   @ApiOkConfiguredResponse(AnswerViewDto, 'Returns answer result', false)
   @ApiUnauthorizedConfiguredResponse()
@@ -72,6 +85,7 @@ export class PairGamePublicController {
   @Get('pairs/:id')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Returns game by id' })
   @ApiBearerAuth()
   @ApiOkConfiguredResponse(GamePairViewDto, 'Returns pair by id', false)
   @ApiBadRequestConfiguredResponse('If id has invalid format')
