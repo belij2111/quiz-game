@@ -26,12 +26,19 @@ import { ApiNoContentConfiguredResponse } from '../../../../core/decorators/swag
 import { ApiNotFoundConfiguredResponse } from '../../../../core/decorators/swagger/api-not-found-configured-response';
 import { UpdateQuestionInputDto } from './input-dto/update-question.input-dto';
 import { UpdatePublishInputDto } from './input-dto/update-publish.input-dto';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateQuestionCommand } from '../application/use-cases/create-question.use-case';
+import { GetQuestionByIdQuery } from '../application/queries/get-question-bu-id.query';
 
 @Controller('sa/quiz/questions')
 @UseGuards(BasicAuthGuard)
 @ApiBasicAuth()
 @ApiTags('QuizQuestions')
 export class QuestionsAdminController {
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create question' })
@@ -39,11 +46,12 @@ export class QuestionsAdminController {
   @ApiBadRequestConfiguredResponse()
   @ApiUnauthorizedConfiguredResponse()
   async create(@Body() createQuestionInputDto: CreateQuestionInputDto) {
-    return {
-      message: 'Created question',
-      inputQuestion: createQuestionInputDto,
-      viewQuestion: 'QuestionViewDto',
-    };
+    const createdQuestionId = await this.commandBus.execute(
+      new CreateQuestionCommand(createQuestionInputDto),
+    );
+    return await this.queryBus.execute(
+      new GetQuestionByIdQuery(createdQuestionId),
+    );
   }
 
   @Get()

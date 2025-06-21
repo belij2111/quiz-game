@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { QuestionRawDataDto } from '../../dto/question-raw-data.dto';
 
 export class QuestionViewDto {
   @ApiProperty()
@@ -28,4 +29,15 @@ export class QuestionViewDto {
 
   @ApiProperty({ format: 'date-time', required: false, nullable: true })
   updatedAt: string;
+
+  static mapToView(question: QuestionRawDataDto): QuestionViewDto {
+    const model = new QuestionViewDto();
+    model.id = question.id;
+    model.body = question.body;
+    model.correctAnswers = question.correctAnswers;
+    model.published = question.published;
+    model.createdAt = question.createdAt.toISOString();
+    model.updatedAt = question.updatedAt.toISOString();
+    return model;
+  }
 }

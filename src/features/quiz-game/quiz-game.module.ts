@@ -3,12 +3,28 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserAccountsModule } from '../user-accounts/user-accounts.module';
 import { PairGamePublicController } from './pair-game/api/pair-game.public-controller';
 import { QuestionsAdminController } from './questions/api/questions.admin-controller';
+import { Question } from './questions/domain/questions.entity';
+import { CreateQuestionUseCase } from './questions/application/use-cases/create-question.use-case';
+import { QuestionsRepository } from './questions/infrastructure/questions.repository';
+import { CqrsModule } from '@nestjs/cqrs';
+import { GetQuestionByIdQueryHandler } from './questions/application/queries/get-question-bu-id.query';
+import { QuestionQueryRepository } from './questions/infrastructure/questions.query-repository';
 
 const controllers = [PairGamePublicController, QuestionsAdminController];
 
+const useCases = [CreateQuestionUseCase];
+
+const queries = [GetQuestionByIdQueryHandler];
+
+const repositories = [QuestionsRepository, QuestionQueryRepository];
+
 @Module({
-  imports: [TypeOrmModule.forFeature([]), UserAccountsModule],
+  imports: [
+    TypeOrmModule.forFeature([Question]),
+    CqrsModule,
+    UserAccountsModule,
+  ],
   controllers: [...controllers],
-  providers: [],
+  providers: [...useCases, ...queries, ...repositories],
 })
 export class QuizGameModule {}
