@@ -29,6 +29,8 @@ import { UpdatePublishInputDto } from './input-dto/update-publish.input-dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateQuestionCommand } from '../application/use-cases/create-question.use-case';
 import { GetQuestionByIdQuery } from '../application/queries/get-question-bu-id.query';
+import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
+import { GetQuestionsQuery } from '../application/queries/get-questions.query';
 
 @Controller('sa/quiz/questions')
 @UseGuards(BasicAuthGuard)
@@ -61,12 +63,10 @@ export class QuestionsAdminController {
   })
   @ApiOkConfiguredResponse(QuestionViewDto)
   @ApiUnauthorizedConfiguredResponse()
-  async getAll(@Query() query: GetQuestionsQueryParams) {
-    return {
-      message: 'Get all questions',
-      inputQuery: query,
-      viewQuestion: 'QuestionViewDto',
-    };
+  async getAll(
+    @Query() query: GetQuestionsQueryParams,
+  ): Promise<PaginatedViewModel<QuestionViewDto[]>> {
+    return await this.queryBus.execute(new GetQuestionsQuery(query));
   }
 
   @Put(':id')
