@@ -11,6 +11,11 @@ import {
 import { CoreTestManager } from '../../tests-managers/core.test-manager';
 import { UpdateQuestionInputDto } from '../../../src/features/quiz-game/questions/api/input-dto/update-question.input-dto';
 import { getMockUuidId } from '../../helpers/get-mock-uuid-id';
+import { UpdatePublishInputDto } from '../../../src/features/quiz-game/questions/api/input-dto/update-publish.input-dto';
+import {
+  createInvalidPublishDto,
+  createPublishDto,
+} from '../../models/quiz-game/publish.input-dto';
 
 describe('e2e-Questions-admin', () => {
   let app: INestApplication;
@@ -129,6 +134,41 @@ describe('e2e-Questions-admin', () => {
         nonExistentId,
         updatedQuestionDto,
         HttpStatus.NOT_FOUND,
+      );
+    });
+  });
+
+  describe('PUT/questions/:id/publish', () => {
+    let createdQuestion: QuestionViewDto;
+    beforeEach(async () => {
+      const validQuestionDto: CreateQuestionInputDto = createValidQuestionDto();
+      createdQuestion =
+        await questionsAdminTestManager.create(validQuestionDto);
+    });
+    it(`should update question publication status : STATUS 204`, async () => {
+      const updatedPublishDto: UpdatePublishInputDto = createPublishDto();
+      // console.log('updatedPublishDto :', updatedPublishDto);
+      await questionsAdminTestManager.updatePublish(
+        createdQuestion.id,
+        updatedPublishDto,
+        HttpStatus.NO_CONTENT,
+      );
+    });
+    it(`shouldn't update question publication status with incorrect input data : STATUS 400 `, async () => {
+      const invalidPublishDto: UpdatePublishInputDto =
+        createInvalidPublishDto();
+      await questionsAdminTestManager.updatePublish(
+        createdQuestion.id,
+        invalidPublishDto,
+        HttpStatus.BAD_REQUEST,
+      );
+    });
+    it(`shouldn't update question publication status if the request is unauthorized `, async () => {
+      const updatedPublishDto: UpdatePublishInputDto = createPublishDto();
+      await questionsAdminTestManager.updatePublishIsNotAuthorized(
+        createdQuestion.id,
+        updatedPublishDto,
+        HttpStatus.UNAUTHORIZED,
       );
     });
   });
