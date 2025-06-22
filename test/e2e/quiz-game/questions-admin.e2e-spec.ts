@@ -8,16 +8,19 @@ import {
   createInValidQuestionDto,
   createValidQuestionDto,
 } from '../../models/quiz-game/question.input-dto';
+import { CoreTestManager } from '../../tests-managers/core.test-manager';
 
 describe('e2e-Questions-admin', () => {
   let app: INestApplication;
   let questionsAdminTestManager: QuestionsAdminTestManager;
+  let coreTestManager: CoreTestManager;
 
   beforeAll(async () => {
     const result = await initSettings();
     app = result.app;
     const coreConfig = result.coreConfig;
     questionsAdminTestManager = new QuestionsAdminTestManager(app, coreConfig);
+    coreTestManager = new CoreTestManager();
   });
   beforeEach(async () => {
     await deleteAllData(app);
@@ -56,6 +59,26 @@ describe('e2e-Questions-admin', () => {
       const validQuestionDto: CreateQuestionInputDto = createValidQuestionDto();
       await questionsAdminTestManager.createIsNotAuthorized(
         validQuestionDto,
+        HttpStatus.UNAUTHORIZED,
+      );
+    });
+  });
+
+  describe('GET/questions', () => {
+    it(`should return questions with pagination`, async () => {
+      const createdQuestions: QuestionViewDto[] =
+        await questionsAdminTestManager.createQuestions(5);
+      const createResponse =
+        await questionsAdminTestManager.getQuestionsWithPaging(HttpStatus.OK);
+      await coreTestManager.expectCorrectPagination(
+        createdQuestions,
+        createResponse.body,
+      );
+      // console.log('createResponse.body :', createResponse.body);
+    });
+    it(`shouldn't return questions with paging if request is unauthorized : STATUS 401`, async () => {
+      await questionsAdminTestManager.createQuestions(5);
+      await questionsAdminTestManager.getQuestionsIsNotAuthorized(
         HttpStatus.UNAUTHORIZED,
       );
     });

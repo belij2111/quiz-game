@@ -3,6 +3,12 @@ import request from 'supertest';
 import { CoreConfig } from '../../src/core/core.config';
 import { CreateQuestionInputDto } from '../../src/features/quiz-game/questions/api/input-dto/create-question.input-dto';
 import { QuestionViewDto } from '../../src/features/quiz-game/questions/api/view-dto/question.view-dto';
+import {
+  createValidQuestionDto,
+  QUESTIONS_PULL,
+} from '../models/quiz-game/question.input-dto';
+import { paginationInputParams } from '../models/base/pagination.input-test-dto';
+import { PublishedStatus } from '../../src/features/quiz-game/questions/api/enums/published-status.enum';
 
 const ISO_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
 
@@ -45,6 +51,63 @@ export class QuestionsAdminTestManager {
       .post('/sa/quiz/questions')
       .auth('invalid login', 'invalid password')
       .send(validQuestionDto)
+      .expect(statusCode);
+  }
+
+  async createQuestions(
+    count: number = 1,
+    statusCode: number = HttpStatus.CREATED,
+  ) {
+    const questions: QuestionViewDto[] = [];
+    for (let i = 0; i < count; i++) {
+      const response = await request(this.app.getHttpServer())
+        .post('/sa/quiz/questions')
+        .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
+        .send(createValidQuestionDto(i))
+        .expect(statusCode);
+      questions.push(response.body);
+    }
+    return questions;
+  }
+
+  async getQuestionsWithPaging(statusCode: number = HttpStatus.OK) {
+    const { pageNumber, pageSize, sortBy, sortDirection } =
+      paginationInputParams;
+    const bodySearchTerm = QUESTIONS_PULL[0].body.split(' ')[0];
+    // console.log('bodySearchTerm :', bodySearchTerm);
+    const publishedStatus = PublishedStatus.All;
+    return request(this.app.getHttpServer())
+      .get('/sa/quiz/questions')
+      .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
+      .query({
+        bodySearchTerm,
+        publishedStatus,
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection,
+      })
+      .expect(statusCode);
+  }
+
+  async getQuestionsIsNotAuthorized(
+    statusCode: number = HttpStatus.UNAUTHORIZED,
+  ) {
+    const { pageNumber, pageSize, sortBy, sortDirection } =
+      paginationInputParams;
+    const bodySearchTerm = QUESTIONS_PULL[0].body.split(' ')[0];
+    const publishedStatus = PublishedStatus.All;
+    return request(this.app.getHttpServer())
+      .get('/sa/quiz/questions')
+      .auth('invalid login', 'invalid password')
+      .query({
+        bodySearchTerm,
+        publishedStatus,
+        pageNumber,
+        pageSize,
+        sortBy,
+        sortDirection,
+      })
       .expect(statusCode);
   }
 }
