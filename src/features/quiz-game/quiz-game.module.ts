@@ -10,10 +10,11 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { GetQuestionByIdQueryHandler } from './questions/application/queries/get-question-bu-id.query';
 import { QuestionQueryRepository } from './questions/infrastructure/questions.query-repository';
 import { GetQuestionsQueryHandler } from './questions/application/queries/get-questions.query';
+import { UpdateQuestionUseCase } from './questions/application/use-cases/update-question.use-case';
 
 const controllers = [PairGamePublicController, QuestionsAdminController];
 
-const useCases = [CreateQuestionUseCase];
+const useCases = [CreateQuestionUseCase, UpdateQuestionUseCase];
 
 const queries = [GetQuestionByIdQueryHandler, GetQuestionsQueryHandler];
 

@@ -31,6 +31,7 @@ import { CreateQuestionCommand } from '../application/use-cases/create-question.
 import { GetQuestionByIdQuery } from '../application/queries/get-question-bu-id.query';
 import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
 import { GetQuestionsQuery } from '../application/queries/get-questions.query';
+import { UpdateQuestionCommand } from '../application/use-cases/update-question.use-case';
 
 @Controller('sa/quiz/questions')
 @UseGuards(BasicAuthGuard)
@@ -80,12 +81,9 @@ export class QuestionsAdminController {
     @Param('id') id: string,
     @Body() updateQuestionInputDto: UpdateQuestionInputDto,
   ) {
-    const result = {
-      id: id,
-      message: 'Updated question',
-      inputQuestion: updateQuestionInputDto,
-    };
-    console.log(result);
+    await this.commandBus.execute(
+      new UpdateQuestionCommand(id, updateQuestionInputDto),
+    );
   }
 
   @Put(':id/publish')
