@@ -9,6 +9,8 @@ import {
   createValidQuestionDto,
 } from '../../models/quiz-game/question.input-dto';
 import { CoreTestManager } from '../../tests-managers/core.test-manager';
+import { UpdateQuestionInputDto } from '../../../src/features/quiz-game/questions/api/input-dto/update-question.input-dto';
+import { getMockUuidId } from '../../helpers/get-mock-uuid-id';
 
 describe('e2e-Questions-admin', () => {
   let app: INestApplication;
@@ -80,6 +82,53 @@ describe('e2e-Questions-admin', () => {
       await questionsAdminTestManager.createQuestions(5);
       await questionsAdminTestManager.getQuestionsIsNotAuthorized(
         HttpStatus.UNAUTHORIZED,
+      );
+    });
+  });
+
+  describe('PUT/questions/:id', () => {
+    let createdQuestion: QuestionViewDto;
+    beforeEach(async () => {
+      const validQuestionDto: CreateQuestionInputDto = createValidQuestionDto();
+      createdQuestion =
+        await questionsAdminTestManager.create(validQuestionDto);
+    });
+    it(`should update question by ID : STATUS 204`, async () => {
+      const updatedQuestionDto: UpdateQuestionInputDto =
+        createValidQuestionDto(5);
+      // console.log('updatedQuestionDto :', updatedQuestionDto);
+      await questionsAdminTestManager.update(
+        createdQuestion.id,
+        updatedQuestionDto,
+        HttpStatus.NO_CONTENT,
+      );
+    });
+    it(`shouldn't update question by ID with incorrect input data : STATUS 400`, async () => {
+      const invalidQuestionDto: UpdateQuestionInputDto =
+        createInValidQuestionDto();
+      await questionsAdminTestManager.update(
+        createdQuestion.id,
+        invalidQuestionDto,
+        HttpStatus.BAD_REQUEST,
+      );
+    });
+    it(`shouldn't update question by ID if the request is unauthorized : STATUS 401 `, async () => {
+      const updatedQuestionDto: UpdateQuestionInputDto =
+        createValidQuestionDto();
+      await questionsAdminTestManager.updateIsNotAuthorized(
+        createdQuestion.id,
+        updatedQuestionDto,
+        HttpStatus.UNAUTHORIZED,
+      );
+    });
+    it(`shouldn't update question by ID if it does not exist : STATUS 404`, async () => {
+      const updatedQuestionDto: UpdateQuestionInputDto =
+        createValidQuestionDto();
+      const nonExistentId = getMockUuidId();
+      await questionsAdminTestManager.update(
+        nonExistentId,
+        updatedQuestionDto,
+        HttpStatus.NOT_FOUND,
       );
     });
   });

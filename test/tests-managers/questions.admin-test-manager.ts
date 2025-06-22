@@ -9,6 +9,7 @@ import {
 } from '../models/quiz-game/question.input-dto';
 import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { PublishedStatus } from '../../src/features/quiz-game/questions/api/enums/published-status.enum';
+import { UpdateQuestionInputDto } from '../../src/features/quiz-game/questions/api/input-dto/update-question.input-dto';
 
 const ISO_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
 
@@ -108,6 +109,30 @@ export class QuestionsAdminTestManager {
         sortBy,
         sortDirection,
       })
+      .expect(statusCode);
+  }
+
+  async update(
+    id: string,
+    updatedQuestionDto: UpdateQuestionInputDto,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    return request(this.app.getHttpServer())
+      .put(`/sa/quiz/questions/${id}`)
+      .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
+      .send(updatedQuestionDto)
+      .expect(statusCode);
+  }
+
+  async updateIsNotAuthorized(
+    id: string,
+    updatedQuestionDto: UpdateQuestionInputDto,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    return request(this.app.getHttpServer())
+      .put(`/sa/quiz/questions/${id}`)
+      .auth('invalid login', 'invalid password')
+      .send(updatedQuestionDto)
       .expect(statusCode);
   }
 }
