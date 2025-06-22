@@ -11,10 +11,15 @@ import { GetQuestionByIdQueryHandler } from './questions/application/queries/get
 import { QuestionQueryRepository } from './questions/infrastructure/questions.query-repository';
 import { GetQuestionsQueryHandler } from './questions/application/queries/get-questions.query';
 import { UpdateQuestionUseCase } from './questions/application/use-cases/update-question.use-case';
+import { UpdatePublishUseCase } from './questions/application/use-cases/update-publish.use-case';
 
 const controllers = [PairGamePublicController, QuestionsAdminController];
 
-const useCases = [CreateQuestionUseCase, UpdateQuestionUseCase];
+const useCases = [
+  CreateQuestionUseCase,
+  UpdateQuestionUseCase,
+  UpdatePublishUseCase,
+];
 
 const queries = [GetQuestionByIdQueryHandler, GetQuestionsQueryHandler];
 
