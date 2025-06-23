@@ -160,4 +160,21 @@ export class QuestionsAdminTestManager {
       .send(updatedPublishDto)
       .expect(statusCode);
   }
+
+  async delete(id: string, statusCode: number = HttpStatus.NO_CONTENT) {
+    return request(this.app.getHttpServer())
+      .delete(`/sa/quiz/questions/${id}`)
+      .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
+      .expect(statusCode);
+  }
+
+  async deleteIsNotAuthorized(
+    id: string,
+    statusCode: number = HttpStatus.UNAUTHORIZED,
+  ) {
+    return request(this.app.getHttpServer())
+      .delete(`/sa/quiz/questions/${id}`)
+      .auth('invalid login', 'invalid password')
+      .expect(statusCode);
+  }
 }

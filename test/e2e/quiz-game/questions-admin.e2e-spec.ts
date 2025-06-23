@@ -172,4 +172,32 @@ describe('e2e-Questions-admin', () => {
       );
     });
   });
+
+  describe('DELETE/questions/:id', () => {
+    let createdQuestion: QuestionViewDto;
+    beforeEach(async () => {
+      const validQuestionDto: CreateQuestionInputDto = createValidQuestionDto();
+      createdQuestion =
+        await questionsAdminTestManager.create(validQuestionDto);
+    });
+    it('should delete question by ID : STATUS 204', async () => {
+      await questionsAdminTestManager.delete(
+        createdQuestion.id,
+        HttpStatus.NO_CONTENT,
+      );
+    });
+    it(`shouldn't delete question by ID if request is unauthorized : STATUS 401 `, async () => {
+      await questionsAdminTestManager.deleteIsNotAuthorized(
+        createdQuestion.id,
+        HttpStatus.UNAUTHORIZED,
+      );
+    });
+    it(`shouldn't delete question by ID if it does not exist : STATUS 404 `, async () => {
+      const nonExistentId = getMockUuidId();
+      await questionsAdminTestManager.delete(
+        nonExistentId,
+        HttpStatus.NOT_FOUND,
+      );
+    });
+  });
 });
