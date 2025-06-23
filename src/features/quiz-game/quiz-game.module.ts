@@ -12,6 +12,7 @@ import { QuestionQueryRepository } from './questions/infrastructure/questions.qu
 import { GetQuestionsQueryHandler } from './questions/application/queries/get-questions.query';
 import { UpdateQuestionUseCase } from './questions/application/use-cases/update-question.use-case';
 import { UpdatePublishUseCase } from './questions/application/use-cases/update-publish.use-case';
+import { DeleteQuestionUseCase } from './questions/application/use-cases/delete-question.use-case';
 
 const controllers = [PairGamePublicController, QuestionsAdminController];
 
@@ -19,6 +20,7 @@ const useCases = [
   CreateQuestionUseCase,
   UpdateQuestionUseCase,
   UpdatePublishUseCase,
+  DeleteQuestionUseCase,
 ];
 
 const queries = [GetQuestionByIdQueryHandler, GetQuestionsQueryHandler];

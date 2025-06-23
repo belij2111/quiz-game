@@ -33,6 +33,7 @@ import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-
 import { GetQuestionsQuery } from '../application/queries/get-questions.query';
 import { UpdateQuestionCommand } from '../application/use-cases/update-question.use-case';
 import { UpdatePublishCommand } from '../application/use-cases/update-publish.use-case';
+import { DeleteQuestionCommand } from '../application/use-cases/delete-question.use-case';
 
 @Controller('sa/quiz/questions')
 @UseGuards(BasicAuthGuard)
@@ -109,10 +110,6 @@ export class QuestionsAdminController {
   @ApiUnauthorizedConfiguredResponse()
   @ApiNotFoundConfiguredResponse()
   async delete(@Param('id') id: string) {
-    const result = {
-      id: id,
-      message: 'Deleted question',
-    };
-    console.log(result);
+    await this.commandBus.execute(new DeleteQuestionCommand(id));
   }
 }

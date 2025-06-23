@@ -20,6 +20,11 @@ export class QuestionsRepository {
     return (result.affected ?? 0) > 0 ? true : null;
   }
 
+  async delete(id: string): Promise<boolean | null> {
+    const result = await this.questionsRepository.softDelete({ id: id });
+    return (result.affected ?? 0) > 0 ? true : null;
+  }
+
   async findByIdOrNotFoundFail(id: string): Promise<Question> {
     const foundQuestion = await this.findById(id);
     if (!foundQuestion) {
