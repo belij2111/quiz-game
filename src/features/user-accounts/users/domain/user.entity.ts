@@ -8,6 +8,7 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { Comment } from '../../../bloggers-platform/comments/domain/comment.entity';
 import { LikeForComment } from '../../../bloggers-platform/likes/domain/like-for-comment.entity';
 import { LikeForPost } from '../../../bloggers-platform/likes/domain/like-for-post.entity';
+import { Player } from '../../../quiz-game/pair-game/domain/player.entity';
 
 @Entity()
 export class User extends BaseWithUuidIdEntity {
@@ -49,6 +50,12 @@ export class User extends BaseWithUuidIdEntity {
 
   @OneToMany(() => LikeForPost, (lp) => lp.user)
   public likeForPost: LikeForPost[];
+
+  @OneToMany(() => Player, (p) => p.user, {
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
+  public player: Player[];
 
   static create(dto: CreateUserDto): User {
     const user = new this();
