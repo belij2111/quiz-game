@@ -14,14 +14,12 @@ export class Player extends BaseWithUuidIdEntity {
   public userId: string;
 
   @OneToMany(() => Answer, (a) => a.player, {
-    onDelete: 'CASCADE',
     cascade: true,
   })
   public answer: Answer[];
 
   static create(userId: string): Player {
     const player = new this();
-    player.score = 0;
     player.userId = userId;
     return player;
   }
