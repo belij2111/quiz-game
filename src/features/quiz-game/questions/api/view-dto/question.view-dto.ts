@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { QuestionRawDataDto } from '../../dto/question-raw-data.dto';
+import { QuestionRawDataDto } from '../../infrastructure/dto/question-raw-data.dto';
 
 export class QuestionViewDto {
   @ApiProperty()

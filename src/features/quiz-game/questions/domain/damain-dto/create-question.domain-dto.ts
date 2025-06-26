@@ -1,4 +1,4 @@
-export class CreateQuestionDto {
+export class CreateQuestionDomainDto {
   body: string;
   correctAnswers: string[];
 }

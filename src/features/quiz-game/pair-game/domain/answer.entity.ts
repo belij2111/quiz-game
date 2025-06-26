@@ -2,7 +2,7 @@ import { BaseWithUuidIdEntity } from '../../../../core/entities/base-with-uuid-i
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { AnswerStatus } from '../api/enums/answer-status.enum';
 import { Player } from './player.entity';
-import { CreateAnswerDto } from '../dto/create-answer.dto';
+import { CreateAnswerDomainDto } from './damain-dto/create-answer.domain-dto';
 
 @Entity()
 export class Answer extends BaseWithUuidIdEntity {
@@ -18,7 +18,7 @@ export class Answer extends BaseWithUuidIdEntity {
   questionId: string;
 
   static create(
-    dto: CreateAnswerDto,
+    dto: CreateAnswerDomainDto,
     playerId: string,
     questionId: string,
   ): Answer {

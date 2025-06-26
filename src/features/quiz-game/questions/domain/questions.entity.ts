@@ -1,6 +1,6 @@
 import { BaseWithUuidIdEntity } from '../../../../core/entities/base-with-uuid-id.entity';
 import { Column, Entity } from 'typeorm';
-import { CreateQuestionDto } from '../dto/create-question.dto';
+import { CreateQuestionDomainDto } from './damain-dto/create-question.domain-dto';
 
 @Entity()
 export class Question extends BaseWithUuidIdEntity {
@@ -13,7 +13,7 @@ export class Question extends BaseWithUuidIdEntity {
   @Column({ type: 'boolean', default: false })
   published: boolean = false;
 
-  static create(dto: CreateQuestionDto) {
+  static create(dto: CreateQuestionDomainDto) {
     const question = new this();
     question.body = dto.body;
     question.correctAnswers = dto.correctAnswers;

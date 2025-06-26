@@ -1,10 +1,10 @@
-import { CreateQuestionDto } from '../../dto/create-question.dto';
+import { CreateQuestionDomainDto } from '../../domain/damain-dto/create-question.domain-dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Question } from '../../domain/questions.entity';
 import { QuestionsRepository } from '../../infrastructure/questions.repository';
 
 export class CreateQuestionCommand {
-  constructor(public createQuestionDto: CreateQuestionDto) {}
+  constructor(public createQuestionDto: CreateQuestionDomainDto) {}
 }
 
 @CommandHandler(CreateQuestionCommand)
