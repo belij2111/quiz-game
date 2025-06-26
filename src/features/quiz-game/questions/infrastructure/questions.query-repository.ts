@@ -34,8 +34,8 @@ export class QuestionQueryRepository {
     if (bodySearchTerm) {
       query.where('q.body iLike :body', { body: `%${bodySearchTerm}%` });
     }
-    if (publishedStatus && publishedStatus !== PublishedStatus.All) {
-      const isPublished = publishedStatus === PublishedStatus.Published;
+    if (publishedStatus && publishedStatus !== PublishedStatus.ALL) {
+      const isPublished = publishedStatus === PublishedStatus.PUBLISHED;
       query.andWhere('q.published = :published', {
         published: isPublished,
       });

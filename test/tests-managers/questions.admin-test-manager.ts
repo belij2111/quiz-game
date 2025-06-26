@@ -77,7 +77,7 @@ export class QuestionsAdminTestManager {
       paginationInputParams;
     const bodySearchTerm = QUESTIONS_PULL[0].body.split(' ')[0];
     // console.log('bodySearchTerm :', bodySearchTerm);
-    const publishedStatus = PublishedStatus.All;
+    const publishedStatus = PublishedStatus.ALL;
     return request(this.app.getHttpServer())
       .get('/sa/quiz/questions')
       .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
@@ -98,7 +98,7 @@ export class QuestionsAdminTestManager {
     const { pageNumber, pageSize, sortBy, sortDirection } =
       paginationInputParams;
     const bodySearchTerm = QUESTIONS_PULL[0].body.split(' ')[0];
-    const publishedStatus = PublishedStatus.All;
+    const publishedStatus = PublishedStatus.ALL;
     return request(this.app.getHttpServer())
       .get('/sa/quiz/questions')
       .auth('invalid login', 'invalid password')

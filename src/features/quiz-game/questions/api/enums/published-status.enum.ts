@@ -1,5 +1,5 @@
 export enum PublishedStatus {
-  All = 'all',
-  Published = 'published',
-  NotPublished = 'notPublished',
+  ALL = 'All',
+  PUBLISHED = 'Published',
+  NOT_PUBLISHED = 'NotPublished',
 }
