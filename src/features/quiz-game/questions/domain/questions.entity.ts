@@ -11,13 +11,12 @@ export class Question extends BaseWithUuidIdEntity {
   correctAnswers: string[];
 
   @Column({ type: 'boolean', default: false })
-  published: boolean;
+  published: boolean = false;
 
   static create(dto: CreateQuestionDto) {
     const question = new this();
     question.body = dto.body;
     question.correctAnswers = dto.correctAnswers;
-    question.published = false;
     return question;
   }
 
