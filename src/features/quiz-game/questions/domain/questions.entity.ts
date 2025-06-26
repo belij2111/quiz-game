@@ -7,7 +7,7 @@ export class Question extends BaseWithUuidIdEntity {
   @Column({ type: 'varchar', collation: 'C' })
   body: string;
 
-  @Column({ type: 'jsonb', default: [] })
+  @Column({ type: 'jsonb' })
   correctAnswers: string[];
 
   @Column({ type: 'boolean', default: false })
