@@ -21,7 +21,8 @@ export class TestingRepository {
         public."questions",
         public."players",
         public."answers",
-        public."games"
+        public."games",
+        public."game_questions"
         RESTART IDENTITY`,
       ),
     ]);
