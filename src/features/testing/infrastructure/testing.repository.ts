@@ -19,7 +19,8 @@ export class TestingRepository {
         public."like_for_comments",
         public."like_for_posts",
         public."questions",
-        public."players"
+        public."players",
+        public."answers"
         RESTART IDENTITY`,
       ),
     ]);
