@@ -15,6 +15,8 @@ import { UpdatePublishUseCase } from './questions/application/use-cases/update-p
 import { DeleteQuestionUseCase } from './questions/application/use-cases/delete-question.use-case';
 import { Player } from './pair-game/domain/player.entity';
 import { Answer } from './pair-game/domain/answer.entity';
+import { Game } from './pair-game/domain/game.entity';
+import { GameQuestion } from './pair-game/domain/game-question.entity';
 
 const controllers = [PairGamePublicController, QuestionsAdminController];
 
@@ -31,7 +33,7 @@ const repositories = [QuestionsRepository, QuestionQueryRepository];
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Question, Player, Answer]),
+    TypeOrmModule.forFeature([Question, Player, Answer, Game, GameQuestion]),
     CqrsModule,
     UserAccountsModule,
   ],
