@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Question } from '../domain/questions.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 @Injectable()
 export class QuestionsRepository {
   constructor(
     @InjectRepository(Question)
     private readonly questionsRepository: Repository<Question>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(question: Question): Promise<string> {
@@ -35,5 +36,14 @@ export class QuestionsRepository {
 
   async findById(id: string): Promise<Question | null> {
     return await this.questionsRepository.findOneBy({ id: id });
+  }
+
+  async findRandomQuestions(count: number): Promise<Question[]> {
+    return this.dataSource.manager
+      .createQueryBuilder(Question, 'q')
+      .where('q.published = :published', { published: true })
+      .orderBy('RANDOM()')
+      .limit(count)
+      .getMany();
   }
 }
