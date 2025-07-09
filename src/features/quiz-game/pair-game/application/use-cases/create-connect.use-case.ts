@@ -67,7 +67,11 @@ export class CreateConnectUseCase
     playerId: string,
   ): Promise<string> {
     await this.addRandomQuestions(game, QUESTIONS_COUNT);
-    game.update({ secondPlayerId: playerId, status: GameStatus.ACTIVE });
+    game.update({
+      secondPlayerId: playerId,
+      status: GameStatus.ACTIVE,
+      startGameDate: new Date(),
+    });
     return await this.gamesRepository.update(game);
   }
 
