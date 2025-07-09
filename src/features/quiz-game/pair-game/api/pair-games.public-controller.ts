@@ -27,6 +27,7 @@ import { ApiBadRequestConfiguredResponse } from '../../../../core/decorators/swa
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateConnectCommand } from '../application/use-cases/create-connect.use-case';
 import { GetPairGameByIdQuery } from '../application/queries/get-pair-game-by-id.query';
+import { GetPairGameOfCurrentUserQuery } from '../application/queries/get-pair-game-of current-user.query';
 
 @Controller('pair-game-quiz')
 @ApiTags('PairQuizGame')
@@ -72,7 +73,9 @@ export class PairGamesPublicController {
   @ApiUnauthorizedConfiguredResponse()
   @ApiNotFoundConfiguredResponse('If no active pair for current user')
   async getMyCurrent(@CurrentUserId() currentUserId: string) {
-    return `my-current ${currentUserId}`;
+    return await this.queryBus.execute(
+      new GetPairGameOfCurrentUserQuery(currentUserId),
+    );
   }
 
   @Post('pairs/my-current/answers')

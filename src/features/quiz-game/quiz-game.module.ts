@@ -23,6 +23,7 @@ import { GamesQueryRepository } from './pair-game/infrastructure/games.query-rep
 import { PlayersRepository } from './pair-game/infrastructure/players.repository';
 import { GetPairGameByIdQueryHandler } from './pair-game/application/queries/get-pair-game-by-id.query';
 import { GameQuestionsRepository } from './pair-game/infrastructure/game-questions.repository';
+import { GetPairGameOfCurrentUserHandler } from './pair-game/application/queries/get-pair-game-of current-user.query';
 
 const controllers = [PairGamesPublicController, QuestionsAdminController];
 
@@ -38,6 +39,7 @@ const queries = [
   GetQuestionByIdQueryHandler,
   GetQuestionsQueryHandler,
   GetPairGameByIdQueryHandler,
+  GetPairGameOfCurrentUserHandler,
 ];
 
 const repositories = [
