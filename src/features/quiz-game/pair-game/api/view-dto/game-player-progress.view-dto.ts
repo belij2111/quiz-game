@@ -7,7 +7,7 @@ export class GamePlayerProgressViewDto {
   answers: AnswerViewDto[];
 
   @ApiProperty({ type: PlayerViewDto })
-  player: PlayerViewDto;
+  player: PlayerViewDto | null;
 
   @ApiProperty({
     type: 'integer',

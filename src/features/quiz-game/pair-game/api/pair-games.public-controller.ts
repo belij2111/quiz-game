@@ -24,10 +24,17 @@ import { ApiNotFoundConfiguredResponse } from '../../../../core/decorators/swagg
 import { AnswerInputDto } from './input-dto/answer.input-dto';
 import { AnswerViewDto } from './view-dto/answer.view-dto';
 import { ApiBadRequestConfiguredResponse } from '../../../../core/decorators/swagger/api-bad-request-configured-response';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreateConnectCommand } from '../application/use-cases/create-connect.use-case';
+import { GetPairGameByIdQuery } from '../application/queries/get-pair-game-by-id.query';
 
 @Controller('pair-game-quiz')
 @ApiTags('PairQuizGame')
-export class PairGamePublicController {
+export class PairGamesPublicController {
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
   @Post('pairs/connection')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
@@ -39,13 +46,17 @@ export class PairGamePublicController {
   @ApiOkConfiguredResponse(
     GamePairViewDto,
     'Returns started existing pair or new pair with status "PendingSecondPlayer',
+    false,
   )
   @ApiUnauthorizedConfiguredResponse()
   @ApiForbiddenConfiguredResponse(
     'If current user is already participating in active pair',
   )
   async createConnection(@CurrentUserId() currentUserId: string) {
-    return `Connection successfully ${currentUserId}`;
+    const createGameId = await this.commandBus.execute(
+      new CreateConnectCommand(currentUserId),
+    );
+    return await this.queryBus.execute(new GetPairGameByIdQuery(createGameId));
   }
 
   @Get('pairs/my-current')
@@ -56,6 +67,7 @@ export class PairGamePublicController {
   @ApiOkConfiguredResponse(
     GamePairViewDto,
     'Returns current pair in which current user is taking part',
+    false,
   )
   @ApiUnauthorizedConfiguredResponse()
   @ApiNotFoundConfiguredResponse('If no active pair for current user')
@@ -96,6 +108,6 @@ export class PairGamePublicController {
   @ApiNotFoundConfiguredResponse('If game not found')
   @ApiParam({ name: 'id', type: String, required: true })
   async getById(@Param('id') id: string) {
-    return `getById ${id} ${GamePairViewDto}`;
+    return await this.queryBus.execute(new GetPairGameByIdQuery(id));
   }
 }
