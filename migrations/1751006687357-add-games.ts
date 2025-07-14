@@ -23,14 +23,6 @@ export class AddGames1751006687357 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`ALTER TABLE "games"
-        ADD CONSTRAINT "FK_97172d8d632d06a0163fee59336" FOREIGN KEY ("first_player_id") REFERENCES "players" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-    await queryRunner.query(`ALTER TABLE "games"
-        ADD CONSTRAINT "FK_e298dbbae272f96d1c55d389f63" FOREIGN KEY ("second_player_id") REFERENCES "players" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-    await queryRunner.query(`ALTER TABLE "games"
-        DROP CONSTRAINT "FK_e298dbbae272f96d1c55d389f63"`);
-    await queryRunner.query(`ALTER TABLE "games"
-        DROP CONSTRAINT "FK_97172d8d632d06a0163fee59336"`);
     await queryRunner.query(`DROP TABLE "games"`);
     await queryRunner.query(`DROP TYPE "public"."games_status_enum"`);
   }
