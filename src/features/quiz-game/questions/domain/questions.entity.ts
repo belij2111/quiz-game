@@ -1,9 +1,26 @@
-import { BaseWithUuidIdEntity } from '../../../../core/entities/base-with-uuid-id.entity';
-import { Column, Entity } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CreateQuestionDomainDto } from './damain-dto/create-question.domain-dto';
 
 @Entity()
-export class Question extends BaseWithUuidIdEntity {
+export class Question {
+  @PrimaryGeneratedColumn('uuid')
+  public id: string;
+
+  @CreateDateColumn({ type: 'timestamp with time zone' })
+  public createdAt: Date;
+
+  @Column({ type: 'timestamp with time zone', nullable: true })
+  public updatedAt: Date | null;
+
+  @DeleteDateColumn({ type: 'timestamp with time zone', nullable: true })
+  public deletedAt: Date | null;
+
   @Column({ type: 'varchar', collation: 'C' })
   body: string;
 

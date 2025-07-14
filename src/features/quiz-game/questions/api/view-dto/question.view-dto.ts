@@ -28,7 +28,7 @@ export class QuestionViewDto {
   createdAt: string;
 
   @ApiProperty({ format: 'date-time', required: false, nullable: true })
-  updatedAt: string;
+  updatedAt: string | null;
 
   static mapToView(question: QuestionRawDataDto): QuestionViewDto {
     const model = new QuestionViewDto();
@@ -37,7 +37,9 @@ export class QuestionViewDto {
     model.correctAnswers = question.correctAnswers;
     model.published = question.published;
     model.createdAt = question.createdAt.toISOString();
-    model.updatedAt = question.updatedAt.toISOString();
+    model.updatedAt = question.updatedAt
+      ? question.updatedAt.toISOString()
+      : null;
     return model;
   }
 }
