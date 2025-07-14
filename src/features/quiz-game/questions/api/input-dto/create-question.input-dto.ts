@@ -34,8 +34,7 @@ export enum QuestionsSortBy {
 
 export class GetQuestionsQueryParams extends BaseSortablePaginationParams<QuestionsSortBy> {
   @IsEnum(QuestionsSortBy)
-  @IsOptional()
-  sortBy: QuestionsSortBy.CreatedAt;
+  sortBy: QuestionsSortBy = QuestionsSortBy.CreatedAt;
 
   @TrimIsString()
   @IsOptional()
