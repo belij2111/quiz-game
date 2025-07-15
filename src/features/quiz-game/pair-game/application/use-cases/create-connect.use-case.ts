@@ -27,7 +27,6 @@ export class CreateConnectUseCase
   ) {}
 
   async execute(command: CreateConnectCommand): Promise<string> {
-    //Todo: wrap it in a transaction
     const foundPendingGame = await this.gamesRepository.findByStatus(
       GameStatus.PENDING_SECOND_PLAYER,
     );
@@ -72,7 +71,7 @@ export class CreateConnectUseCase
       status: GameStatus.ACTIVE,
       startGameDate: new Date(),
     });
-    return await this.gamesRepository.update(game);
+    return await this.gamesRepository.save(game);
   }
 
   private async createPlayer(userId: string): Promise<Player> {
@@ -82,12 +81,12 @@ export class CreateConnectUseCase
 
   private async createNewGame(playerId: string): Promise<string> {
     const game = Game.create(playerId);
-    return await this.gamesRepository.create(game);
+    return await this.gamesRepository.save(game);
   }
 
   private async addRandomQuestions(game: Game, count: number) {
     const foundRandomQuestions =
-      await this.questionsRepository.findRandomQuestions(count);
+      await this.questionsRepository.findRandomPublishedQuestions(count);
     const savePromises = foundRandomQuestions.map(async (question) => {
       const gameQuestion = new GameQuestion();
       gameQuestion.gameId = game.id;

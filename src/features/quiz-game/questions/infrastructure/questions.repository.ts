@@ -38,7 +38,7 @@ export class QuestionsRepository {
     return await this.questionsRepository.findOneBy({ id: id });
   }
 
-  async findRandomQuestions(count: number): Promise<Question[]> {
+  async findRandomPublishedQuestions(count: number): Promise<Question[]> {
     return this.dataSource.manager
       .createQueryBuilder(Question, 'q')
       .where('q.published = :published', { published: true })

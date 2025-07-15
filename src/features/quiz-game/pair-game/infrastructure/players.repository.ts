@@ -31,4 +31,8 @@ export class PlayersRepository {
   async findById(id: string): Promise<Player | null> {
     return await this.playersRepository.findOneBy({ id: id });
   }
+
+  async update(player: Player) {
+    return await this.playersRepository.save(player);
+  }
 }

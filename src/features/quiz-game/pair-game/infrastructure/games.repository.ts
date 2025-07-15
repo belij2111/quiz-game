@@ -10,7 +10,7 @@ export class GamesRepository {
     @InjectRepository(Game) private readonly gamesRepository: Repository<Game>,
   ) {}
 
-  async create(game: Game): Promise<string> {
+  async save(game: Game): Promise<string> {
     const result = await this.gamesRepository.save(game);
     return result.id;
   }
@@ -46,8 +46,12 @@ export class GamesRepository {
     return await this.gamesRepository.findOneBy({ id: id });
   }
 
-  async update(game: Game): Promise<string> {
-    const result = await this.gamesRepository.save(game);
-    return result.id;
+  async update(game: Game) {
+    await this.gamesRepository
+      .createQueryBuilder()
+      .update(Game)
+      .set(game)
+      .where('id = :id', { id: game.id })
+      .execute();
   }
 }
