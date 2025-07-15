@@ -13,4 +13,24 @@ export class GameQuestionsRepository {
   async create(gameQuestions: GameQuestion) {
     await this.gameQuestionsRepository.save(gameQuestions);
   }
+
+  async findNextQuestion(
+    gameId: string,
+    playerId: string,
+  ): Promise<GameQuestion | null> {
+    return this.gameQuestionsRepository
+      .createQueryBuilder('gq')
+      .leftJoinAndSelect('gq.question', 'question')
+      .where('gq.gameId = :gameId', { gameId: gameId })
+      .andWhere(
+        'gq."question_id" NOT IN (SELECT answers."question_id" FROM answers WHERE answers."player_id" = :playerId)',
+        { playerId: playerId },
+      )
+      .orderBy('gq."id"', 'ASC')
+      .getOne();
+  }
+
+  async findByGameId(gameId: string): Promise<GameQuestion[]> {
+    return this.gameQuestionsRepository.find({ where: { gameId: gameId } });
+  }
 }

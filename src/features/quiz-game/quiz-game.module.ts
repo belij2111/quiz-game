@@ -24,6 +24,10 @@ import { PlayersRepository } from './pair-game/infrastructure/players.repository
 import { GetPairGameByIdQueryHandler } from './pair-game/application/queries/get-pair-game-by-id.query';
 import { GameQuestionsRepository } from './pair-game/infrastructure/game-questions.repository';
 import { GetPairGameOfCurrentUserHandler } from './pair-game/application/queries/get-pair-game-of current-user.query';
+import { CreateAnswerOfCurrentUserUseCase } from './pair-game/application/use-cases/create-answer-of-current-user.use-case';
+import { AnswersRepository } from './pair-game/infrastructure/answers.repository';
+import { GetAnswerResultQueryHandler } from './pair-game/application/queries/get-answer-result.query';
+import { AnswersQueryRepository } from './pair-game/infrastructure/answers.query-repository';
 
 const controllers = [PairGamesPublicController, QuestionsAdminController];
 
@@ -33,6 +37,7 @@ const useCases = [
   UpdatePublishUseCase,
   DeleteQuestionUseCase,
   CreateConnectUseCase,
+  CreateAnswerOfCurrentUserUseCase,
 ];
 
 const queries = [
@@ -40,6 +45,7 @@ const queries = [
   GetQuestionsQueryHandler,
   GetPairGameByIdQueryHandler,
   GetPairGameOfCurrentUserHandler,
+  GetAnswerResultQueryHandler,
 ];
 
 const repositories = [
@@ -49,6 +55,8 @@ const repositories = [
   GamesQueryRepository,
   PlayersRepository,
   GameQuestionsRepository,
+  AnswersRepository,
+  AnswersQueryRepository,
 ];
 
 @Module({

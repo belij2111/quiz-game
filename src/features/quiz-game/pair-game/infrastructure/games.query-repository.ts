@@ -117,6 +117,7 @@ export class GamesQueryRepository {
           'id', q."id",
           'body', q."body"
           )
+          ORDER BY gq."id" ASC
         ) as "questions"`,
       ])
       .where('q."published" = true')

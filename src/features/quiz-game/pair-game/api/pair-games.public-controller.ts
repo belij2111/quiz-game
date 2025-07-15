@@ -28,6 +28,8 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateConnectCommand } from '../application/use-cases/create-connect.use-case';
 import { GetPairGameByIdQuery } from '../application/queries/get-pair-game-by-id.query';
 import { GetPairGameOfCurrentUserQuery } from '../application/queries/get-pair-game-of current-user.query';
+import { CreateAnswerOfCurrentUserCommand } from '../application/use-cases/create-answer-of-current-user.use-case';
+import { GetAnswerResultQuery } from '../application/queries/get-answer-result.query';
 
 @Controller('pair-game-quiz')
 @ApiTags('PairQuizGame')
@@ -94,9 +96,13 @@ export class PairGamesPublicController {
     @CurrentUserId() currentUserId: string,
     @Body() answerInputDto: AnswerInputDto,
   ) {
-    return `answers ${currentUserId} ${answerInputDto} ${AnswerViewDto}`;
+    const createAnswerId = await this.commandBus.execute(
+      new CreateAnswerOfCurrentUserCommand(currentUserId, answerInputDto),
+    );
+    return await this.queryBus.execute(
+      new GetAnswerResultQuery(createAnswerId),
+    );
   }
-
   @Get('pairs/:id')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
