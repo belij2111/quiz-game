@@ -11,5 +11,5 @@ export const paginationInputParams = new PaginationInputTestDto(
   1,
   10,
   'createdAt',
-  'asc',
+  'desc',
 );

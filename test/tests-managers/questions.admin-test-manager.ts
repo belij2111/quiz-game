@@ -42,7 +42,7 @@ export class QuestionsAdminTestManager {
     );
     expect(responseModel.published).toBe(false);
     expect(responseModel.createdAt).toMatch(ISO_REGEX);
-    expect(responseModel.updatedAt).toMatch(ISO_REGEX);
+    expect(responseModel.updatedAt).toBeNull();
   }
 
   async createIsNotAuthorized(
@@ -67,7 +67,7 @@ export class QuestionsAdminTestManager {
         .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
         .send(createValidQuestionDto(i))
         .expect(statusCode);
-      questions.push(response.body);
+      questions.unshift(response.body);
     }
     return questions;
   }
@@ -159,6 +159,19 @@ export class QuestionsAdminTestManager {
       .auth('invalid login', 'invalid password')
       .send(updatedPublishDto)
       .expect(statusCode);
+  }
+
+  async publishQuestions(
+    questions: QuestionViewDto[],
+    publishStatus: boolean = true,
+    statusCode: number = HttpStatus.NO_CONTENT,
+  ) {
+    for (const question of questions) {
+      const updatedPublishDto: UpdatePublishInputDto = {
+        published: publishStatus,
+      };
+      await this.updatePublish(question.id, updatedPublishDto, statusCode);
+    }
   }
 
   async delete(id: string, statusCode: number = HttpStatus.NO_CONTENT) {
