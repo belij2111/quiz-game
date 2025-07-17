@@ -73,6 +73,13 @@ describe('e2e-Pair-Games-public', () => {
       );
       console.log('gameActive: ', createdConnection);
     });
+    it(`shouldn't create new game if accessToken expired : STATUS 401`, async () => {
+      await delay(10000);
+      await pairGamesPublicTestManager.createConnect(
+        firsPlayerToken,
+        HttpStatus.UNAUTHORIZED,
+      );
+    });
   });
   describe('GET/pair-game-quiz/pairs/my-current', () => {
     beforeEach(async () => {
@@ -101,18 +108,26 @@ describe('e2e-Pair-Games-public', () => {
         createResponseForSecondPlayer.body,
       );
     });
+    it(`shouldn't return a game if accessToken expired : STATUS 401`, async () => {
+      await delay(10000);
+      await pairGamesPublicTestManager.getMyCurrent(
+        firsPlayerToken,
+        HttpStatus.UNAUTHORIZED,
+      );
+    });
   });
   describe('POST/pair-game-quiz/pairs/my-current/answers', () => {
+    let answerDto: AnswerInputDto;
     beforeEach(async () => {
       createdConnection =
         await pairGamesPublicTestManager.createConnect(firsPlayerToken);
       createdConnection =
         await pairGamesPublicTestManager.createConnect(secondPlayerToken);
-    });
-    it('should send answer for next answered question : STATUS 200', async () => {
-      const answerDto: AnswerInputDto = {
+      answerDto = {
         answer: QUESTIONS_PULL[0].correctAnswers[0],
       };
+    });
+    it('should send answer for next answered question : STATUS 200', async () => {
       for (let i = 1; i <= 5; i++) {
         await delay(0);
         const firstPlayerAnswer: GamePairViewDto =
@@ -131,6 +146,14 @@ describe('e2e-Pair-Games-public', () => {
         console.log('firstPlayerAnswer: ', secondPlayerAnswer);
         console.log('count: ', i);
       }
+    });
+    it(`shouldn't send answer for next answered question if accessToken expired : STATUS 401`, async () => {
+      await delay(10000);
+      await pairGamesPublicTestManager.sendAnswer(
+        firsPlayerToken,
+        answerDto,
+        HttpStatus.UNAUTHORIZED,
+      );
     });
   });
   describe('GET/pair-game-quiz/pairs/:id', () => {
@@ -158,6 +181,15 @@ describe('e2e-Pair-Games-public', () => {
       console.log(
         'game for second player: ',
         createResponseForSecondPlayer.body,
+      );
+    });
+    it(`shouldn't return game by id if accessToken expired : STATUS 401`, async () => {
+      const gameId = createdConnection.id;
+      await delay(10000);
+      await pairGamesPublicTestManager.getById(
+        firsPlayerToken,
+        gameId,
+        HttpStatus.UNAUTHORIZED,
       );
     });
   });
