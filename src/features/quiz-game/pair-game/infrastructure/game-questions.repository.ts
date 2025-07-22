@@ -1,24 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { GameQuestion } from '../domain/game-question.entity';
 
 @Injectable()
 export class GameQuestionsRepository {
+  private getRepo(manager?: EntityManager) {
+    return (
+      manager?.getRepository(GameQuestion) ||
+      this.dataSource.getRepository(GameQuestion)
+    );
+  }
   constructor(
-    @InjectRepository(GameQuestion)
-    private readonly gameQuestionsRepository: Repository<GameQuestion>,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
   ) {}
 
-  async create(gameQuestions: GameQuestion) {
-    await this.gameQuestionsRepository.save(gameQuestions);
+  async create(gameQuestions: GameQuestion, manager?: EntityManager) {
+    await this.getRepo(manager).save(gameQuestions);
   }
 
   async findNextQuestion(
     gameId: string,
     playerId: string,
+    manager?: EntityManager,
   ): Promise<GameQuestion | null> {
-    return this.gameQuestionsRepository
+    return this.getRepo(manager)
       .createQueryBuilder('gq')
       .leftJoinAndSelect('gq.question', 'question')
       .where('gq.gameId = :gameId', { gameId: gameId })
@@ -30,7 +37,10 @@ export class GameQuestionsRepository {
       .getOne();
   }
 
-  async findByGameId(gameId: string): Promise<GameQuestion[]> {
-    return this.gameQuestionsRepository.find({ where: { gameId: gameId } });
+  async findByGameId(
+    gameId: string,
+    manager?: EntityManager,
+  ): Promise<GameQuestion[]> {
+    return this.getRepo(manager).find({ where: { gameId: gameId } });
   }
 }

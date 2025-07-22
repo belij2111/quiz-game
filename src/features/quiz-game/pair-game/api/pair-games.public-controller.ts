@@ -59,7 +59,9 @@ export class PairGamesPublicController {
     const createGameId = await this.commandBus.execute(
       new CreateConnectCommand(currentUserId),
     );
-    return await this.queryBus.execute(new GetPairGameByIdQuery(createGameId));
+    return await this.queryBus.execute(
+      new GetPairGameByIdQuery(currentUserId, createGameId),
+    );
   }
 
   @Get('pairs/my-current')
@@ -116,7 +118,12 @@ export class PairGamesPublicController {
   )
   @ApiNotFoundConfiguredResponse('If game not found')
   @ApiParam({ name: 'id', type: String, required: true })
-  async getById(@Param('id') id: string) {
-    return await this.queryBus.execute(new GetPairGameByIdQuery(id));
+  async getById(
+    @CurrentUserId() currentUserId: string,
+    @Param('id') id: string,
+  ) {
+    return await this.queryBus.execute(
+      new GetPairGameByIdQuery(currentUserId, id),
+    );
   }
 }
