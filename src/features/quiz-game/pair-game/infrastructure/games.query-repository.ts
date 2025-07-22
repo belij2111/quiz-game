@@ -19,7 +19,17 @@ export class GamesQueryRepository {
   }
 
   async getByUserIdOrNotFoundFail(currentUserId: string) {
-    const gameIdQuery = this.dataSource.manager
+    const foundGame = await this.getByUserId(currentUserId);
+    if (!foundGame) {
+      throw new NotFoundException(
+        `Game for user with id ${currentUserId} not found`,
+      );
+    }
+    return foundGame.id;
+  }
+
+  async getByUserId(currentUserId: string | null) {
+    return await this.dataSource.manager
       .createQueryBuilder(Game, 'g')
       .select('g.id as "id"')
       .where((qb) => {
@@ -32,14 +42,8 @@ export class GamesQueryRepository {
         return `g.first_player_id IN ${subQuery} OR g.second_player_id IN ${subQuery}`;
       })
       .orderBy('g.created_at', 'DESC')
-      .limit(1);
-    const foundGameId = await gameIdQuery.getRawOne();
-    if (!foundGameId) {
-      throw new NotFoundException(
-        `Game for user with id ${currentUserId} not found`,
-      );
-    }
-    return foundGameId.id;
+      .limit(1)
+      .getRawOne();
   }
 
   private getBaseQuery(gameId: string): SelectQueryBuilder<Game> {
