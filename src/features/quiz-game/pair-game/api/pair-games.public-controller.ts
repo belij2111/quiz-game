@@ -30,6 +30,7 @@ import { GetPairGameByIdQuery } from '../application/queries/get-pair-game-by-id
 import { GetPairGameOfCurrentUserQuery } from '../application/queries/get-pair-game-of current-user.query';
 import { CreateAnswerOfCurrentUserCommand } from '../application/use-cases/create-answer-of-current-user.use-case';
 import { GetAnswerResultQuery } from '../application/queries/get-answer-result.query';
+import { IdIsUuidValidationPipe } from '../../../../core/pipes/id-is-uuid.validation-pipe';
 
 @Controller('pair-game-quiz')
 @ApiTags('PairQuizGame')
@@ -120,7 +121,7 @@ export class PairGamesPublicController {
   @ApiParam({ name: 'id', type: String, required: true })
   async getById(
     @CurrentUserId() currentUserId: string,
-    @Param('id') id: string,
+    @Param('id', new IdIsUuidValidationPipe()) id: string,
   ) {
     return await this.queryBus.execute(
       new GetPairGameByIdQuery(currentUserId, id),
