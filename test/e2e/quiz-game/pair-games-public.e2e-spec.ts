@@ -80,6 +80,20 @@ describe('e2e-Pair-Games-public', () => {
         HttpStatus.UNAUTHORIZED,
       );
     });
+    it(`shouldn't create new game if user is already participating in active pair : STATUS 403`, async () => {
+      createdConnection = await pairGamesPublicTestManager.createConnect(
+        firsPlayerToken,
+        HttpStatus.OK,
+      );
+      createdConnection = await pairGamesPublicTestManager.createConnect(
+        secondPlayerToken,
+        HttpStatus.OK,
+      );
+      createdConnection = await pairGamesPublicTestManager.createConnect(
+        firsPlayerToken,
+        HttpStatus.FORBIDDEN,
+      );
+    });
   });
   describe('GET/pair-game-quiz/pairs/my-current', () => {
     beforeEach(async () => {
@@ -155,6 +169,30 @@ describe('e2e-Pair-Games-public', () => {
         HttpStatus.UNAUTHORIZED,
       );
     });
+    it(`shouldn't send answer for next answered if user is not in active pair : STATUS 403`, async () => {
+      loginResult = await coreTestManager.loginUser(3);
+      const thirdPlayerToken = loginResult!.accessToken;
+      await pairGamesPublicTestManager.sendAnswer(
+        thirdPlayerToken,
+        answerDto,
+        HttpStatus.FORBIDDEN,
+      );
+    });
+    it(`shouldn't send answer if has already answered to all questions : STATUS 403`, async () => {
+      for (let i = 1; i <= 5; i++) {
+        await delay(0);
+        await pairGamesPublicTestManager.sendAnswer(
+          firsPlayerToken,
+          answerDto,
+          HttpStatus.OK,
+        );
+      }
+      await pairGamesPublicTestManager.sendAnswer(
+        firsPlayerToken,
+        answerDto,
+        HttpStatus.FORBIDDEN,
+      );
+    });
   });
   describe('GET/pair-game-quiz/pairs/:id', () => {
     beforeEach(async () => {
@@ -190,6 +228,16 @@ describe('e2e-Pair-Games-public', () => {
         firsPlayerToken,
         gameId,
         HttpStatus.UNAUTHORIZED,
+      );
+    });
+    it(`shouldn't return game by id if user is not in an active pair : STATUS 403`, async () => {
+      const gameId = createdConnection.id;
+      loginResult = await coreTestManager.loginUser(3);
+      const thirdPlayerToken = loginResult!.accessToken;
+      await pairGamesPublicTestManager.getById(
+        thirdPlayerToken,
+        gameId,
+        HttpStatus.FORBIDDEN,
       );
     });
   });
