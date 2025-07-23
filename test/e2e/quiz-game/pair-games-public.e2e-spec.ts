@@ -129,6 +129,32 @@ describe('e2e-Pair-Games-public', () => {
         HttpStatus.UNAUTHORIZED,
       );
     });
+    it(`shouldn't return a game if it does not exist : STATUS 404`, async () => {
+      loginResult = await coreTestManager.loginUser(3);
+      const thirdPlayerToken = loginResult!.accessToken;
+      await pairGamesPublicTestManager.getMyCurrent(
+        thirdPlayerToken,
+        HttpStatus.NOT_FOUND,
+      );
+    });
+    it(`shouldn't return the game if it is finished : STATUS 404`, async () => {
+      const answerDto = {
+        answer: QUESTIONS_PULL[0].correctAnswers[0],
+      };
+      for (let i = 1; i <= 5; i++) {
+        await delay(0);
+        await pairGamesPublicTestManager.sendAnswer(firsPlayerToken, answerDto);
+        await pairGamesPublicTestManager.sendAnswer(
+          secondPlayerToken,
+          answerDto,
+        );
+      }
+      await delay(1000);
+      await pairGamesPublicTestManager.getMyCurrent(
+        firsPlayerToken,
+        HttpStatus.NOT_FOUND,
+      );
+    });
   });
   describe('POST/pair-game-quiz/pairs/my-current/answers', () => {
     let answerDto: AnswerInputDto;
