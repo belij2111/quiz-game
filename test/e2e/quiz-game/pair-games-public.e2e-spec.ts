@@ -266,5 +266,13 @@ describe('e2e-Pair-Games-public', () => {
         HttpStatus.FORBIDDEN,
       );
     });
+    it(`shouldn't return game by ID with incorrect input data : STATUS 400`, async () => {
+      const invalidUUID = 'invalid id';
+      await pairGamesPublicTestManager.getById(
+        secondPlayerToken,
+        invalidUUID,
+        HttpStatus.BAD_REQUEST,
+      );
+    });
   });
 });
