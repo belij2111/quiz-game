@@ -23,7 +23,7 @@ describe('e2e-Pair-Games-public', () => {
   let createdConnection: GamePairViewDto;
   let loginResult: LoginSuccessViewTestDto | undefined;
   let createdQuestions: QuestionViewDto[];
-  let firsPlayerToken: string;
+  let firstPlayerToken: string;
   let secondPlayerToken: string;
 
   beforeAll(async () => {
@@ -43,7 +43,7 @@ describe('e2e-Pair-Games-public', () => {
     createdQuestions = await questionsAdminTestManager.createQuestions(5);
     await questionsAdminTestManager.publishQuestions(createdQuestions);
     loginResult = await coreTestManager.loginUser(1);
-    firsPlayerToken = loginResult!.accessToken;
+    firstPlayerToken = loginResult!.accessToken;
     loginResult = await coreTestManager.loginUser(2);
     secondPlayerToken = loginResult!.accessToken;
   });
@@ -57,14 +57,14 @@ describe('e2e-Pair-Games-public', () => {
   describe('POST/pair-game-quiz/pairs/connection', () => {
     it(`should create new game with the pending status and connect the first player : STATUS 200`, async () => {
       createdConnection = await pairGamesPublicTestManager.createConnect(
-        firsPlayerToken,
+        firstPlayerToken,
         HttpStatus.OK,
       );
       console.log('gamePending: ', createdConnection);
     });
     it(`should to connect the second player,asc questions and switch the game to the active status :STATUS 200`, async () => {
       createdConnection = await pairGamesPublicTestManager.createConnect(
-        firsPlayerToken,
+        firstPlayerToken,
         HttpStatus.OK,
       );
       createdConnection = await pairGamesPublicTestManager.createConnect(
@@ -73,16 +73,33 @@ describe('e2e-Pair-Games-public', () => {
       );
       console.log('gameActive: ', createdConnection);
     });
+    it('should connect two new players to a new game', async () => {
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(firstPlayerToken);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(secondPlayerToken);
+
+      loginResult = await coreTestManager.loginUser(3);
+      const thirdPlayerToken = loginResult!.accessToken;
+      loginResult = await coreTestManager.loginUser(4);
+      const fourthPlayerToken = loginResult!.accessToken;
+      await delay(1000);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(thirdPlayerToken);
+      await delay(1000);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(fourthPlayerToken);
+    });
     it(`shouldn't create new game if accessToken expired : STATUS 401`, async () => {
       await delay(10000);
       await pairGamesPublicTestManager.createConnect(
-        firsPlayerToken,
+        firstPlayerToken,
         HttpStatus.UNAUTHORIZED,
       );
     });
     it(`shouldn't create new game if user is already participating in active pair : STATUS 403`, async () => {
       createdConnection = await pairGamesPublicTestManager.createConnect(
-        firsPlayerToken,
+        firstPlayerToken,
         HttpStatus.OK,
       );
       createdConnection = await pairGamesPublicTestManager.createConnect(
@@ -90,7 +107,7 @@ describe('e2e-Pair-Games-public', () => {
         HttpStatus.OK,
       );
       createdConnection = await pairGamesPublicTestManager.createConnect(
-        firsPlayerToken,
+        firstPlayerToken,
         HttpStatus.FORBIDDEN,
       );
     });
@@ -98,14 +115,14 @@ describe('e2e-Pair-Games-public', () => {
   describe('GET/pair-game-quiz/pairs/my-current', () => {
     beforeEach(async () => {
       createdConnection =
-        await pairGamesPublicTestManager.createConnect(firsPlayerToken);
+        await pairGamesPublicTestManager.createConnect(firstPlayerToken);
       createdConnection =
         await pairGamesPublicTestManager.createConnect(secondPlayerToken);
     });
     it('should return a current unfinished user game : STATUS 200 ', async () => {
       const createResponseForFirstPlayer =
         await pairGamesPublicTestManager.getMyCurrent(
-          firsPlayerToken,
+          firstPlayerToken,
           HttpStatus.OK,
         );
       console.log(
@@ -122,10 +139,34 @@ describe('e2e-Pair-Games-public', () => {
         createResponseForSecondPlayer.body,
       );
     });
+    it('should return the current game after the first answers : STATUS 200', async () => {
+      const answerDto = {
+        answer: QUESTIONS_PULL[0].correctAnswers[0],
+      };
+      await pairGamesPublicTestManager.sendAnswer(firstPlayerToken, answerDto);
+      await pairGamesPublicTestManager.sendAnswer(secondPlayerToken, answerDto);
+      await pairGamesPublicTestManager.sendAnswer(secondPlayerToken, answerDto);
+
+      loginResult = await coreTestManager.loginUser(3);
+      const thirdPlayerToken = loginResult!.accessToken;
+      await delay(1000);
+      loginResult = await coreTestManager.loginUser(4);
+      const fourthPlayerToken = loginResult!.accessToken;
+
+      await pairGamesPublicTestManager.createConnect(thirdPlayerToken);
+      await delay(1000);
+      await pairGamesPublicTestManager.createConnect(fourthPlayerToken);
+
+      await delay(1000);
+      await pairGamesPublicTestManager.getMyCurrent(
+        firstPlayerToken,
+        HttpStatus.OK,
+      );
+    });
     it(`shouldn't return a game if accessToken expired : STATUS 401`, async () => {
       await delay(10000);
       await pairGamesPublicTestManager.getMyCurrent(
-        firsPlayerToken,
+        firstPlayerToken,
         HttpStatus.UNAUTHORIZED,
       );
     });
@@ -143,7 +184,10 @@ describe('e2e-Pair-Games-public', () => {
       };
       for (let i = 1; i <= 5; i++) {
         await delay(0);
-        await pairGamesPublicTestManager.sendAnswer(firsPlayerToken, answerDto);
+        await pairGamesPublicTestManager.sendAnswer(
+          firstPlayerToken,
+          answerDto,
+        );
         await pairGamesPublicTestManager.sendAnswer(
           secondPlayerToken,
           answerDto,
@@ -151,7 +195,7 @@ describe('e2e-Pair-Games-public', () => {
       }
       await delay(1000);
       await pairGamesPublicTestManager.getMyCurrent(
-        firsPlayerToken,
+        firstPlayerToken,
         HttpStatus.NOT_FOUND,
       );
     });
@@ -160,7 +204,7 @@ describe('e2e-Pair-Games-public', () => {
     let answerDto: AnswerInputDto;
     beforeEach(async () => {
       createdConnection =
-        await pairGamesPublicTestManager.createConnect(firsPlayerToken);
+        await pairGamesPublicTestManager.createConnect(firstPlayerToken);
       createdConnection =
         await pairGamesPublicTestManager.createConnect(secondPlayerToken);
       answerDto = {
@@ -172,7 +216,7 @@ describe('e2e-Pair-Games-public', () => {
         await delay(0);
         const firstPlayerAnswer: GamePairViewDto =
           await pairGamesPublicTestManager.sendAnswer(
-            firsPlayerToken,
+            firstPlayerToken,
             answerDto,
             HttpStatus.OK,
           );
@@ -190,7 +234,7 @@ describe('e2e-Pair-Games-public', () => {
     it(`shouldn't send answer for next answered question if accessToken expired : STATUS 401`, async () => {
       await delay(10000);
       await pairGamesPublicTestManager.sendAnswer(
-        firsPlayerToken,
+        firstPlayerToken,
         answerDto,
         HttpStatus.UNAUTHORIZED,
       );
@@ -208,13 +252,13 @@ describe('e2e-Pair-Games-public', () => {
       for (let i = 1; i <= 5; i++) {
         await delay(0);
         await pairGamesPublicTestManager.sendAnswer(
-          firsPlayerToken,
+          firstPlayerToken,
           answerDto,
           HttpStatus.OK,
         );
       }
       await pairGamesPublicTestManager.sendAnswer(
-        firsPlayerToken,
+        firstPlayerToken,
         answerDto,
         HttpStatus.FORBIDDEN,
       );
@@ -223,7 +267,7 @@ describe('e2e-Pair-Games-public', () => {
   describe('GET/pair-game-quiz/pairs/:id', () => {
     beforeEach(async () => {
       createdConnection =
-        await pairGamesPublicTestManager.createConnect(firsPlayerToken);
+        await pairGamesPublicTestManager.createConnect(firstPlayerToken);
       createdConnection =
         await pairGamesPublicTestManager.createConnect(secondPlayerToken);
     });
@@ -231,7 +275,7 @@ describe('e2e-Pair-Games-public', () => {
       const gameId = createdConnection.id;
       const createResponseForFirstPlayer =
         await pairGamesPublicTestManager.getById(
-          firsPlayerToken,
+          firstPlayerToken,
           gameId,
           HttpStatus.OK,
         );
@@ -251,7 +295,7 @@ describe('e2e-Pair-Games-public', () => {
       const gameId = createdConnection.id;
       await delay(10000);
       await pairGamesPublicTestManager.getById(
-        firsPlayerToken,
+        firstPlayerToken,
         gameId,
         HttpStatus.UNAUTHORIZED,
       );
