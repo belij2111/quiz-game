@@ -49,7 +49,7 @@ export class BlogsAdminTestManager {
         .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
         .send(createValidBlogModel(i))
         .expect(statusCode);
-      blogs.push(response.body);
+      blogs.unshift(response.body);
     }
     return blogs;
   }
@@ -195,7 +195,7 @@ export class BlogsAdminTestManager {
         .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
         .send(createValidPostModel(i))
         .expect(statusCode);
-      posts.push(response.body);
+      posts.unshift(response.body);
     }
     return posts;
   }

@@ -44,7 +44,7 @@ export class CommentsTestManager {
         .auth(accessToken, { type: 'bearer' })
         .send(createValidCommentModel(i))
         .expect(statusCode);
-      comments.push(response.body);
+      comments.unshift(response.body);
     }
     return comments;
   }

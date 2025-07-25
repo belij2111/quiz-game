@@ -55,7 +55,7 @@ export class UsersTestManager {
         .auth(this.coreConfig.ADMIN_LOGIN, this.coreConfig.ADMIN_PASSWORD)
         .send(createValidUserModel(i))
         .expect(statusCode);
-      users.push(response.body);
+      users.unshift(response.body);
     }
     return users;
   }
