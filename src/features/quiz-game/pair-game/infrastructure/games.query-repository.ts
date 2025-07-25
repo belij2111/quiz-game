@@ -21,6 +21,7 @@ export class GamesQueryRepository {
   private getBaseQuery(gameId: string): SelectQueryBuilder<Game> {
     return this.dataSource.manager
       .createQueryBuilder(Game, 'g')
+      .where('g.id = :gameId', { gameId: gameId })
       .addCommonTableExpression(
         this.getPlayerProgress('first_player_id', gameId),
         'fp_cte',
