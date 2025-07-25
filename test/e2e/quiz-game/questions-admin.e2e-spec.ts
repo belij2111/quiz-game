@@ -62,7 +62,7 @@ describe('e2e-Questions-admin', () => {
         HttpStatus.BAD_REQUEST,
       );
     });
-    it(`shouldn't create new question if the request is unauthorized : STATUS 404 `, async () => {
+    it(`shouldn't create new question if the request is unauthorized : STATUS 401 `, async () => {
       const validQuestionDto: CreateQuestionInputDto = createValidQuestionDto();
       await questionsAdminTestManager.createIsNotAuthorized(
         validQuestionDto,
