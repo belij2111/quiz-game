@@ -21,7 +21,7 @@ export class AnswersRepository {
     return this.answersRepository.countBy({ playerId: playerId });
   }
 
-  async validateCorrectAnswers(playerId: string): Promise<boolean> {
+  async hasAtLeastOneCorrectAnswer(playerId: string): Promise<boolean> {
     const count = await this.answersRepository.count({
       where: {
         playerId: playerId,

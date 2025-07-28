@@ -41,6 +41,13 @@ export class GameQuestionsRepository {
     gameId: string,
     manager?: EntityManager,
   ): Promise<GameQuestion[]> {
-    return this.getRepo(manager).find({ where: { gameId: gameId } });
+    return this.getRepo(manager).find({
+      where: { gameId: gameId },
+      order: { id: 'ASC' },
+    });
+  }
+
+  async findCountByGameId(gameId: string): Promise<number> {
+    return this.getRepo().count({ where: { gameId: gameId } });
   }
 }

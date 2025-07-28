@@ -33,20 +33,26 @@ export class CreateAnswerOfCurrentUserUseCase
 
   async execute(command: CreateAnswerOfCurrentUserCommand): Promise<string> {
     const { currentUserId, answerInputDto } = command;
-    const player = await this.playersRepository.findByUserId(currentUserId);
+    const activeGame =
+      await this.gamesRepository.findActiveGameByUserId(currentUserId);
+    if (!activeGame) {
+      throw new ForbiddenException('User is not in an active pair');
+    }
+    const player = await this.playersRepository.findByUserIdAndByGameId(
+      currentUserId,
+      activeGame.id,
+    );
     if (!player) {
       throw new NotFoundException(`Player not found`);
     }
-    const activeGame = await this.gamesRepository.findActiveGameByPlayerId(
+    const totalQuestions = await this.gameQuestionsRepository.findCountByGameId(
+      activeGame.id,
+    );
+    const playerAnswersCount = await this.answersRepository.getCountByPlayerId(
       player.id,
     );
-    if (!activeGame) {
-      throw new NotFoundException('Player does not have an active game');
-    }
-    const isFirsPlayer = activeGame.firstPlayerId === player.id;
-    const isSecondPlayer = activeGame.secondPlayerId === player.id;
-    if (!isFirsPlayer && !isSecondPlayer) {
-      throw new ForbiddenException('User is not in an active pair');
+    if (playerAnswersCount >= totalQuestions) {
+      throw new ForbiddenException('User has already answered all questions');
     }
     const nextQuestion = await this.gameQuestionsRepository.findNextQuestion(
       activeGame.id,
@@ -66,12 +72,11 @@ export class CreateAnswerOfCurrentUserUseCase
       player.id,
       nextQuestion.questionId,
     );
+    await this.answersRepository.create(answer);
     if (isCorrect) {
       player.score += SCORE_INCREMENT;
       await this.playersRepository.update(player);
     }
-    await this.answersRepository.create(answer);
-
     const isGameFinished = await this.checkAllQuestionsAnswered(activeGame);
     if (isGameFinished) {
       await this.finishGame(activeGame);
@@ -99,9 +104,13 @@ export class CreateAnswerOfCurrentUserUseCase
       game.secondPlayerId!,
     );
     const isFirstPlayerCorrectAnswers: boolean =
-      await this.answersRepository.validateCorrectAnswers(game.firstPlayerId);
+      await this.answersRepository.hasAtLeastOneCorrectAnswer(
+        game.firstPlayerId,
+      );
     const isSecondPlayerCorrectAnswers: boolean =
-      await this.answersRepository.validateCorrectAnswers(game.secondPlayerId!);
+      await this.answersRepository.hasAtLeastOneCorrectAnswer(
+        game.secondPlayerId!,
+      );
     const firstPlayerFinishedFirst: boolean =
       await this.checkFirstPlayerFinishedFirst(
         game.firstPlayerId,
@@ -135,6 +144,6 @@ export class CreateAnswerOfCurrentUserUseCase
       await this.answersRepository.getLastAnswerDate(secondPlayerId, gameId);
     if (!firstPlayerLastAnswer) return false;
     if (!secondPlayerLastAnswer) return true;
-    return firstPlayerLastAnswer < secondPlayerLastAnswer;
+    return firstPlayerLastAnswer.getTime() < secondPlayerLastAnswer.getTime();
   }
 }

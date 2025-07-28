@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { Player } from '../domain/player.entity';
+import { Game } from '../domain/game.entity';
 
 @Injectable()
 export class PlayersRepository {
@@ -15,13 +16,21 @@ export class PlayersRepository {
     private readonly dataSource: DataSource,
   ) {}
 
-  async findByUserId(
+  async findByUserIdAndByGameId(
     userId: string,
+    gameId: string,
     manager?: EntityManager,
   ): Promise<Player | null> {
-    return await this.getRepo(manager).findOne({
-      where: { userId: userId },
-    });
+    return this.getRepo(manager)
+      .createQueryBuilder('p')
+      .innerJoin(
+        Game,
+        'g',
+        '(g.first_player_id = p.id OR g.second_player_id = p.id) AND g.id = :gameId',
+        { gameId: gameId },
+      )
+      .where('p.user_id = :userId', { userId: userId })
+      .getOne();
   }
 
   async create(player: Player, manager?: EntityManager) {
