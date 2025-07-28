@@ -1,6 +1,7 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AnswerInputDto } from '../../src/features/quiz-game/pair-game/api/input-dto/answer.input-dto';
+import { GameStatus } from '../../src/features/quiz-game/pair-game/api/enums/game-status.enum';
 
 export class PairGamesPublicTestManager {
   constructor(private readonly app: INestApplication) {}
@@ -42,5 +43,13 @@ export class PairGamesPublicTestManager {
       .send(answerDto)
       .expect(statusCode);
     return response.body;
+  }
+
+  expectCountScore(receivedScore: number, expectedScore: number) {
+    expect(receivedScore).toBe(expectedScore);
+  }
+
+  expectGameStatus(receivedStatus: GameStatus, expectedStatus: GameStatus) {
+    expect(receivedStatus).toBe(expectedStatus);
   }
 }
