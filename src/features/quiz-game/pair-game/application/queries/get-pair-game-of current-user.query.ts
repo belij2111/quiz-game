@@ -2,6 +2,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GamePairViewDto } from '../../api/view-dto/game-pair.view-dto';
 import { GamesQueryRepository } from '../../infrastructure/games.query-repository';
 import { GamesRepository } from '../../infrastructure/games.repository';
+import { NotFoundException } from '@nestjs/common';
 
 export class GetPairGameOfCurrentUserQuery {
   constructor(public currentUserId: string) {}
@@ -18,9 +19,15 @@ export class GetPairGameOfCurrentUserHandler
   async execute(
     query: GetPairGameOfCurrentUserQuery,
   ): Promise<GamePairViewDto> {
-    const foundGameId = await this.gamesRepository.findByUserIdOrNotFoundFail(
-      query.currentUserId,
-    );
-    return await this.gamesQueryRepository.getByIdOrNotFoundFail(foundGameId);
+    const foundGame =
+      await this.gamesRepository.findPendingOrActiveGameByUserId(
+        query.currentUserId,
+      );
+    if (!foundGame) {
+      throw new NotFoundException(
+        `Current user doesn't have active or pending game`,
+      );
+    }
+    return await this.gamesQueryRepository.getByIdOrNotFoundFail(foundGame.id);
   }
 }

@@ -54,6 +54,12 @@ export class GamesQueryRepository {
     return this.dataSource.manager
       .createQueryBuilder(Player, 'p')
       .leftJoin('p.answer', 'a')
+      .leftJoin(
+        GameQuestion,
+        'gq',
+        'gq.question_id = a.question_id AND gq.game_id = :gameId',
+        { gameId: gameId },
+      )
       .leftJoin('p.user', 'u')
       .select([
         'p."id" as "playerId"',
@@ -66,7 +72,7 @@ export class GamesQueryRepository {
                 'addedAt' , a."created_at"
               )
               ORDER BY a."created_at" ASC
-            ) FILTER (WHERE a."id" IS NOT NULL),'[]'::json
+            ) FILTER (WHERE gq."id" IS NOT NULL),'[]'::json
           ),
           'player', json_build_object(
           'id', u."id",
