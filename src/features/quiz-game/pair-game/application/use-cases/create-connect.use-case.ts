@@ -31,51 +31,41 @@ export class CreateConnectUseCase
 
   async execute(command: CreateConnectCommand): Promise<string> {
     return this.dataSource.transaction(async (manager: EntityManager) => {
+      const { currentUserId } = command;
       const foundPendingGame = await this.gamesRepository.findByStatus(
         GameStatus.PENDING_SECOND_PLAYER,
-        manager,
       );
-      const player = await this.playersRepository.findByUserId(
-        command.currentUserId,
-        manager,
-      );
-      if (player) {
-        const foundActiveCame =
-          await this.gamesRepository.findActiveGameByPlayerId(
-            player.id,
-            manager,
-          );
-        if (
-          foundActiveCame ||
-          (foundPendingGame && foundPendingGame.firstPlayerId === player.id)
-        ) {
-          throw new ForbiddenException(
-            'User is already participating in active pair',
-          );
-        }
-        if (foundPendingGame && foundPendingGame.firstPlayerId !== player.id) {
-          return await this.connectToExistingGame(
-            foundPendingGame,
-            player.id,
-            manager,
-          );
-        }
-        if (!foundPendingGame) {
-          return await this.createNewGame(player.id, manager);
-        }
+      const foundActiveCame =
+        await this.gamesRepository.findActiveGameByUserId(currentUserId);
+      if (foundActiveCame) {
+        throw new ForbiddenException(
+          'User is already participating in active pair',
+        );
       }
-      const createdPlayer = await this.createPlayer(
-        command.currentUserId,
-        manager,
-      );
       if (foundPendingGame) {
+        const firstPlayer = await this.playersRepository.findById(
+          foundPendingGame.firstPlayerId,
+        );
+        if (firstPlayer?.userId === currentUserId) {
+          throw new ForbiddenException(
+            'User cannot connect to his own pending game',
+          );
+        }
+        const createdSecondPlayer = await this.createPlayer(
+          currentUserId,
+          manager,
+        );
         return await this.connectToExistingGame(
           foundPendingGame,
-          createdPlayer.id,
+          createdSecondPlayer.id,
           manager,
         );
       }
-      return await this.createNewGame(createdPlayer.id, manager);
+      const createdFirstPlayer = await this.createPlayer(
+        currentUserId,
+        manager,
+      );
+      return await this.createNewGame(createdFirstPlayer.id, manager);
     });
   }
 

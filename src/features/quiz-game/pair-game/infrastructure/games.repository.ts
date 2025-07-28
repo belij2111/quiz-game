@@ -17,24 +17,6 @@ export class GamesRepository {
     return result.id;
   }
 
-  async findActiveGameByPlayerId(
-    playerId: string,
-    manager?: EntityManager,
-  ): Promise<Game | null> {
-    return await this.getRepo(manager).findOne({
-      where: [
-        {
-          firstPlayerId: playerId,
-          status: GameStatus.ACTIVE,
-        },
-        {
-          secondPlayerId: playerId,
-          status: GameStatus.ACTIVE,
-        },
-      ],
-    });
-  }
-
   async findByStatus(status: GameStatus, manager?: EntityManager) {
     return await this.getRepo(manager).findOne({ where: { status: status } });
   }
@@ -80,6 +62,36 @@ export class GamesRepository {
       .orderBy('g.created_at', 'DESC')
       .limit(1)
       .getRawOne();
+  }
+
+  async findActiveGameByUserId(currentUserId: string) {
+    return await this.dataSource.manager
+      .createQueryBuilder(Game, 'g')
+      .leftJoin(Player, 'p1', 'p1.id = g.first_player_id')
+      .leftJoin(Player, 'p2', 'p2.id = g.second_player_id')
+      .where('(p1.user_id = :userId OR p2.user_id = :userId)', {
+        userId: currentUserId,
+      })
+      .andWhere('g."status" = :status', { status: GameStatus.ACTIVE })
+      .orderBy('g.created_at', 'DESC')
+      .limit(1)
+      .getOne();
+  }
+
+  async findPendingOrActiveGameByUserId(currentUserId: string) {
+    return await this.dataSource.manager
+      .createQueryBuilder(Game, 'g')
+      .leftJoin(Player, 'p1', 'p1.id = g.first_player_id')
+      .leftJoin(Player, 'p2', 'p2.id = g.second_player_id')
+      .where('(p1.user_id = :userId OR p2.user_id = :userId)', {
+        userId: currentUserId,
+      })
+      .andWhere('g.status IN (:...statuses)', {
+        statuses: [GameStatus.PENDING_SECOND_PLAYER, GameStatus.ACTIVE],
+      })
+      .orderBy('g.created_at', 'DESC')
+      .limit(1)
+      .getOne();
   }
 
   async update(game: Game, manager?: EntityManager) {
