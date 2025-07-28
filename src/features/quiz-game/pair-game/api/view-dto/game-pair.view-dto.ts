@@ -52,29 +52,29 @@ export class GamePairViewDto {
       'Game finishes immediately after both players have all the questions',
     nullable: true,
   })
-  finishedGameDate: string | null = null;
+  finishGameDate: string | null = null;
 
   static mapToView(game: GameRawDataDto): GamePairViewDto {
     const dto = new GamePairViewDto();
     dto.id = game.id;
     dto.firstPlayerProgress = {
-      answers: game.firstPlayerProgress.answers.map((answer) => ({
+      answers: (game.firstPlayerProgress?.answers || []).map((answer) => ({
         questionId: answer.questionId,
         answerStatus: answer.answerStatus,
-        addedAt: answer.addedAt.toISOString(),
+        addedAt: new Date(answer.addedAt).toISOString(),
       })),
       player: {
-        id: game.firstPlayerProgress.player.id,
-        login: game.firstPlayerProgress.player.login,
+        id: game.firstPlayerProgress?.player?.id || '',
+        login: game.firstPlayerProgress?.player?.login || '',
       },
-      score: game.firstPlayerProgress.score,
+      score: game.firstPlayerProgress?.score || 0,
     };
     dto.secondPlayerProgress = game.secondPlayerProgress
       ? {
           answers: game.secondPlayerProgress.answers.map((answer) => ({
             questionId: answer.questionId,
             answerStatus: answer.answerStatus,
-            addedAt: answer.addedAt.toISOString(),
+            addedAt: new Date(answer.addedAt).toISOString(),
           })),
           player: {
             id: game.secondPlayerProgress.player.id,
@@ -94,10 +94,9 @@ export class GamePairViewDto {
     dto.startGameDate = game.startGameDate
       ? game.startGameDate.toISOString()
       : null;
-    dto.finishedGameDate = game.finishedGameDate
+    dto.finishGameDate = game.finishedGameDate
       ? game.finishedGameDate.toISOString()
       : null;
-
     return dto;
   }
 }
