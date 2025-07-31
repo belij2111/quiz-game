@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -31,6 +32,9 @@ import { GetPairGameOfCurrentUserQuery } from '../application/queries/get-pair-g
 import { CreateAnswerOfCurrentUserCommand } from '../application/use-cases/create-answer-of-current-user.use-case';
 import { GetAnswerResultQuery } from '../application/queries/get-answer-result.query';
 import { IdIsUuidValidationPipe } from '../../../../core/pipes/id-is-uuid.validation-pipe';
+import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
+import { GetPairGameQueryParams } from './input-dto/get-pair-game-query-params';
+import { GetMyGamesQuery } from '../application/queries/get-my-games.query';
 
 @Controller('pair-game-quiz')
 @ApiTags('PairQuizGame')
@@ -106,6 +110,27 @@ export class PairGamesPublicController {
       new GetAnswerResultQuery(createAnswerId),
     );
   }
+
+  @Get('pairs/my')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Returns all my games (closed games and current)' })
+  @ApiBearerAuth()
+  @ApiOkConfiguredResponse(
+    GamePairViewDto,
+    'Returns pair by id if current user is taking part in this pair',
+    true,
+  )
+  @ApiUnauthorizedConfiguredResponse()
+  async getMyGames(
+    @CurrentUserId() currentUserId: string,
+    @Query() query: GetPairGameQueryParams,
+  ): Promise<PaginatedViewModel<GamePairViewDto[]>> {
+    return await this.queryBus.execute(
+      new GetMyGamesQuery(currentUserId, query),
+    );
+  }
+
   @Get('pairs/:id')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)

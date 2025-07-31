@@ -28,6 +28,7 @@ import { CreateAnswerOfCurrentUserUseCase } from './pair-game/application/use-ca
 import { AnswersRepository } from './pair-game/infrastructure/answers.repository';
 import { GetAnswerResultQueryHandler } from './pair-game/application/queries/get-answer-result.query';
 import { AnswersQueryRepository } from './pair-game/infrastructure/answers.query-repository';
+import { GetMyGamesQueryHandler } from './pair-game/application/queries/get-my-games.query';
 
 const controllers = [PairGamesPublicController, QuestionsAdminController];
 
@@ -46,6 +47,7 @@ const queries = [
   GetPairGameByIdQueryHandler,
   GetPairGameOfCurrentUserHandler,
   GetAnswerResultQueryHandler,
+  GetMyGamesQueryHandler,
 ];
 
 const repositories = [
