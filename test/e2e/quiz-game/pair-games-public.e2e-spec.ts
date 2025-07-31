@@ -539,4 +539,59 @@ describe('e2e-Pair-Games-public', () => {
       );
     });
   });
+  describe('GET/pair-game-quiz/pairs/my', () => {
+    beforeEach(async () => {
+      // 1. First game (status: Finished )
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(firstPlayerToken);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(secondPlayerToken);
+      for (let i = 1; i <= 5; i++) {
+        await pairGamesPublicTestManager.sendAnswer(
+          firstPlayerToken,
+          correctAnswer,
+        );
+        await pairGamesPublicTestManager.sendAnswer(
+          secondPlayerToken,
+          correctAnswer,
+        );
+      }
+      // 2. Second game (status: Finished )
+      await delay(1000);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(firstPlayerToken);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(secondPlayerToken);
+      for (let i = 1; i <= 5; i++) {
+        await pairGamesPublicTestManager.sendAnswer(
+          firstPlayerToken,
+          incorrectAnswer,
+        );
+        await pairGamesPublicTestManager.sendAnswer(
+          secondPlayerToken,
+          correctAnswer,
+        );
+      }
+      // 3. Third game (status: Active)
+      await delay(1000);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(firstPlayerToken);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(secondPlayerToken);
+      await pairGamesPublicTestManager.sendAnswer(
+        firstPlayerToken,
+        correctAnswer,
+      );
+    });
+    it('should return all my games with pagination : STATUS 200', async () => {
+      const createResponseForFirstPlayer =
+        await pairGamesPublicTestManager.getGamesWithPaging(
+          firstPlayerToken,
+          HttpStatus.OK,
+        );
+      pairGamesPublicTestManager.expectCorrectPagination(
+        createResponseForFirstPlayer.body,
+      );
+    });
+  });
 });
