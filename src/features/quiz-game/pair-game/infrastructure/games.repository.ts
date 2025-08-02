@@ -46,9 +46,9 @@ export class GamesRepository {
     return foundGame.id;
   }
 
-  async findByUserId(currentUserId: string | null) {
-    return await this.dataSource.manager
-      .createQueryBuilder(Game, 'g')
+  async findByUserId(currentUserId: string | null, manager?: EntityManager) {
+    return await this.getRepo(manager)
+      .createQueryBuilder('g')
       .select('g.id as "id"')
       .where((qb) => {
         const subQuery = qb
@@ -64,9 +64,9 @@ export class GamesRepository {
       .getRawOne();
   }
 
-  async findActiveGameByUserId(currentUserId: string) {
-    return await this.dataSource.manager
-      .createQueryBuilder(Game, 'g')
+  async findActiveGameByUserId(currentUserId: string, manager?: EntityManager) {
+    return await this.getRepo(manager)
+      .createQueryBuilder('g')
       .leftJoin(Player, 'p1', 'p1.id = g.first_player_id')
       .leftJoin(Player, 'p2', 'p2.id = g.second_player_id')
       .where('(p1.user_id = :userId OR p2.user_id = :userId)', {
@@ -78,9 +78,12 @@ export class GamesRepository {
       .getOne();
   }
 
-  async findPendingOrActiveGameByUserId(currentUserId: string) {
-    return await this.dataSource.manager
-      .createQueryBuilder(Game, 'g')
+  async findPendingOrActiveGameByUserId(
+    currentUserId: string,
+    manager?: EntityManager,
+  ) {
+    return await this.getRepo(manager)
+      .createQueryBuilder('g')
       .leftJoin(Player, 'p1', 'p1.id = g.first_player_id')
       .leftJoin(Player, 'p2', 'p2.id = g.second_player_id')
       .where('(p1.user_id = :userId OR p2.user_id = :userId)', {

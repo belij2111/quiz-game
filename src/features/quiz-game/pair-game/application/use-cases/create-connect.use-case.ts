@@ -34,9 +34,12 @@ export class CreateConnectUseCase
       const { currentUserId } = command;
       const foundPendingGame = await this.gamesRepository.findByStatus(
         GameStatus.PENDING_SECOND_PLAYER,
+        manager,
       );
-      const foundActiveCame =
-        await this.gamesRepository.findActiveGameByUserId(currentUserId);
+      const foundActiveCame = await this.gamesRepository.findActiveGameByUserId(
+        currentUserId,
+        manager,
+      );
       if (foundActiveCame) {
         throw new ForbiddenException(
           'User is already participating in active pair',
@@ -45,6 +48,7 @@ export class CreateConnectUseCase
       if (foundPendingGame) {
         const firstPlayer = await this.playersRepository.findById(
           foundPendingGame.firstPlayerId,
+          manager,
         );
         if (firstPlayer?.userId === currentUserId) {
           throw new ForbiddenException(
@@ -72,7 +76,7 @@ export class CreateConnectUseCase
   private async connectToExistingGame(
     game: Game,
     playerId: string,
-    manager?: EntityManager,
+    manager: EntityManager,
   ): Promise<string> {
     await this.addRandomQuestions(game, QUESTIONS_COUNT, manager);
     game.update({
@@ -85,7 +89,7 @@ export class CreateConnectUseCase
 
   private async createPlayer(
     userId: string,
-    manager?: EntityManager,
+    manager: EntityManager,
   ): Promise<Player> {
     const player = Player.create(userId);
     return await this.playersRepository.create(player, manager);
@@ -93,7 +97,7 @@ export class CreateConnectUseCase
 
   private async createNewGame(
     playerId: string,
-    manager?: EntityManager,
+    manager: EntityManager,
   ): Promise<string> {
     const game = Game.create(playerId);
     return await this.gamesRepository.save(game, manager);
@@ -102,7 +106,7 @@ export class CreateConnectUseCase
   private async addRandomQuestions(
     game: Game,
     count: number,
-    manager?: EntityManager,
+    manager: EntityManager,
   ) {
     const foundRandomQuestions =
       await this.questionsRepository.findRandomPublishedQuestions(
