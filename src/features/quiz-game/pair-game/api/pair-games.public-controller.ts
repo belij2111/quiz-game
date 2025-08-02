@@ -35,6 +35,8 @@ import { IdIsUuidValidationPipe } from '../../../../core/pipes/id-is-uuid.valida
 import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
 import { GetPairGameQueryParams } from './input-dto/get-pair-game-query-params';
 import { GetMyGamesQuery } from '../application/queries/get-my-games.query';
+import { MyStatisticViewDto } from './view-dto/my-statistic.view-dto';
+import { GetMyStatisticQuery } from '../application/queries/get-my-statistic.query';
 
 @Controller('pair-game-quiz')
 @ApiTags('PairQuizGame')
@@ -43,6 +45,7 @@ export class PairGamesPublicController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
+
   @Post('pairs/connection')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
@@ -151,5 +154,22 @@ export class PairGamesPublicController {
     return await this.queryBus.execute(
       new GetPairGameByIdQuery(currentUserId, id),
     );
+  }
+
+  @Get('users/my-statistic')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get current user statistic' })
+  @ApiBearerAuth()
+  @ApiOkConfiguredResponse(
+    MyStatisticViewDto,
+    'Returns statistics of the current user',
+    false,
+  )
+  @ApiUnauthorizedConfiguredResponse()
+  async getMyStatistic(
+    @CurrentUserId() currentUserId: string,
+  ): Promise<MyStatisticViewDto> {
+    return await this.queryBus.execute(new GetMyStatisticQuery(currentUserId));
   }
 }

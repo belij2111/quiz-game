@@ -55,4 +55,24 @@ export class PlayersRepository {
   async update(player: Player, manager?: EntityManager) {
     return await this.getRepo(manager).save(player);
   }
+
+  async findByUserIdOrNotFoundFail(
+    userId: string,
+    manager?: EntityManager,
+  ): Promise<Player[]> {
+    const foundPlayer = await this.findByUserId(userId, manager);
+    if (!foundPlayer) {
+      throw new NotFoundException(
+        `No players found for the user with the ID ${userId}`,
+      );
+    }
+    return foundPlayer;
+  }
+
+  async findByUserId(
+    userId: string,
+    manager?: EntityManager,
+  ): Promise<Player[] | null> {
+    return await this.getRepo(manager).find({ where: { userId: userId } });
+  }
 }

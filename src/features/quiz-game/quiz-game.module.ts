@@ -29,6 +29,7 @@ import { AnswersRepository } from './pair-game/infrastructure/answers.repository
 import { GetAnswerResultQueryHandler } from './pair-game/application/queries/get-answer-result.query';
 import { AnswersQueryRepository } from './pair-game/infrastructure/answers.query-repository';
 import { GetMyGamesQueryHandler } from './pair-game/application/queries/get-my-games.query';
+import { GetMyStatisticQueryHandler } from './pair-game/application/queries/get-my-statistic.query';
 
 const controllers = [PairGamesPublicController, QuestionsAdminController];
 
@@ -48,6 +49,7 @@ const queries = [
   GetPairGameOfCurrentUserHandler,
   GetAnswerResultQueryHandler,
   GetMyGamesQueryHandler,
+  GetMyStatisticQueryHandler,
 ];
 
 const repositories = [

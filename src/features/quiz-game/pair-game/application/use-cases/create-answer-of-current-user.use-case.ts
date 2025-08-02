@@ -9,6 +9,8 @@ import { AnswersRepository } from '../../infrastructure/answers.repository';
 import { Answer } from '../../domain/answer.entity';
 import { Game } from '../../domain/game.entity';
 import { GameStatus } from '../../api/enums/game-status.enum';
+import { PlayerStatusEnum } from '../../api/enums/player-status.enum';
+import { Player } from '../../domain/player.entity';
 
 const SCORE_INCREMENT = 1;
 const BONUS_SCORE = 1;
@@ -123,6 +125,7 @@ export class CreateAnswerOfCurrentUserUseCase
     if (isSecondPlayerCorrectAnswers && !firstPlayerFinishedFirst) {
       secondPlayer.score += BONUS_SCORE;
     }
+    await this.determinePlayerStatus(firstPlayer, secondPlayer);
     await this.playersRepository.update(firstPlayer);
     await this.playersRepository.update(secondPlayer);
 
@@ -145,5 +148,24 @@ export class CreateAnswerOfCurrentUserUseCase
     if (!firstPlayerLastAnswer) return false;
     if (!secondPlayerLastAnswer) return true;
     return firstPlayerLastAnswer.getTime() < secondPlayerLastAnswer.getTime();
+  }
+
+  private async determinePlayerStatus(
+    firstPlayer: Player,
+    secondPlayer: Player,
+  ): Promise<void> {
+    switch (true) {
+      case firstPlayer.score > secondPlayer.score:
+        firstPlayer.status = PlayerStatusEnum.WIN;
+        secondPlayer.status = PlayerStatusEnum.LOSE;
+        break;
+      case secondPlayer.score > firstPlayer.score:
+        firstPlayer.status = PlayerStatusEnum.LOSE;
+        secondPlayer.status = PlayerStatusEnum.WIN;
+        break;
+      default:
+        firstPlayer.status = PlayerStatusEnum.DRAW;
+        secondPlayer.status = PlayerStatusEnum.DRAW;
+    }
   }
 }
