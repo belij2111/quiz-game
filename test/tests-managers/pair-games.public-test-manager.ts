@@ -5,6 +5,7 @@ import { GameStatus } from '../../src/features/quiz-game/pair-game/api/enums/gam
 import { paginationInputParams } from '../models/base/pagination.input-test-dto';
 import { GamePairViewDto } from '../../src/features/quiz-game/pair-game/api/view-dto/game-pair.view-dto';
 import { PaginatedViewModel } from '../../src/core/models/base-paginated.view-model';
+import { MyStatisticViewDto } from '../../src/features/quiz-game/pair-game/api/view-dto/my-statistic.view-dto';
 
 export class PairGamesPublicTestManager {
   constructor(private readonly app: INestApplication) {}
@@ -94,5 +95,25 @@ export class PairGamesPublicTestManager {
       expect(item).toHaveProperty('startGameDate');
       expect(item).toHaveProperty('finishGameDate');
     });
+  }
+
+  async getMyStatistic(
+    accessToken: string,
+    statusCode: number = HttpStatus.OK,
+  ) {
+    const response = await request(this.app.getHttpServer())
+      .get(`/pair-game-quiz/users/my-statistic`)
+      .auth(accessToken, { type: 'bearer' })
+      .expect(statusCode);
+    return response.body;
+  }
+
+  expectCorrectMyStatistic(responseDto: MyStatisticViewDto) {
+    expect(responseDto).toHaveProperty('sumScore');
+    expect(responseDto).toHaveProperty('avgScores');
+    expect(responseDto).toHaveProperty('gamesCount');
+    expect(responseDto).toHaveProperty('winsCount');
+    expect(responseDto).toHaveProperty('lossesCount');
+    expect(responseDto).toHaveProperty('drawsCount');
   }
 }

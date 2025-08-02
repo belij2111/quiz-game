@@ -13,6 +13,7 @@ import { QUESTIONS_PULL } from '../../models/quiz-game/question.input-dto';
 import { AnswerInputDto } from '../../../src/features/quiz-game/pair-game/api/input-dto/answer.input-dto';
 import { delay } from '../../helpers/delay';
 import { GameStatus } from '../../../src/features/quiz-game/pair-game/api/enums/game-status.enum';
+import { MyStatisticViewDto } from '../../../src/features/quiz-game/pair-game/api/view-dto/my-statistic.view-dto';
 
 describe('e2e-Pair-Games-public', () => {
   let app: INestApplication;
@@ -591,6 +592,72 @@ describe('e2e-Pair-Games-public', () => {
         );
       pairGamesPublicTestManager.expectCorrectPagination(
         createResponseForFirstPlayer.body,
+      );
+    });
+  });
+  describe('GET/pair-game-quiz/users/my-statistic', () => {
+    beforeEach(async () => {
+      // 1. First game (firsPlayer: Win )
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(firstPlayerToken);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(secondPlayerToken);
+      for (let i = 1; i <= 5; i++) {
+        await pairGamesPublicTestManager.sendAnswer(
+          firstPlayerToken,
+          correctAnswer,
+        );
+        await pairGamesPublicTestManager.sendAnswer(
+          secondPlayerToken,
+          correctAnswer,
+        );
+      }
+      // 2. Second game (secondPlayer:Win )
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(firstPlayerToken);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(secondPlayerToken);
+      for (let i = 1; i <= 5; i++) {
+        await pairGamesPublicTestManager.sendAnswer(
+          firstPlayerToken,
+          incorrectAnswer,
+        );
+        await pairGamesPublicTestManager.sendAnswer(
+          secondPlayerToken,
+          correctAnswer,
+        );
+      }
+      // 3. Third game (firstPlayer: Draw, secondPlayer: Draw )
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(firstPlayerToken);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(secondPlayerToken);
+      for (let i = 1; i <= 5; i++) {
+        await pairGamesPublicTestManager.sendAnswer(
+          firstPlayerToken,
+          incorrectAnswer,
+        );
+        await pairGamesPublicTestManager.sendAnswer(
+          secondPlayerToken,
+          incorrectAnswer,
+        );
+      }
+    });
+    it('should return statistics of the current user : STATUS 200', async () => {
+      const createResponseForFirstPlayer: MyStatisticViewDto =
+        await pairGamesPublicTestManager.getMyStatistic(
+          secondPlayerToken,
+          HttpStatus.OK,
+        );
+      pairGamesPublicTestManager.expectCorrectMyStatistic(
+        createResponseForFirstPlayer,
+      );
+    });
+    it(`shouldn't return statistics of the current user if accessToken expired : STATUS 401`, async () => {
+      await delay(10000);
+      await pairGamesPublicTestManager.getMyStatistic(
+        secondPlayerToken,
+        HttpStatus.UNAUTHORIZED,
       );
     });
   });
