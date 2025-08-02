@@ -1,28 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { Answer } from '../domain/answer.entity';
 import { AnswerStatus } from '../api/enums/answer-status.enum';
 import { GameQuestion } from '../domain/game-question.entity';
 
 @Injectable()
 export class AnswersRepository {
+  private getRepo(manager?: EntityManager): Repository<Answer> {
+    return (
+      manager?.getRepository(Answer) || this.dataSource.getRepository(Answer)
+    );
+  }
   constructor(
-    @InjectRepository(Answer)
-    private readonly answersRepository: Repository<Answer>,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
   ) {}
 
-  async create(answer: Answer) {
-    const result = await this.answersRepository.save(answer);
+  async create(answer: Answer, manager?: EntityManager) {
+    const result = await this.getRepo(manager).save(answer);
     return result.id;
   }
 
-  async getCountByPlayerId(playerId: string): Promise<number> {
-    return this.answersRepository.countBy({ playerId: playerId });
+  async getCountByPlayerId(
+    playerId: string,
+    manager?: EntityManager,
+  ): Promise<number> {
+    return this.getRepo(manager).countBy({ playerId: playerId });
   }
 
-  async hasAtLeastOneCorrectAnswer(playerId: string): Promise<boolean> {
-    const count = await this.answersRepository.count({
+  async hasAtLeastOneCorrectAnswer(
+    playerId: string,
+    manager?: EntityManager,
+  ): Promise<boolean> {
+    const count = await this.getRepo(manager).count({
       where: {
         playerId: playerId,
         answerStatus: AnswerStatus.CORRECT,
@@ -34,8 +45,9 @@ export class AnswersRepository {
   async getLastAnswerDate(
     playerId: string,
     gameId: string,
+    manager?: EntityManager,
   ): Promise<Date | null> {
-    const result = await this.answersRepository
+    const result = await this.getRepo(manager)
       .createQueryBuilder('a')
       .select('MAX(a."created_at") as "lastAnswerDate"')
       .where('a."player_id" = :playerId', { playerId: playerId })

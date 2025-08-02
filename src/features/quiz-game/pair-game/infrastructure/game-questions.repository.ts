@@ -47,7 +47,10 @@ export class GameQuestionsRepository {
     });
   }
 
-  async findCountByGameId(gameId: string): Promise<number> {
-    return this.getRepo().count({ where: { gameId: gameId } });
+  async findCountByGameId(
+    gameId: string,
+    manager?: EntityManager,
+  ): Promise<number> {
+    return this.getRepo(manager).count({ where: { gameId: gameId } });
   }
 }
