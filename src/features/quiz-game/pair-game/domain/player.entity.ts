@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { BaseWithUuidIdEntity } from '../../../../core/entities/base-with-uuid-id.entity';
 import { User } from '../../../user-accounts/users/domain/user.entity';
 import { Answer } from './answer.entity';
+import { PlayerStatusEnum } from '../api/enums/player-status.enum';
 
 @Entity()
 export class Player extends BaseWithUuidIdEntity {
@@ -17,6 +18,9 @@ export class Player extends BaseWithUuidIdEntity {
     cascade: true,
   })
   public answer: Answer[];
+
+  @Column({ type: 'enum', enum: PlayerStatusEnum, nullable: true })
+  public status: PlayerStatusEnum;
 
   static create(userId: string): Player {
     const player = new this();
