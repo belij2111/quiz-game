@@ -30,8 +30,11 @@ import { GetAnswerResultQueryHandler } from './pair-game/application/queries/get
 import { AnswersQueryRepository } from './pair-game/infrastructure/answers.query-repository';
 import { GetMyGamesQueryHandler } from './pair-game/application/queries/get-my-games.query';
 import { GetMyStatisticQueryHandler } from './pair-game/application/queries/get-my-statistic.query';
+import { CalculateStatisticsService } from './pair-game/application/services/calculate-statistics.service';
 
 const controllers = [PairGamesPublicController, QuestionsAdminController];
+
+const services = [CalculateStatisticsService];
 
 const useCases = [
   CreateQuestionUseCase,
@@ -70,6 +73,6 @@ const repositories = [
     UserAccountsModule,
   ],
   controllers: [...controllers],
-  providers: [...useCases, ...queries, ...repositories],
+  providers: [...services, ...useCases, ...queries, ...repositories],
 })
 export class QuizGameModule {}
