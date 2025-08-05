@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../domain/user.entity';
 import { ILike, Repository } from 'typeorm';
@@ -6,6 +6,7 @@ import { UserViewModel } from '../api/models/view/user.view-model';
 import { GetUsersQueryParams } from '../api/models/input/create-user.input-model';
 import { PaginatedViewModel } from '../../../../core/models/base-paginated.view-model';
 import { MeViewModel } from '../../auth/api/models/view/me.view-model';
+import { UserWhoArePlayerDto } from './dto/user-who-are-player.dto';
 
 @Injectable()
 export class UsersQueryRepository {
@@ -49,5 +50,17 @@ export class UsersQueryRepository {
     const foundUser = await this.usersQueryRepository.findOneBy({ id: id });
     if (!foundUser) return null;
     return MeViewModel.mapToView(foundUser);
+  }
+
+  async getUsersWhoArePlayersOrNotFoundFail(): Promise<UserWhoArePlayerDto[]> {
+    const result = await this.usersQueryRepository
+      .createQueryBuilder('u')
+      .innerJoin('u.player', 'p')
+      .select(['u.id', 'u.login'])
+      .getMany();
+    if (result.length === 0) {
+      throw new NotFoundException('No users who are players');
+    }
+    return result;
   }
 }

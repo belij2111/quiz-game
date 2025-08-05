@@ -103,6 +103,6 @@ const repositories = [
       useClass: ThrottlerGuard,
     },
   ],
-  exports: [UsersRepository],
+  exports: [UsersRepository, UsersQueryRepository],
 })
 export class UserAccountsModule {}

@@ -31,6 +31,8 @@ import { AnswersQueryRepository } from './pair-game/infrastructure/answers.query
 import { GetMyGamesQueryHandler } from './pair-game/application/queries/get-my-games.query';
 import { GetMyStatisticQueryHandler } from './pair-game/application/queries/get-my-statistic.query';
 import { CalculateStatisticsService } from './pair-game/application/services/calculate-statistics.service';
+import { PlayersQueryRepository } from './pair-game/infrastructure/players.query-repository';
+import { GetTopUsersQueryHandler } from './pair-game/application/queries/get-top-users.query';
 
 const controllers = [PairGamesPublicController, QuestionsAdminController];
 
@@ -53,6 +55,7 @@ const queries = [
   GetAnswerResultQueryHandler,
   GetMyGamesQueryHandler,
   GetMyStatisticQueryHandler,
+  GetTopUsersQueryHandler,
 ];
 
 const repositories = [
@@ -64,6 +67,7 @@ const repositories = [
   GameQuestionsRepository,
   AnswersRepository,
   AnswersQueryRepository,
+  PlayersQueryRepository,
 ];
 
 @Module({

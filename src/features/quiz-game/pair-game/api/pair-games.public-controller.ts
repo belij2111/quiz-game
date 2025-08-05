@@ -37,6 +37,10 @@ import { GetPairGameQueryParams } from './input-dto/get-pair-game-query-params';
 import { GetMyGamesQuery } from '../application/queries/get-my-games.query';
 import { MyStatisticViewDto } from './view-dto/my-statistic.view-dto';
 import { GetMyStatisticQuery } from '../application/queries/get-my-statistic.query';
+import { TopGamePlayerViewDto } from './view-dto/top-game-player.view-dto';
+import { GetTopUsersQuery } from '../application/queries/get-top-users.query';
+import { GetTopUsersQueryParams } from './input-dto/get-top-users-query-params';
+import { SortArrayConversionPipe } from '../../../../core/pipes/sort-array-conversion.pipe';
 
 @Controller('pair-game-quiz')
 @ApiTags('PairQuizGame')
@@ -171,5 +175,15 @@ export class PairGamesPublicController {
     @CurrentUserId() currentUserId: string,
   ): Promise<MyStatisticViewDto> {
     return await this.queryBus.execute(new GetMyStatisticQuery(currentUserId));
+  }
+
+  @Get('users/top')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get users top' })
+  @ApiOkConfiguredResponse(TopGamePlayerViewDto)
+  async getTopUsers(
+    @Query(new SortArrayConversionPipe()) query: GetTopUsersQueryParams,
+  ): Promise<PaginatedViewModel<TopGamePlayerViewDto[]>> {
+    return await this.queryBus.execute(new GetTopUsersQuery(query));
   }
 }
