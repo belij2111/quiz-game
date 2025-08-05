@@ -14,6 +14,8 @@ import { AnswerInputDto } from '../../../src/features/quiz-game/pair-game/api/in
 import { delay } from '../../helpers/delay';
 import { GameStatus } from '../../../src/features/quiz-game/pair-game/api/enums/game-status.enum';
 import { MyStatisticViewDto } from '../../../src/features/quiz-game/pair-game/api/view-dto/my-statistic.view-dto';
+import { TopGamePlayerViewDto } from '../../../src/features/quiz-game/pair-game/api/view-dto/top-game-player.view-dto';
+import { PaginatedViewModel } from '../../../src/core/models/base-paginated.view-model';
 
 describe('e2e-Pair-Games-public', () => {
   let app: INestApplication;
@@ -658,6 +660,82 @@ describe('e2e-Pair-Games-public', () => {
       await pairGamesPublicTestManager.getMyStatistic(
         secondPlayerToken,
         HttpStatus.UNAUTHORIZED,
+      );
+    });
+  });
+  describe('GET/pair-game-quiz/users/top', () => {
+    beforeEach(async () => {
+      // 1. First game (user1: Win )
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(firstPlayerToken);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(secondPlayerToken);
+      for (let i = 1; i <= 5; i++) {
+        await pairGamesPublicTestManager.sendAnswer(
+          firstPlayerToken,
+          correctAnswer,
+        );
+        await pairGamesPublicTestManager.sendAnswer(
+          secondPlayerToken,
+          correctAnswer,
+        );
+      }
+      // 2. Second game (user1:Win )
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(firstPlayerToken);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(secondPlayerToken);
+      for (let i = 1; i <= 5; i++) {
+        await pairGamesPublicTestManager.sendAnswer(
+          firstPlayerToken,
+          correctAnswer,
+        );
+        await pairGamesPublicTestManager.sendAnswer(
+          secondPlayerToken,
+          correctAnswer,
+        );
+      }
+      // 3. Third game (user3: Win)
+      loginResult = await coreTestManager.loginUser(3);
+      const thirdPlayerToken = loginResult!.accessToken;
+      loginResult = await coreTestManager.loginUser(4);
+      const fourthPlayerToken = loginResult!.accessToken;
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(thirdPlayerToken);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(fourthPlayerToken);
+      for (let i = 1; i <= 5; i++) {
+        await pairGamesPublicTestManager.sendAnswer(
+          thirdPlayerToken,
+          correctAnswer,
+        );
+        await pairGamesPublicTestManager.sendAnswer(
+          fourthPlayerToken,
+          incorrectAnswer,
+        );
+      }
+      // 4. Fourth game (user4: Win)
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(thirdPlayerToken);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(fourthPlayerToken);
+      for (let i = 1; i <= 5; i++) {
+        await pairGamesPublicTestManager.sendAnswer(
+          thirdPlayerToken,
+          incorrectAnswer,
+        );
+        await pairGamesPublicTestManager.sendAnswer(
+          fourthPlayerToken,
+          correctAnswer,
+        );
+      }
+    });
+    it('should return top users with pagination : STATUS 200', async () => {
+      const createResponse: PaginatedViewModel<TopGamePlayerViewDto[]> =
+        await pairGamesPublicTestManager.getTopUsers(HttpStatus.OK);
+      console.log('createResponse :', createResponse);
+      pairGamesPublicTestManager.expectCorrectPaginationTopUsers(
+        createResponse,
       );
     });
   });

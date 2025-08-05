@@ -6,6 +6,7 @@ import { paginationInputParams } from '../models/base/pagination.input-test-dto'
 import { GamePairViewDto } from '../../src/features/quiz-game/pair-game/api/view-dto/game-pair.view-dto';
 import { PaginatedViewModel } from '../../src/core/models/base-paginated.view-model';
 import { MyStatisticViewDto } from '../../src/features/quiz-game/pair-game/api/view-dto/my-statistic.view-dto';
+import { TopGamePlayerViewDto } from '../../src/features/quiz-game/pair-game/api/view-dto/top-game-player.view-dto';
 
 export class PairGamesPublicTestManager {
   constructor(private readonly app: INestApplication) {}
@@ -115,5 +116,35 @@ export class PairGamesPublicTestManager {
     expect(responseDto).toHaveProperty('winsCount');
     expect(responseDto).toHaveProperty('lossesCount');
     expect(responseDto).toHaveProperty('drawsCount');
+  }
+
+  async getTopUsers(statusCode: number = HttpStatus.OK) {
+    const { pageNumber, pageSize } = paginationInputParams;
+    const sort = ['winsCount desc', 'avgScore asc'];
+    const response = await request(this.app.getHttpServer())
+      .get(`/pair-game-quiz/users/top`)
+      .query({
+        pageNumber,
+        pageSize,
+        sort,
+      })
+      .expect(statusCode);
+    return response.body;
+  }
+
+  expectCorrectPaginationTopUsers(
+    responseDto: PaginatedViewModel<TopGamePlayerViewDto[]>,
+  ) {
+    responseDto.items.forEach((item) => {
+      expect(item).toHaveProperty('sumScore');
+      expect(item).toHaveProperty('avgScores');
+      expect(item).toHaveProperty('gamesCount');
+      expect(item).toHaveProperty('winsCount');
+      expect(item).toHaveProperty('lossesCount');
+      expect(item).toHaveProperty('drawsCount');
+      expect(item).toHaveProperty('player');
+      expect(item.player).toHaveProperty('id');
+      expect(item.player).toHaveProperty('login');
+    });
   }
 }
