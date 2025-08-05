@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-class PaginationParams {
+export class PaginationParams {
   @Type(() => Number)
   @ApiProperty({
     required: false,
