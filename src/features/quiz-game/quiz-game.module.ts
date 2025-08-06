@@ -33,6 +33,7 @@ import { GetMyStatisticQueryHandler } from './pair-game/application/queries/get-
 import { CalculateStatisticsService } from './pair-game/application/services/calculate-statistics.service';
 import { PlayersQueryRepository } from './pair-game/infrastructure/players.query-repository';
 import { GetTopUsersQueryHandler } from './pair-game/application/queries/get-top-users.query';
+import { ScheduleModule } from '@nestjs/schedule';
 
 const controllers = [PairGamesPublicController, QuestionsAdminController];
 
@@ -75,6 +76,7 @@ const repositories = [
     TypeOrmModule.forFeature([Question, Player, Answer, Game, GameQuestion]),
     CqrsModule,
     UserAccountsModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [...controllers],
   providers: [...services, ...useCases, ...queries, ...repositories],
