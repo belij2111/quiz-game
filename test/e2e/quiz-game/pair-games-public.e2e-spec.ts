@@ -739,4 +739,48 @@ describe('e2e-Pair-Games-public', () => {
       );
     });
   });
+  describe('checking the end of the game', () => {
+    beforeEach(async () => {
+      // 1. First game (user1: Win, score: 6 / user2: Lose, score: 1 )
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(firstPlayerToken);
+      createdConnection =
+        await pairGamesPublicTestManager.createConnect(secondPlayerToken);
+      for (let i = 1; i <= 5; i++) {
+        await pairGamesPublicTestManager.sendAnswer(
+          firstPlayerToken,
+          correctAnswer,
+        );
+      }
+      await pairGamesPublicTestManager.sendAnswer(
+        secondPlayerToken,
+        correctAnswer,
+      );
+    });
+    it('should end the game 10 seconds after all the answers of one of the players : STATUS 200', async () => {
+      await delay(9000);
+      const createResponseForStatusActive =
+        await pairGamesPublicTestManager.getMyCurrent(
+          firstPlayerToken,
+          HttpStatus.OK,
+        );
+      console.log(
+        'createResponseForFirstPlayer: ',
+        createResponseForStatusActive.body,
+      );
+      await delay(10000);
+      const createResponseForStatusFinished =
+        await pairGamesPublicTestManager.getById(
+          firstPlayerToken,
+          createResponseForStatusActive.body.id,
+        );
+      console.log(
+        'createResponseForFirstPlayer: ',
+        createResponseForStatusFinished.body,
+      );
+      await pairGamesPublicTestManager.expectCorrectEndGame(
+        createResponseForStatusFinished.body,
+      );
+    });
+  });
 });

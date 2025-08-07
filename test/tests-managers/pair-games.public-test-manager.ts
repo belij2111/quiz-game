@@ -147,4 +147,10 @@ export class PairGamesPublicTestManager {
       expect(item.player).toHaveProperty('login');
     });
   }
+
+  async expectCorrectEndGame(responseDto: GamePairViewDto) {
+    expect(responseDto.firstPlayerProgress.score).toBe(6);
+    expect(responseDto.secondPlayerProgress!.score).toBe(1);
+    expect(responseDto.status).toBe(GameStatus.FINISHED);
+  }
 }
