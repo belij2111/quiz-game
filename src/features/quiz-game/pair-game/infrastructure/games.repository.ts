@@ -105,4 +105,10 @@ export class GamesRepository {
       .where('id = :id', { id: game.id })
       .execute();
   }
+
+  async findActiveGames(manager?: EntityManager): Promise<Game[]> {
+    return await this.getRepo(manager).find({
+      where: { status: GameStatus.ACTIVE },
+    });
+  }
 }
