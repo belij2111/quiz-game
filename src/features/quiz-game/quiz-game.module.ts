@@ -34,6 +34,7 @@ import { CalculateStatisticsService } from './pair-game/application/services/cal
 import { PlayersQueryRepository } from './pair-game/infrastructure/players.query-repository';
 import { GetTopUsersQueryHandler } from './pair-game/application/queries/get-top-users.query';
 import { ScheduleModule } from '@nestjs/schedule';
+import { FinishGameCommandUseCase } from './pair-game/application/use-cases/finish-game.use-case';
 
 const controllers = [PairGamesPublicController, QuestionsAdminController];
 
@@ -46,6 +47,7 @@ const useCases = [
   DeleteQuestionUseCase,
   CreateConnectUseCase,
   CreateAnswerOfCurrentUserUseCase,
+  FinishGameCommandUseCase,
 ];
 
 const queries = [
