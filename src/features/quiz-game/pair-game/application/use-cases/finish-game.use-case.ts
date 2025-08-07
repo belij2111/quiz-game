@@ -6,6 +6,7 @@ import { GamesRepository } from '../../infrastructure/games.repository';
 import { PlayersRepository } from '../../infrastructure/players.repository';
 import { AnswersRepository } from '../../infrastructure/answers.repository';
 import { GameStatus } from '../../api/enums/game-status.enum';
+import { GameQuestionsRepository } from '../../infrastructure/game-questions.repository';
 
 const BONUS_SCORE = 1;
 
@@ -22,6 +23,7 @@ export class FinishGameCommandUseCase
     private readonly gamesRepository: GamesRepository,
     private readonly playersRepository: PlayersRepository,
     private readonly answersRepository: AnswersRepository,
+    private readonly gameQuestionsRepository: GameQuestionsRepository,
   ) {}
   async execute(
     command: FinishGameCommand,
@@ -85,6 +87,31 @@ export class FinishGameCommandUseCase
     gameId: string,
     manager: EntityManager,
   ): Promise<boolean> {
+    const firstPlayerCount = await this.answersRepository.getCountByPlayerId(
+      firstPlayerId,
+      manager,
+    );
+    const secondPlayerCount = await this.answersRepository.getCountByPlayerId(
+      secondPlayerId,
+      manager,
+    );
+    const totalQuestions = await this.gameQuestionsRepository.findCountByGameId(
+      gameId,
+      manager,
+    );
+    if (
+      firstPlayerCount === totalQuestions &&
+      secondPlayerCount < totalQuestions
+    ) {
+      return true;
+    }
+    if (
+      secondPlayerCount === totalQuestions &&
+      firstPlayerCount < totalQuestions
+    ) {
+      return false;
+    }
+
     const firstPlayerLastAnswer =
       await this.answersRepository.getLastAnswerDate(
         firstPlayerId,

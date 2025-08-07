@@ -35,10 +35,11 @@ import { PlayersQueryRepository } from './pair-game/infrastructure/players.query
 import { GetTopUsersQueryHandler } from './pair-game/application/queries/get-top-users.query';
 import { ScheduleModule } from '@nestjs/schedule';
 import { FinishGameCommandUseCase } from './pair-game/application/use-cases/finish-game.use-case';
+import { GameTimeoutService } from './pair-game/application/services/game-timeout.service';
 
 const controllers = [PairGamesPublicController, QuestionsAdminController];
 
-const services = [CalculateStatisticsService];
+const services = [CalculateStatisticsService, GameTimeoutService];
 
 const useCases = [
   CreateQuestionUseCase,
